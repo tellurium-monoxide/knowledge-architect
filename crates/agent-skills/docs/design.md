@@ -1748,7 +1748,8 @@ The method of `skill@knowledge-architect-project-audit@audit-method` holds for e
 gives what varies: its corpus and what is read beside it, its dispatch, its drafts, its outcomes,
 and how its findings are classified as on old or new text. Its dispatch, its drafts and the reading
 of them are its saved workflow's, per `design@agent-skills@audit-axis-runs-a-workflow`, and each
-pass is one run of it, per `design@agent-skills@one-run-pass`. Each agent writes its drafts in a
+pass is one run of it, with one more on the application where the axis judges it, per
+`design@agent-skills@one-run-pass`. Each agent writes its drafts in a
 scratch directory of its own and edits nothing else, and nothing an agent proposes is applied before
 a reading by the session confirms it, per `design@agent-skills@synthetic-evidence-not-built`. A
 quotation or an attribution of the owner is confirmed against the question it answered, as well as
@@ -1806,7 +1807,7 @@ left. The nearest rival, the plain count with its fall judged over its context, 
 at each firing, with the same explanation each time. Dropping the count for the owner's judgement
 alone drops the convergence signal the stop rule reads.
 
-### A pass of an axis is one run of its saved workflow, from its preflight to its report, and the session reads the report after the run, never between its steps `##one-run-pass`
+### A pass of an axis is one run of its saved workflow, from its preflight to its report, with one more run to judge its application where the axis has one, and the session reads each report after its run, never between its steps `##one-run-pass`
 
 One run dispatches every agent of the pass and delivers one report, and the session reads nothing
 between its steps. The saved workflow is their one home, per
@@ -1842,7 +1843,10 @@ agentic-workflow axis; the calibration's readings, every check and a sample of t
 for the design-record axis. The samples are the session's to choose, on the owner's word: "Sample
 left to judgement". The owner list, the owner's word and the application follow. The run ends at
 its report, and the application is the session's, per
-`design@agent-skills@apply-stays-with-the-session`.
+`design@agent-skills@apply-stays-with-the-session`. The design-record axis then runs its workflow
+once more on the application, in the mode `application`, per
+`design@agent-skills@created-heads-checked-in-the-run`: the owner's ruling and the session's
+application sit between the two runs, so no single run can hold both.
 
 The shape is the owner's: "the main power of that tool is to organize multiple complex steps that
 produce a complete result (such as a report) which is as ready as possible for the main session to
@@ -2064,20 +2068,40 @@ reading bears on, the load the group bound exists to avoid; the barrier costs th
 slowest auditor. A verifier sees one group only, so it cannot replace the sample: the sample's
 readings differ between groups, not inside one.
 
-### Each head a proposed split, merge, rename or move would create is judged alone inside the run, before the owner rules `##created-heads-checked-in-the-run`
+### Each head a proposed split, merge, rename, retitle or move would create is judged alone inside the run, before the owner rules, and every entry the application changes is judged after it `##created-heads-checked-in-the-run`
 
 In the design-record axis's run, for each group whose verified findings propose a split, a merge, a
-rename or a move, a design-record auditor under its check brief judges each head the edit would
-create alone against every rule of `primer@design-heads`, and the edit against the auditor's
-failure modes of an edit. One checker per group is the default, and the count is the session's,
-passed to the run. The session judges alone each head its application creates beyond what the run
-checked.
+rename, a retitle or a move, a design-record auditor under its check brief judges each head the edit
+would create, or the head under its new title, alone against every rule of `primer@design-heads`,
+and the edit against the auditor's failure modes of an edit. One checker per group is the default,
+and the count is the session's, passed to the run.
+
+After the owner's ruling, the session commits its application and runs the same saved workflow on
+it, in its mode `application`: one design-record auditor per group, under an application brief,
+judges every head and rejected alternative whose text the application changed, a retitle and a body
+edit included and a re-pointed reference alone left out, against every rule, its change against the
+failure modes of an edit and the owner's ruling it carries out, and each tripwire and issue that
+cites a changed head, clause by clause, against the head that now holds what each clause guards. The
+session repairs what the report names and folds the repairs into the pass's commit.
 
 A head created by a split failed a rule read alone in the axis's first audit on this repository,
 and moving text unchanged does not make the new head conform. The rival, that judgement made at
 the application, comes after the owner's ruling, so the owner would rule on a head nobody had
 judged alone. One checker per group reads the rules once for every created head of the group, where
-one per proposal reads them once per head.
+one per proposal reads them once per head. A retitle is judged with them, since the owner rules on
+its new title as on a created head.
+
+The application is judged too, since it writes text the run never read: the edits of the owner's
+rulings, a check's repair, and every entry a split or a retitle touches. In the first pass of the
+axis in thaum, on knowledge-architect 0.6.0, the application touched about 200 heads and entries;
+four auditors judging every changed entry found 19 failures the run's checks could not see, among
+them a retitle that made a title true of a recorded rival and an attribution wider than the owner's
+argument, and the standing-state review found two tripwires the application left false while they
+still resolved. The rivals lost. The session judging alone does not read about 200 entries against
+every rule within one context. The re-check of the audit method runs only when a pass follows, and
+not when the owner stops the audit. A dispatch by hand from the skill puts a step outside the saved
+workflow, against `design@agent-skills@audit-axis-runs-a-workflow`. The cross-check's reading of
+tripwires runs before the application, and can only predict what the edits will do.
 
 ### The agentic-workflow axis reads every text the harness delivers to a session as an instruction, and neither the scoped CLAUDE.md files nor the registers are in its corpus `##workflow-axis-corpus`
 
