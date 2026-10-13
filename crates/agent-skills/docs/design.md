@@ -517,7 +517,7 @@ listed here, and an edit that adds one checks it against the list:
 | --- | --- | --- |
 | `T` | tripwires put to the owner | a plan document's Premortem section |
 | `AC` | acceptance criteria put to the owner | a plan document's Premortem section and its defaults |
-| `D` | a plan document's defaults: awaiting the owner where `primer@question-authority` gives the owner the question, and listed after them, as the session's decisions the owner can contest, where the record settles it | its "Defaults awaiting the owner" |
+| `D` | a plan document's defaults awaiting the owner | its "Defaults awaiting the owner" |
 | `W` | the findings on the installed workflow: a retrospective's, and a project audit's sent upstream | the workflow's file of the retrospective, whose shape an audit's upstream file takes |
 | `C`, `P` | a retrospective's other findings | the retrospective's files |
 | `F` | a project audit's findings put to the owner | the audit report file of the pass |
@@ -830,24 +830,24 @@ stands, joined to closure. The
 risk, a session judging a rival defeated on a weak argument, is what the checkpoint's contest and
 `tripwire@agent-skills@argued-closure-reopened` watch.
 
-### Bounded work, and a default the record answers, are built on their default without waiting for the owner's word `##derived-decision-proceeds-on-default`
+### A default that holds no fork, on bounded work or settled by the record, is built without waiting for the owner's word `##derived-decision-proceeds-on-default`
 
 The bounded path's one message names its default, which the session builds: the owner's answer
 stops or redirects it, and a part that cannot be undone waits for the owner's word, per
 `skill@knowledge-architect-design@bounded-work`, and the turn lists it under "Decided", per
 `design@agent-skills@decisions-reported-to-the-owner`. A default whose every premise comes from
 the record, a measurement or a source is the session's decision in the same way: in a plan
-review's findings, listed after the defaults awaiting the owner with its ground, per
+review's findings, written into the plan document with its ground and no label, per
 `skill@knowledge-architect-planning@plan-reviews`; in a review's items, per
 `skill@knowledge-architect-review@what-review-leaves`; and in an audit's rule read two ways that a
 record states, per `skill@knowledge-architect-project-audit@outcomes`.
 
 It serves `goal@knowledge-architect@the-owner-decides`, under which the record settles what such a
-default decides, a bounded proposal holding no fork, while the owner, told in the one message,
-overrules it at any time. The nearest rival, the wait for the owner's word, sends the owner defaults
-that, the owner believes, the recorded design heads should answer: the owner reported that such
-defaults appear to be put to the owner before the heads are looked at, which the owner thinks is
-why the owner points the agent to them. It is a delivery of
+default decides, since it holds no fork, while the owner, told of it in the bounded path's one
+message or in the turn's "Decided" section, overrules it at any time. The nearest rival, the wait
+for the owner's word, sends the owner the defaults that, by the owner's report recorded in
+`design@agent-skills@questions-go-to-their-authority`, the recorded design heads should answer. It
+is a delivery of
 `design@agent-skills@questions-go-to-their-authority` where a skill writes a default, and a head
 of its own because its rival, the wait, is another than that head's.
 
@@ -1815,7 +1815,8 @@ instruction read two ways reworded to the reading a design head or another instr
 approval cited as a head's ground is removed in the branch where the head stands on its argument,
 since its repair removes a false ground and widens nothing. A widening of what the owner's words
 approved, the removal of an entry, a ground that is the owner's words, which side of a
-contradiction wins, a verdict where a rule reads two ways and no record states the reading, a
+contradiction wins where no design head, goal or source settles it, a verdict where a rule reads
+two ways and no record states the reading, a
 provable gap, a head in the wrong Component and a conflict with a goal go to the owner, per
 `goal@knowledge-architect@the-owner-decides` and `design@agent-skills@questions-go-to-their-authority`; any finding no case names goes there too. In the
 agentic-workflow axis, an instruction read two ways goes to the owner where nothing recorded states
@@ -1849,7 +1850,7 @@ reads before the repair lands.
 Most findings of the design-record axis are text edits, so they are applied at once: the owner
 thinks the goal for that axis is usually immediate application, with little reason to delay since
 those are mostly text edits, unless some design entries have major issues that bear on the
-project's goals.
+project's goals, for example.
 
 ### The design-record axis re-applies to every entry the rules on design heads, on the Component a head sits in and on rejected alternatives, reading the tripwires and issues that bear on each head and judging neither them, the restatements nor the code `##design-record-axis`
 
@@ -2562,9 +2563,8 @@ cannot be told apart from a plugin's.
 ### Setting up stops at a conformant structure, and the move of existing documents is planned work `##adopting-existing-docs`
 
 For a project that already has documentation, the setup skill takes an inventory of it,
-proposes a destination for each document, places a document a row of the knowledge table fits, per
-`design@agent-skills@questions-go-to-their-authority`, takes the owner's rulings on the others, and
-opens one `todo` issue for the move. The move itself is planned work of its own, written under the planning skill. A migration
+proposes a destination for each document, takes the owner's rulings, and opens one `todo` issue for
+the move. The move itself is planned work of its own, written under the planning skill. A migration
 is a decision with arguments of its own, such as which recorded decisions still hold, and it fits
 in one session only for a small project. The issue keeps the old documents beside the new homes
 listed as outstanding work, per `design@agent-skills@undesigned-work-is-an-issue`.

@@ -452,14 +452,16 @@ ruling on its owner list.
 ## Guarding `design@agent-skills@questions-go-to-their-authority`: questions the record answers still reach the owner `##record-answered-questions-reach-the-owner`
 
 T2 of the premortem of the discussion that made the decision. The decision rests on the premise that routing a question by its
-authority, stated in the primer every session reads, overcomes the weight agents give to the
-owner's word, which `design@agent-skills@misstated-ruling-rated-by-what-it-changes` records the
-owner judging that no further instruction would reduce.
+authority, stated in the primer every session reads and delivered where a skill writes a default,
+per `design@agent-skills@derived-decision-proceeds-on-default`, overcomes the weight agents give to
+the owner's word, which `design@agent-skills@misstated-ruling-rated-by-what-it-changes` records
+the owner judging that no further instruction would reduce.
 
 **Fires when:** a retrospective of a session after this decision's landing finds 2 or more
 questions put to the owner that a goal, a design head or a source's text answered.
-**Response:** reopen `design@agent-skills@questions-go-to-their-authority` on how the routing is
-delivered, for example at the points where a skill writes a default for the owner.
+**Response:** reopen `design@agent-skills@questions-go-to-their-authority` and
+`design@agent-skills@derived-decision-proceeds-on-default` on how the routing is delivered, for
+example at the points where a skill puts a finding to the owner rather than a default.
 **Re-entry:** the retrospective of each session, with the limit
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.
 

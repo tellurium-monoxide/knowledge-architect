@@ -58,7 +58,9 @@ subsection is omitted.
   opened, and the work builds on the head; it holds its part only where the head's argument is
   found defeated, while the head's reversal is decided, by the owner where it is a fork or the head
   rests on the owner's words. A turn that decided
-  something the owner could have decided ends with a "Decided" section.
+  something the owner could have decided ends with a "Decided" section. A project whose own
+  instructions override `primer@owner-word-premise` to apply a source over an answer of the owner
+  can remove that override.
 - `agent-skills`, patch: the transcript reviewer checks the scope of a ruling of the owner only for a
   question the owner answers, and reports an answer on a reading or a fact that a record calls the
   owner's ruling. A design head that stands on its argument is reversed with the owner's approval

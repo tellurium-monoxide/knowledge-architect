@@ -137,7 +137,8 @@ the rules as for drafting, then every drafter's draft of each sample entry. For 
 - each group's verdict, and the rule each failing verdict names;
 - where the verdicts differ and one of them follows the rule's text, a proposed reading: the
   verdict, the sentence of the rule it rests on, quoted, and the drafts that differ from it;
-- where the rule's text admits both verdicts, say so, with the two readings: the owner rules.
+- where the rule's text admits both verdicts and no record states the reading, say so, with the
+  two readings: the owner rules.
 
 Write `calibration.md` in your directory. Return its path, the count of proposed readings and the
 count of entries whose rule admits both.
