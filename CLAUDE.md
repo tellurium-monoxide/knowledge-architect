@@ -149,8 +149,8 @@ This section is a restatement. The decisions live in the core's design home,
   - A span with no space whose head before the first `@` is a kind or an anchor is a candidate.
     Any other span holding an `@`, such as an email address or a git remote, is silent. A typo
     inside the kind is silent too.
-  - A placeholder in angle brackets is not a candidate. In the checker's own source every literal is data, bound or not, per
-    `design@core@checker-source-literals-are-data`.
+  - A placeholder in angle brackets is not a candidate. In the checker's own source every literal
+    is data, bound or not, per `design@core@checker-source-literals-are-data`.
   - Two retired forms are reported, not ignored: `<anchor>@<path>` with no kind, and a backticked
     `<word>#<id>` or `#<id>` whose id is an entry here, or whose word is an anchor or a kind. Any
     other `#` shape, such as an issue number, is silent, per
