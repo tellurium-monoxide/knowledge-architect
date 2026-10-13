@@ -24,9 +24,10 @@ Three statements of one agent definition, `path@agent-skills@content/agents/desi
 
 An auditor can fill `<verdict>` in `return.md` either with the draft's verdict, naming each rule,
 or with the schema's two values. Two census agents of the design discussion on what enters
-agent-facing text reported the pair independently. Not established: whether any step of the saved
-workflow parses `return.md`'s verdict, or whether only agents read it, which decides whether the two
-readings lead to different results.
+agent-facing text reported the pair independently. Two census agents of step 4 of the work on what enters
+agent-facing text read the saved workflow: it passes the schema to the drafting agent, and its
+report step is an agent that reads every `return.md`, so no step parses the verdict. Not
+established: whether that report agent treats the two vocabularies alike.
 
 ### Why it matters
 

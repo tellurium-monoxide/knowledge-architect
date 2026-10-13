@@ -21,7 +21,8 @@ for a decision about the configuration lands**: `skill@knowledge-architect-decis
 This standard binds every statement of agent-facing text, the primer, a `CLAUDE.md`, a skill, a
 subagent definition and a saved workflow's prompts included, and every actor that writes or judges
 one: a session writing it, a review, an audit and its repairs, a retrospective's proposals, an
-analysis of received findings, and a skill that moves text into agent-facing text.
+analysis of received findings where a project makes one, and a skill that moves text into
+agent-facing text.
 
 ### The need test
 

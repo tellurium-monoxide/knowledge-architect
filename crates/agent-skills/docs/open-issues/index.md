@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-36 entries
+37 entries
 
 | kind | title |
 | --- | --- |
@@ -29,6 +29,7 @@
 | question | [The primer's paragraph on a divergence between a head and the code reads two ways on the work that goes on meanwhile](the-primer-s-divergence-paragraph-reads-two-ways-on-work-that-goes-on.md) |
 | question | [The decision-recording skill's reason for the `void` marker reads two ways](the-void-marker-s-reason-reads-two-ways.md) |
 | question | [The planning skill forbids "plan" alone as a document's name and uses it alone](the-word-plan-is-banned-alone-and-used-alone.md) |
+| question | [Whether a census of a project's own text under a planned instruction is real use, or a run the workflow refuses](whether-a-census-of-real-text-under-a-planned-instruction-is-real-use.md) |
 | question | [Whether a session in Claude Code's default permission mode is asked for permission, or needs an allow rule, to run an installed saved workflow](whether-a-saved-workflow-run-needs-a-permission-rule.md) |
 | todo | [A design discussion's proposals are read against the heads they may contradict only after the plan document is written](a-proposal-is-read-against-the-heads-only-after-the-plan-is-written.md) |
 | todo | [No installed skill says how a new Component is created](a-skill-for-creating-a-component.md) |

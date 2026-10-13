@@ -2109,9 +2109,8 @@ them, as the owner's opinion, in the agentic-workflow axis.
 
 L9 reads each statement of the corpus against the need test of `design@agent-skills@need-test`, so
 that the audit and the review axis on agent-facing text judge one statement by one standard, per
-`design@agent-skills@admission-rules-home`. A lens of its own, rather than a widened L5, is the
-owner's choice, made on the ground that all work that judges or edits agent-facing text follows one
-standard; L5 judges a restatement against its home, and L9 whether a statement is needed at all.
+`design@agent-skills@admission-rules-home`. A lens of its own, rather than a widened L5, is the owner's choice; L5 judges a restatement
+against its home, and L9 whether a statement is needed at all.
 Its two auditors by default rest on the premise above, that a second agent of one lens finds what
 the others missed.
 
@@ -2134,11 +2133,12 @@ the axis: the retrospective judges it against an expectation set.
 The standard derives from `design@agent-skills@behaviour-additions-need-real-use`: a defect provable by
 reading is repaired on reading, and an instruction about how an agent behaves is added only on
 evidence from real use. A divergent verdict needs a text of the project, since a written example is
-a synthetic scenario. The owner set the axis's aim: most of its work is finding what cannot be followed and the gaps
-where judgement is not enough, on the principle that some things are left to the agent's judgement, since no text covers
-every case, and that instructions are best kept to what the workflow needs to function as intended.
-The class of an unneeded statement serves that last clause, on the owner's ruling that all work that
-judges or edits agent-facing text follows one standard, per `design@agent-skills@admission-rules-home`.
+a synthetic scenario. The owner set the axis's aim: most of its work is finding what cannot be followed, and the gaps
+where judgement is not enough, those gaps following the principle that some things are left to the
+agent's judgement, since no text covers every case, and that instructions are best kept to what the
+workflow needs to function as intended. The class of an unneeded statement is in the axis because
+the owner ruled that all work that judges or edits agent-facing text follows one standard, per
+`design@agent-skills@admission-rules-home`.
 The nearest rival, every gap a finding to fill, fails
 `goal@agent-skills@installed-text-leaves-room-to-judge`.
 
