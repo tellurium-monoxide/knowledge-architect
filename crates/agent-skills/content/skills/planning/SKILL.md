@@ -44,7 +44,7 @@ audit and at each landing.
 | **thread** | one proposal of the discussion, carrying a state; a thread closed `approved` or `argued` is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a decision of the plan, a thread closed `approved` or `argued`, that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named; presenting it reopens the thread, which closes again on the owner's word, per `skill@knowledge-architect-design@decision-authority` |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named; presenting it reopens the thread, which closes again on its argument or, at a fork, on the owner's word, per `skill@knowledge-architect-design@decision-authority` |
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
@@ -176,7 +176,7 @@ so in one line rather than being omitted, so a reader can tell an empty section 
 | Acceptance criteria | one item per criterion, ``### <criterion> `##<id>` ``, as `skill@knowledge-architect-planning@acceptance-criteria` says |
 | Implementation sequence | in a spec, its steps; in a milestone document, its slices, each linked to its spec, whose own steps it holds (`skill@knowledge-architect-planning@cutting-steps-and-slices`). Concise: what each builds and what it fails alone on |
 | Order rationale | one sentence per pair of adjacent steps or slices |
-| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced, labelled `D<n>`, with the thread it bears on, marked as ruled once the owner rules; and the label of each acceptance criterion awaiting the owner's word |
+| Defaults awaiting the owner | each default a reviewer's finding or the author's judgement produced that `primer@question-authority` gives the owner, labelled `D<n>`, with the thread it bears on, marked as ruled once the owner rules; and the label of each acceptance criterion awaiting the owner's word |
 | Harvest | what lands where and when. In a spec, its rows; in a milestone, each slice's row in that slice's spec, and the row of the milestone document itself in it |
 | Later consequences | what each later piece of work adds or replaces, so a later reader knows what was deliberately left |
 
@@ -519,8 +519,12 @@ these four:
 %% The `D` label of a default: `design@agent-skills@ruled-items-labelled`.
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
-touches, and listed under the defaults awaiting the owner, with the thread it bears on and a label,
-`D<n>`, numbered as `primer@labelled-items` says. Until the owner rules on a default, it is built as
+touches. **A default the record, a measurement or a source settles is the session's decision**: it
+is listed after the defaults awaiting the owner, with its label and its ground, as a decision the
+owner can contest, and reported in the turn's "Decided" section, per `primer@decided-section`. A
+default that `primer@question-authority` gives the owner, a fork among them, is listed under the
+defaults awaiting the owner, with the thread it bears on and a label, `D<n>`, numbered as
+`primer@labelled-items` says. Until the owner rules on a default, it is built as
 written, as `skill@knowledge-architect-planning@working-a-slice` says. A ruled default stays in that list,
 marked as ruled, with its label, since the sections it was written into cite it by its label. A
 finding that is a gap with one answer is applied in place. A finding that is wrong is dropped, with

@@ -69,6 +69,11 @@ subsection is omitted.
   reserves to the owner, waits for the owner's word.
   Bounded work builds its default after its one message instead of waiting for the owner's word, and
   a factual question goes to the owner only for a fact the owner alone holds.
+- `agent-skills`, patch: a default or a finding of a plan review, of a review or of an audit that the
+  record, a measurement or a source settles is decided by the session and reported, not listed as
+  awaiting the owner; an audit puts a rule read two ways on its owner list only where no record
+  states the reading; the setup of an existing project places a document a row of the knowledge
+  table fits, and asks the owner only about the others.
 
 ## 0.6.0
 

@@ -194,8 +194,9 @@ carries in `skill@knowledge-architect-retrospective@expectation-sets`, as the se
 design skill.
 
 **You are present to rule.** The setup proposes and you rule: the
-Components, the goals, the place of each existing document, and each
-choice that changes your project's build or a file it already has.
+Components, the goals, the place of each existing document that no row
+of the knowledge table settles, and each choice that changes your
+project's build or a file it already has.
 A run without an owner, such as a trial, makes those choices itself,
 except the goals, which it leaves for you to state, and a gap it
 reports in a choice it had to make alone is not a defect of the skill.

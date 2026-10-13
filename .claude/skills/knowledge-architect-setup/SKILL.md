@@ -231,7 +231,9 @@ A project that already has documentation keeps it until its move is planned:
    for a decision that earns no design entry, or nothing, for history that records no current
    decision. Say what is uncertain: which recorded decisions still hold, and
    which describe a design the code has left.
-3. **The owner rules** on the proposal, on each document by a label, `Q<n>`, given to it in the
+3. **A destination a row of the knowledge table fits is the session's**, reported with its row, per
+   `primer@question-authority`. **The owner rules** on a document no row fits, as the table's last
+   row asks, and on one whose destination is uncertain, each by a label, `Q<n>`, given to it in the
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
    rulings. The move is then planned work: when the owner schedules it, it starts under

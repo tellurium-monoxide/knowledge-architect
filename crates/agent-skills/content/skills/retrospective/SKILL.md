@@ -205,7 +205,7 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
 ### `skill@knowledge-architect-setup`
 
 - **The owner is present to rule.** The setup proposes and the owner rules: the Components, the
-  goals, the place of each existing document, and each choice that changes the project's build or
-  a file it already has. A run without an owner, such as a trial, makes those choices itself, the
+  goals, the place of each existing document that no row of the knowledge table settles, and each
+  choice that changes the project's build or a file it already has. A run without an owner, such as a trial, makes those choices itself, the
   goals excepted, as `skill@knowledge-architect-setup` says, and a gap it reports in a choice it
   had to make alone is not a defect of the skill.
