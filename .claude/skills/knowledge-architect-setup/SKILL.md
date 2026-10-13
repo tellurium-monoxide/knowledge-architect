@@ -39,7 +39,8 @@ The checker needs `git` 2.36 or newer, and a project inside a git repository. Bu
 Rust toolchain, whatever the project's own language.
 
 **Setting up is done with the owner.** Every step that writes a durable statement on the owner's
-behalf is shown to the owner first: the Components, the goals, the place of each existing document,
+behalf is shown to the owner first: the Components, the goals, the place of each existing document
+that no row of the knowledge table settles,
 and each choice below that changes the project's build or a file it already has. The owner rules;
 the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
 trial, makes those choices itself, except the goals, which only the owner states: such a run writes
@@ -233,7 +234,7 @@ A project that already has documentation keeps it until its move is planned:
    which describe a design the code has left.
 3. **A destination a row of the knowledge table fits is the session's**, reported with its row, per
    `primer@question-authority`. **The owner rules** on a document no row fits, as the table's last
-   row asks, and on one whose destination is uncertain, each by a label, `Q<n>`, given to it in the
+   row asks, each by a label, `Q<n>`, given to it in the
    proposal. The issue below names each document by its path, not by the label.
 4. **Open one `todo` issue for the move**, in the root Component, holding the inventory and the
    rulings. The move is then planned work: when the owner schedules it, it starts under

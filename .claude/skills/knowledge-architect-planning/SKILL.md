@@ -497,8 +497,9 @@ these four:
 **What their findings become.** Check each finding against the tree, or against the transcript,
 before acting on it. A material finding is answered with a default, written into the sections it
 touches. **A default the record, a measurement or a source settles is the session's decision**: it
-is listed after the defaults awaiting the owner, with its label and its ground, as a decision the
-owner can contest, and reported in the turn's "Decided" section, per `primer@decided-section`. A
+is written into the sections it touches with its ground, takes no label, is not listed under the
+defaults awaiting the owner, and is reported in the turn's "Decided" section, per
+`primer@decided-section`, where the owner can contest it. A
 default that `primer@question-authority` gives the owner, a fork among them, is listed under the
 defaults awaiting the owner, with the thread it bears on and a label, `D<n>`, numbered as
 `primer@labelled-items` says. Until the owner rules on a default, it is built as
@@ -544,8 +545,8 @@ milestone document leaves with the last slice. Before deleting:
   leaves with it;
 - each of its later consequences is in the issue entry or the plan document of the later work it
   names, or in a `todo` issue opened for it where that work has neither;
-- every default the document lists as awaiting the owner is ruled, since a design head records a
-  default only once the owner has ruled on it;
+- every default the document lists as awaiting the owner is ruled, since a design head records such
+  a default only once the owner has ruled on it;
 - its row of the roadmap, if it has one, is removed (`skill@knowledge-architect-planning@spec-or-milestone`).
 
 **A citation of the leaving document from another plan document dangles.** The session that meets

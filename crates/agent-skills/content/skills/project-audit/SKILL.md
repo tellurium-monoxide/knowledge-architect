@@ -220,8 +220,8 @@ calibration proposes, against the sample's drafts; every item of the owner-list 
 finding the report marks as plausible or as bearing on a ruling of the owner or on a tripwire,
 against its draft; every check; and a sample of the refuted drafts and a sample of the conforming
 drafts, of its choosing. A reading of the calibration it rejects is corrected in the calibration
-file, and the workflow runs again from `verify`. Where the rule's text admits both readings, the
-difference goes on the owner list. The pass's commit message states each reading settled.
+file, and the workflow runs again from `verify`. Where the rule's text admits both readings and no
+record states the reading, the difference goes on the owner list. The pass's commit message states each reading settled.
 
 **Application.** A split, a merge or a move of a head is drafted first, like any other finding: a
 fold judged alone is the edit most often undone. Each head the session's application creates
@@ -331,8 +331,8 @@ files.
 
 | outcome | the findings |
 | --- | --- |
-| applied in the branch | a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
-| put to the owner, on the owner list | which side of a contradiction wins, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
+| applied in the branch | a contradiction that a design head, a goal or a source settles, repaired to the side it settles; a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
+| put to the owner, on the owner list | which side of a contradiction wins where no design head, goal or source settles it, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
 **Sent upstream**: every finding whose outcome is sent upstream, over every pass of the audit, a
