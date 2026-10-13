@@ -4,7 +4,7 @@
 
 - **The goals**, under `skill@knowledge-architect-goal-setting`, in `register@knowledge-architect@goal`:
   G1 and G3 verbatim as #owner-decides-goal-wording of the milestone document gives them, G2 as
-  #owner-word-is-verified gives it with D12's rewording if the owner approves it, its slug
+  #owner-word-is-verified gives it with D12's rewording, approved in R6, its slug
   `the-owner-s-word-is-verified`.
 - **The authority section** in `path@agent-skills@content/PRIMER.md`, beside `primer@goals-bind`,
   as "Decided design" gives it, with the rank sentence of D13.
@@ -85,7 +85,7 @@ awaited", which names the default of `primer@owner-word-premise`.
 | G1, G2, G3 | `register@knowledge-architect@goal` | step 1 of this slice |
 | #questions-go-to-their-authority | a head in `register@agent-skills@design`, slug its thread's | this slice |
 | #answer-keeps-its-authority | a head of its own, slug its thread's; the label rule in `design@agent-skills@ruled-items-labelled`, rewritten | this slice |
-| #specification-outranks-an-owner-answer | a head, slug a-source-outranks-an-owner-answer, the pair stated in the commit | this slice |
+| #specification-outranks-an-owner-answer | one head for `primer@owner-word-premise` whole, slug owner-word-holds-as-far-as-its-premise, the pair stated in the commit | this slice |
 | #decisions-reported-to-the-owner | a head, slug its thread's | this slice |
 | `design@agent-skills@primer-content` | rewritten: pointers to the new heads, case 1 per G2, each directive this slice changes leaving for its own head | this slice |
 | `design@agent-skills@tripwire-wording-is-the-agents`, `design@agent-skills@head-prevails-over-diverging-code` | rewritten in place | this slice |
