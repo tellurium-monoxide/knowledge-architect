@@ -43,10 +43,8 @@ rather than a diff (`skill@knowledge-architect-project-audit`).
 | design conformance | `agent@knowledge-architect-design-conformance-reviewer`: does the plan document fit the project's goals, design heads and rejected alternatives | the same moment |
 | transcript | `agent@knowledge-architect-transcript-reviewer`: has everything the work's sessions established that must outlive them a durable outcome, and is no ruling of the owner misstated | the transcripts of the sessions that produced the work are available; at the review before a merge, alone and last (below), not also with the other axes; at an earlier review of the branch, only where the work is a plan document assembled from a transcript, in the batch |
 
-Each of these is conditional on the work. In other skills, more axes are added to this list, when
-the work has properties these axes do not reach. **A review owes every axis of this table whose
-condition holds, and every axis that the skill of an activity whose work it reviews adds, where
-that axis's condition holds.** The review before a merge is the last review of a branch, after
+**A review owes every axis of this table whose condition holds, and every axis that the skill of an
+activity whose work it reviews adds, where that axis's condition holds.** The review before a merge is the last review of a branch, after
 which only its own repairs land, whichever activity's skill dispatched it, such as the review of a
 plan document on a branch of its own; the work it reviews is the whole branch. **An axis named by
 an agent is dispatched as that agent. An axis with no agent is dispatched as a fresh
@@ -59,10 +57,7 @@ outcome under `skill@knowledge-architect-review@what-review-leaves`, since an an
 given after its extraction reads to it as missing. Its range is the whole branch,
 `<main branch>..<head>`, and its brief names the transcripts of every session that worked on the
 branch, with the message where the branch's work begins in each. It is the one axis that can see whether the findings of the others were acted on, since
-their reports reach the session as messages of its transcript. Its repairs land as additional
-commits, or are folded where `skill@knowledge-architect-review@what-review-leaves` says. **Where one of them adds, removes or reverses a design head,
-the decision-record axis reviews it**, and any other axis whose condition it meets; the review ends
-with their repairs. Any other additional commit is reviewed by no axis again.
+their reports reach the session as messages of its transcript.
 
 **Find each transcript file by the message where the work begins, never by a session
 identifier.** Search the harness's transcript directory for the opening words of that message, and
@@ -70,9 +65,6 @@ name a file only once it is seen to hold the message: a session that was cleared
 leave an earlier session's identifier in the harness's paths.
 
 ## The invariants `##review-invariants`
-
-These hold whatever the axes are. They are what makes a finding worth acting on rather than
-re-checking.
 
 - **Each axis is a separate subagent, and none sees another's findings.** Reviewers given a shared
   findings list converge on it. The transcript reviewer is the one exception: its subject is the
@@ -84,8 +76,8 @@ re-checking.
   and no summary of what is believed to be true. The finding that changes a design is usually the
   one nobody was looking for.
 - **Reproduce before claiming.** Every reviewer is told to reproduce anything it asserts, and to
-  drop what it cannot. This is the instruction most likely to be dropped when the procedure is
-  rewritten, and it is the whole difference between a finding you act on and a finding you re-check.
+  drop what it cannot. It is the whole difference between a finding you act on and a finding you
+  re-check.
 - **A brief must not assert what the tree contains.** Give the task and the standard, and tell the
   reviewer to establish the state itself. A brief that describes the implementation sends a reviewer
   to test something that may not be there, and it cannot tell a wrong brief from a broken artifact
@@ -146,8 +138,8 @@ change. Each is a claim about the work like any finding. So is a repair the disp
 owner while answering a review. The record of the review lists each item with its outcome.
 
 **A repair that adds, removes or reverses a design head is reviewed by the decision-record axis**,
-whichever axis's finding it answers. A repair made before the last transcript review is reviewed
-before it, and that transcript review then runs as `skill@knowledge-architect-review@review-axes` says; a repair of the last transcript review
+and by any other axis whose condition it meets, whichever axis's finding it answers. A repair made before the last
+transcript review is reviewed before it, and that transcript review then runs as `skill@knowledge-architect-review@review-axes` says; a repair of the last transcript review
 is reviewed after it, and the review ends with that review's repairs. Any other repair, a rewording
 or an argument, a mention or a reference added inside an existing head included, and a title
 brought to what its head's body already argues, is reviewed by no axis again; one made before the
@@ -176,8 +168,7 @@ outcome is reported to the owner, in the record of the review and in the turn's 
 per `primer@decided-section`. A ruling
 the reviewer finds misstated is the owner's, and is put to the owner.
 
-**Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,
-which may give them new SHAs; GitHub's rebase merge drops a commit that changes no file):
+**Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge):
 
 - **A repair of the branch's tree is a new commit, appended**, which edits no history, except one
   that `primer@branch-commits` folds into an earlier commit. Either way, the paragraph recording
@@ -195,7 +186,7 @@ which may give them new SHAs; GitHub's rebase merge drops a commit that changes 
 
 **Where the project squashes a branch into one commit on merge**, the record of the review goes
 where the project keeps what survives the merge: the squashed commit's message, or the pull
-request. Follow the project's own rules on that.
+request.
 
 The record tells what was reviewed, on which axes, how consequential the
 findings were, which were repaired, which were left and why, and which axis was not run and why.

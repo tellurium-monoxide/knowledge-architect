@@ -6,11 +6,7 @@ description: MUST use when the owner hands this session one or more files of fin
 # Retrospective intake
 
 Scope: the analysis of the findings a retrospective or a project audit sends to this repository,
-the owner's ruling on each, and the life of the analysis file until it leaves. A retrospective is
-run by `skill@knowledge-architect-retrospective`, and an audit's agentic-workflow axis by
-`skill@knowledge-architect-project-audit`, in this repository or in a project that uses the
-workflow, and their files land outside the project, in a directory the owner names. A later
-session receives them, and this skill is that session's procedure.
+the owner's ruling on each, and the life of the analysis file until it leaves.
 
 Not covered here:
 - **running a retrospective or an audit**: `skill@knowledge-architect-retrospective`,
@@ -44,8 +40,7 @@ real use changes in the workflow.
   the project's file is not, and the analysis is committed to a public repository.
 
 The findings of this repository's two files are handled here, never as an issue on GitHub, per
-`design@knowledge-architect@workflow-findings-stay-here`. A consumer's workflow file
-arrives the same way once the owner hands it over.
+`design@knowledge-architect@workflow-findings-stay-here`.
 
 A finding is cited by its id and its file's stem, as "W3 of <date>-<project>-<subject>-workflow",
 a file of the older form; the installed retrospective skill gives the form for its own files.
@@ -79,7 +74,7 @@ a file of the older form; the installed retrospective skill gives the form for i
 
 ## What to establish for each finding or cluster `##what-to-establish`
 
-Each item below is answered with its evidence. The order is a suggestion; the content is not.
+The order is a suggestion; the content is not.
 
 - **a. What it says.** What happened in the session, which text it blames, quoted, and the fix it
   proposes.
@@ -203,7 +198,5 @@ A finding handled now can turn out to need a design discussion and a plan. Its O
 rewritten, on the owner's word, to name the plan document or the issue that now carries it, so the
 analysis can still leave.
 
-Until it leaves, an analysis is outstanding work that no register lists. The root `CLAUDE.md`
-lists the directory among the places a session looks for what is already known. A file whose
-cluster other files point to leaves after them, or the commit that deletes it rewrites the
-pointing sections, since their references would dangle.
+A file whose cluster other files point to leaves after them, or the commit that deletes it rewrites
+the pointing sections, since their references would dangle.

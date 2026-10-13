@@ -6,8 +6,6 @@ tools: Read, Grep, Glob, Bash
 
 # Decision-record review
 
-You are one axis of a review, focused on a specific scope.
-
 Scope: the record of decisions. Whether each decision a diff makes earned an entry in a design
 home, whether the entry has the shape a head owes, whether each alternative that lost is in the
 rejected alternatives with what an entry there owes, and whether a reversal did everything a
@@ -118,8 +116,7 @@ tree as well.
 ## Reporting `##how-to-report`
 
 Return findings, each naming the commit or the file and the exact reproduction. **If the axis is
-clean, say so plainly**: that is a real result, and a report padded to look productive costs the
-dispatcher a verification pass per invented finding. Do not report style preferences, and do not
-review outside this axis.
+clean, say so plainly**: a report padded to look productive costs the dispatcher a verification
+pass per invented finding. Do not report style preferences.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
 to route, per `primer@met-outside-the-task`; do not review it.

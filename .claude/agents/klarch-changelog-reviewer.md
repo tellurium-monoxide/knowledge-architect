@@ -6,8 +6,8 @@ tools: Read, Grep, Glob, Bash
 
 # Changelog review
 
-You are one axis of a review, focused on a specific scope. `skill@klarch-release` dispatches you on
-a release branch, with the range `v<previous>..<commit under review>`.
+`skill@klarch-release` dispatches you on a release branch, with the range
+`v<previous>..<commit under review>`.
 
 Scope: CHANGELOG.md's section for the version being released, against every change in the range,
 and the arguments the range records. **Not** whether a change is right, nor anything the other
@@ -21,8 +21,7 @@ reproduce. **You do not use `Write` or `Edit`**, and you run nothing that change
 
 The standard is three heads of `register@knowledge-architect@design`, read in full: `design@knowledge-architect@changelog-entries`
 for the entries, `design@knowledge-architect@changelog-section-fixed-at-release` for the released
-sections, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
-own preamble states the order of entries.
+sections, and `design@knowledge-architect@versioning-policy` for its bump table.
 
 ## The predicates `##changelog-predicates`
 

@@ -6,8 +6,7 @@ description: MUST use once per session, at the first of these moments (deferred 
 # Retrospective
 
 Scope: looking back at one session's use of the workflow, and turning what was unclear, missing or
-wrong into findings the owner can act on. Real sessions are the test of the workflow, and this is
-how they report.
+wrong into findings the owner can act on.
 
 Not covered here: **opening an issue entry in the project**,
 `skill@knowledge-architect-issue-tracking`.
@@ -59,8 +58,7 @@ by its id and the stem of its file (`skill@knowledge-architect-retrospective@two
 **W** for the installed files, **C** for the checker, **P** for the project's own
 instructions. Numbers follow `primer@labelled-items`, so an id is unique within its file, and the
 stem makes the citation unique across retrospectives. An interaction
-finding whose fix may fall on either side goes in both files (`skill@knowledge-architect-retrospective@two-files`) and gets one id in each, each
-naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
+finding gets one id in each file, each naming the other, since the two files may be read apart. The standing questions below take no id: they are answers, not findings.
 
 1. **The installed files.**
 2. **The project's own instructions**: its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own
@@ -86,7 +84,7 @@ naming the other, since the two files may be read apart. The standing questions 
 
 **A ruling of the owner recorded a little wider, narrower or firmer than given, on a detail that is
 not load-bearing, and caught by the transcript reviewer before the merge, is no finding.** The
-reviewer exists to catch that expected rate, and it worked. A misstated ruling that changed what was
+reviewer exists to catch that expected rate. A misstated ruling that changed what was
 built, or reached the main branch, is one.
 
 **A finding about how the owner works is judged against the skill's expectation set** (`skill@knowledge-architect-retrospective@expectation-sets`). A
@@ -170,7 +168,7 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
   a fork to the agent: "your judgement" is an approval like any other, and a finding that defeats
   its premise still returns to the owner.
 - **A closed thread is not frozen.** The owner's word reopens one at any time, and needs no new
-  argument; the agent does. Nothing about having been recorded makes a decision final.
+  argument; the agent does.
 - **The owner says why when rejecting something.** A ruled-out thread carries its reason into the
   record, and the reopening rule reads that reason to decide whether a later proposal is new. A
   rejection with no reason cannot do that work, so the same argument comes back.
@@ -195,8 +193,7 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
 - **The owner is trying to converge**: arguing, ruling, or saying stop. Several rules are released
   only by the owner's word, and withholding it leaves the discussion parked rather than producing a
   wrong result.
-- **The owner accepts a methodology, not a script for every exchange.** Conduct outside what the
-  skill describes is the agent's judgement, not a gap to be filled, per `primer@room-to-judge`.
+- **The owner accepts a methodology, not a script for every exchange.**
 - **The project's design intent is discoverable, or the project is new.** The skill grounds itself in
   the goals, the design homes, the rejected alternatives, the README files, the open issues and the
   tripwires, or failing

@@ -39,9 +39,8 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    heading. Then run `cargo x changelog` to write the crates'
    copies, per
    `design@knowledge-architect@the-changelog-ships-in-every-crate`. Each branch wrote its own
-   entries there, per `design@knowledge-architect@the-branch-writes-its-changelog-entries`, and step 9's review checks
-   them, per `design@knowledge-architect@changelog-reviewed-at-the-release`. The version chosen at step 1 follows the highest bump class among its entries, a patch at
-   least.
+   entries there, per `design@knowledge-architect@the-branch-writes-its-changelog-entries`. The
+   version chosen at step 1 follows the highest bump class among its entries, a patch at least.
 3. **Commit**, with `cargo klarch check --staged` before and
    `cargo klarch commits origin/main..HEAD` after: the whole branch, per
    `instructions@verify-mechanically`, `design@agent-skills@staged-check-before-each-commit`, and
@@ -93,7 +92,7 @@ On a branch of its own, `release-<version>`, under the Git rules of the root `CL
    under `skill@knowledge-architect-review`. Its axes include
    `agent@klarch-changelog-reviewer`, dispatched on `v<previous>..<commit under review>`, the head's commit at the dispatch: every change of the range
    has the entries the policy owes, each entry's class is right, and the version is their highest
-   class. A repair lands as `skill@knowledge-architect-review@what-review-leaves` says, and
+   class, per `design@knowledge-architect@changelog-reviewed-at-the-release`. A repair lands as `skill@knowledge-architect-review@what-review-leaves` says, and
    each of steps 2 and 4 to 8 whose result the repair changes runs again on the head.
 
 ## Merge, then publish `##merge-then-publish`

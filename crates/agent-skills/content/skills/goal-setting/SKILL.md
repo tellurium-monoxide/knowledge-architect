@@ -14,8 +14,7 @@ Not covered here: **a decision about how something is built**, which is
 
 **The goals are the only statements assumed to come from the owner**, per `primer@goals-bind`. Every design decision binds
 as a presumption, and a goal binds outright: a constraint derived from a goal rules a proposal out.
-That is why no goal is written that the owner did not rule on, and why an agent never edits a goal
-outside this skill.
+That is why an agent never edits a goal outside this skill.
 
 ## A goal, and what is not one {{slug:goal-or-not}}
 
@@ -31,7 +30,8 @@ on the owner's word.
 ## The shape of a goal entry {{slug:goal-entry-shape}}
 
 A level-two heading stating the goal as a sentence, its slug at the end, then one short paragraph:
-what the goal means, and **what would show it is met**. Every level-two heading of a goals home is a
+what the goal means, and **what would show it is met**. The paragraph stays short because a goals
+home is read whenever a decision is argued from one. Every level-two heading of a goals home is a
 goal and carries a slug: the head that says what the home holds is prose under the level-one title,
 never a level-two section.
 
@@ -65,8 +65,7 @@ Component goal that refines it, and removing the root goal leaves each of those 
 which the check reports.
 
 The head of the goals home says what it holds: a goal is met or unmet, it stays while it is met,
-and it leaves only on the owner's word. Goals stay short: a goals home is read whenever a decision
-is argued from one.
+and it leaves only on the owner's word.
 
 ## Drawing out the owner's intent {{slug:drawing-out-intent}}
 
@@ -77,17 +76,14 @@ is argued from one.
 %% which is not the owner's word; for the same reason a goal with no ruling is not written. It is not
 %% dropped either, since a goal with no ruling may still be the owner's intent, and dropping it
 %% silently can discard it.
-**The owner states, the agent helps write, and the owner rules on every goal.**
-
 1. **Ask the owner to state their intent** for the Component, and any goals they already have, in
    their own words. Three questions help: what is it for, and for whom; what would show that it
    fails at that; what is it explicitly not for.
 2. **Refine the wording** of what the owner stated. **Propose further goals** from the existing
    documentation, or from the code and content when the documentation does not say enough.
-3. **Write a draft that goes into the goals home verbatim if it is approved**: short, one heading
-   and one paragraph per goal. **Mark each goal with its source**: "the owner's statement", or
-   "proposed from <the document or the code it was read from>". The source mark is not written to
-   the goals home.
+3. **Write a draft that goes into the goals home verbatim if it is approved**.
+   **Mark each goal with its source**: "the owner's statement", or "proposed from <the document or
+   the code it was read from>". The source mark is not written to the goals home.
 4. **Ask the owner to read the draft in full, and to rule on each goal by its slug**: approved, or
    dropped. A goal with no ruling is neither written nor dropped: ask again for it by its slug. A
    goal the owner rewords is shown again in its new wording before it is written.

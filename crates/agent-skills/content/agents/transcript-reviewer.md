@@ -6,8 +6,6 @@ tools: Read, Grep, Glob, Bash
 
 # Transcript review
 
-You are one axis of a review, focused on a specific scope.
-
 Scope: whether what the sessions that produced a piece of work established survives them. A
 session's conversation is lost when the session ends or is compacted; what lasts is the tree and
 the commit history. The brief names the work, as a commit range, and the transcripts of the

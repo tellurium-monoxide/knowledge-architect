@@ -48,29 +48,27 @@ tree ends with two homes for one question, the old one still asserting what the 
 is the one you have not written yet, and the incumbent's own name is rarely the words you are
 thinking in. Grep the subject's terms across every document that carries decisions (the design homes, the
 rejected alternatives, the scoped `CLAUDE.md` files) and the comments of the code the subject
-touches, then `git log -G'<term>'` for the argument behind them. Say what you searched and what it returned. A
-search that returned nothing is a finding worth one line in the commit message.
+touches, then `git log -G'<term>'` for the argument behind them. Say in the commit message what you
+searched and what it returned. A search that returned nothing is a finding worth one line there.
 
 **If nothing holds it, carry on to the entry tests of `primer@design-heads`.** If something does, do all of the following, in the same
 change:
 
-- **The Component is the incumbent's.** The test of `skill@knowledge-architect-decision-recording@owning-component` is not asked again. A reversal does not move a
-  decision between Components. If the incumbent looks misfiled, that is a separate change with its
+- **The Component is the incumbent's.** The test of `skill@knowledge-architect-decision-recording@owning-component` is not asked again. If the incumbent looks misfiled, that is a separate change with its
   own argument.
 - **It earns durable text whatever the entry tests of `primer@design-heads` say.** The
   incumbent's head now states something false, so the minimum is rewriting it. The entry tests
   decide whether a _new_ decision earns an entry, not whether a false one may stand.
 - **Rewrite the head in place** (`skill@knowledge-architect-decision-recording@current-design`), and give the new statement its own slug when it is a new
   statement. Keep the old slug only where it still names the same decision. The slug and the
-  title stay aligned with the full scope of the decision, per `primer@design-heads`, so rename it
-  even when that means rewriting every reference in the project. A rename is cheap, and the checker lists every reference it leaves dangling in the files it
-  reads, per `primer@where-knowledge-goes`; grep for the slug as well, for the rest.
+  title stay aligned with the full scope of the decision, per `primer@design-heads`. A rename is
+  cheap, and the checker lists every reference it leaves dangling in the files it reads, per
+  `primer@where-knowledge-goes`.
 - **Move the incumbent into the Component's rejected alternatives** (`skill@knowledge-architect-decision-recording@losing-alternatives`) with its reason and a
   validity marker, stated as strongly as it was originally made, if it meets one of the tests of `skill@knowledge-architect-decision-recording@losing-alternatives`.
 - **Argue it under `skill@knowledge-architect-design` first**, if it was not: a reversal contradicts
   a statement of the incumbent, the second case of the backstop of `primer@design-heads`.
-- **Delete the tripwires guarding the reversed decision.** A tripwire whose decision is reversed
-  goes outright. `skill@knowledge-architect-issue-tracking` owns that movement.
+- **Delete the tripwires guarding the reversed decision.** `skill@knowledge-architect-issue-tracking` owns that movement.
 - **Repair what pointed at the old behaviour**: skills, subagent definitions, scoped `CLAUDE.md`
   files, generated headers. Grep the behaviour's wording as well as the slug, since a pointer that
   describes the behaviour without naming it is the one a slug grep misses. A sentence about the
@@ -186,7 +184,7 @@ question is whether **a shape lost to an argument**.
 4. there is still some doubt that the winning alternative will achieve every goal of the project or
    of its Component.
 
-Test 3 is the load-bearing one. Proposing something again costs one discussion round, and that is
+Proposing something again costs one discussion round, and that is
 healthy. What decides an entry is whether the refutation can be derived again inside that round.
 Reasoning derives again for free, so an alternative that lost to an argument any competent reader
 reconstructs needs no entry. Evidence does not, so an alternative refuted by measurement does.
@@ -196,10 +194,6 @@ somewhere when the chosen one proves insufficient.
 
 An alternative meeting none of those stays in the deliberation, where
 `skill@knowledge-architect-decision-recording@three-homes` keeps it, and nowhere else.
-
-**A losing alternative is not recorded to make sure it is never proposed again.** It is recorded
-so that the next time someone brings it to the table, the arguments that justified the rejection
-are known, and it is possible to examine whether they still hold at the time of reopening.
 
 **Write the entry so that it cannot be read as the current design.** Name the alternative and the
 reason it lost. Do not describe how it would work: an entry detailed enough to build from is the one
@@ -229,9 +223,6 @@ What counts as new is the record test of `skill@knowledge-architect-design@threa
 **Every entry states a reason a reader can check without leaving the entry, or points at where the
 reason is.** _"Refuted by measurement"_ satisfies neither: it asserts that a checkable reason exists
 somewhere and does not say where.
-
-**A reversal moves the old winner into this file** with the reason it lost, if it meets one of the
-four tests.
 
 **A rejected alternative that is reopened, chosen and implemented moves out of the file.** The file
 must not describe as rejected a design the project now has.
@@ -264,8 +255,7 @@ issue. Its shape and its lifecycle are `skill@knowledge-architect-issue-tracking
 
 Every reference you wrote must resolve.
 
-Then, in the commit message, say what you searched for the incumbent and what it returned (`skill@knowledge-architect-decision-recording@reversal-check`),
-and re-read each head you wrote: present tense, as if the design had always been so (`primer@design-heads`).
+Then re-read each head you wrote: present tense, as if the design had always been so (`primer@design-heads`).
 
 Then apply the entry tests of `primer@design-heads` again to each decision of the change, now that every text of it is
 written: a site the change itself wrote counts, a skill or a restatement of the project's own

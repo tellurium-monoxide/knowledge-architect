@@ -11,11 +11,10 @@ Its standard for what enters agent-facing text,
 `skill@knowledge-architect-agent-configuration@admission-standard`, also governs the installed text
 wherever a session judges it or proposes a change to it.
 
-Not covered here: **the installed files**, every file that `{{command}} install-agent-skills`
+Not covered here: **editing the installed files**, every file that `{{command}} install-agent-skills`
 writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
-for a decision about the configuration lands**: `skill@knowledge-architect-decision-recording`; this
-skill owns how to write the configuration, that one owns where the argument goes. **Setting the
-configuration up the first time**: `skill@knowledge-architect-setup`.
+for a decision about the configuration lands**: `skill@knowledge-architect-decision-recording`.
+**Setting the configuration up the first time**: `skill@knowledge-architect-setup`.
 
 ## What enters agent-facing text, and how a change to it is shaped {{slug:admission-standard}}
 
@@ -28,7 +27,8 @@ analysis of received findings, and a skill that moves text into agent-facing tex
 
 Every statement in agent-facing text passes one test: **name the act of an agent following the
 workflow that would differ without it**: what the agent does, when, where, or a fact it must use.
-A statement for which no such act can be named is not written, and an existing one is deleted. The
+A statement for which no such act can be named is not written, and an existing one leaves as the
+table below gives. The
 unit is a sentence, or a clause when only part of a sentence fails.
 
 - **Whose act.** Any agent that reads the text in its work counts, an agent that maintains the text
@@ -124,8 +124,8 @@ member its argument does not cover, or earns text at all. One that strains a goa
 owner, under `skill@knowledge-architect-goal-setting`. A rewording that changes no instruction is
 not a decision.
 
-**References are checked like anywhere else.** A project's skills and agents are walked by
-`{{command}} check`, and a live reference in them must resolve. Run it after editing one.
+A project's skills and agents are walked by `{{command}} check`, and a live reference in them must
+resolve. Run it after editing one.
 
 ### The outcomes of a need-test failure
 
@@ -196,8 +196,7 @@ Decided in order; the first match wins.
   subagent definition's file name and its frontmatter `name` are equal, as a skill's directory and
   its `name` are where a skill sets one.
 - **Begin the description with MUST**, and make the trigger **symptom-shaped, not request-shaped**.
-  A session rarely asks to "track open issues"; it does meet a behaviour that looks wrong. Write the
-  symptom.
+  A session rarely asks to "track open issues"; it does meet a behaviour that looks wrong.
 - **State what the skill does not cover**, naming the skill that does. A seam left unnamed becomes a
   dead zone where neither skill loads.
 - When two skills legitimately both apply to one change, say so, and in what order.
@@ -239,8 +238,7 @@ An installed file is compared byte for byte with the version the project pins, a
 overwrites it. **A change the project needs is a project skill or agent of its own**,
 with its own name. It adds to the installed text: an extra step,
 an extra review axis, a convention of the project. It never contradicts it. Where it would have to
-contradict it, the installed text is wrong for this project: say so to the owner, who may report it
-to the workflow's maintainers.
+contradict it, the installed text is wrong for this project: say so to the owner.
 
 ## After an install that changes the installed files {{slug:after-installing}}
 

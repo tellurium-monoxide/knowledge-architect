@@ -9,15 +9,9 @@ description: MUST use when a design discussion has an open solution space — re
 
 Design by open, argued exchange: both parties propose, push back with
 arguments, and converge through rounds.
-**The discussion is fully symmetric; only the decision is not.**
-Both parties' proposals are held to one standard, stated in loop step 4.
-The asymmetry lives in decision authority alone: a fork, and every question
-`primer@question-authority` reserves to the owner, closes on the owner's word
-(see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
-person whose word closes those, and can overrule any closure. A **decided thread** is one
+**The owner** is the person whose word closes the questions
+`skill@knowledge-architect-design@decision-authority` gives the owner. A **decided thread** is one
 closed `approved` or `argued`.
-
-Terms this skill defines and then uses as vocabulary:
 
 - a **thread** is one open question or proposal, the unit that carries state (below).
 - an **argument** is what causes a thread's state to change.
@@ -40,19 +34,8 @@ which the discussion grounds against and the harvest records into.
 A metaphor that names a defined concept is legitimate vocabulary after its
 definition; undefined metaphors are not.
 
-This mode fits an OPEN solution space: what the feature needs is not
-a requirement waiting to be extracted from the owner, because neither party
-knows it yet. It is discovered by proposing, arguing, and following
-the open threads.
-
 **This skill ends at convergence**, and, where the premortem runs, the premortem and the owner's
-rulings on its tripwires and acceptance criteria. Bounded work ends sooner, at its one proposal,
-built on its default (`skill@knowledge-architect-design@bounded-work`). On the full path,
-`skill@knowledge-architect-planning` writes the plan documents, in the same session (step 8); on
-the in-change path, a commit message carries the deliberation
-(`skill@knowledge-architect-design@decision-authority`). Either way, a decision is recorded at the
-landing of the work that implements it, and one that no work implements and that is not part of
-any spec is recorded when it is made, per `skill@knowledge-architect-decision-recording@when-recording-happens`.
+rulings on its tripwires and acceptance criteria.
 
 ## Decision authority {{slug:decision-authority}}
 
@@ -60,7 +43,6 @@ The owner decides what `primer@question-authority` reserves to the
 owner, a fork among it, and can overrule any decision of the
 discussion. Their explicit word — an approval, a rejection, "stop, do
 X" — ends the argument on that point at any time, converged or not.
-It ends the argument, but it does not end your duties around it:
 
 - **Never assume the decision saw all its consequences.** A decision
   can be given before the implications, feasibility, and interactions
@@ -84,8 +66,7 @@ It ends the argument, but it does not end your duties around it:
   at the top of the turn it appears in — before the delta, before the
   work: state it once with the discriminating fact, name the default
   ("unless you say otherwise, I build the decided shape"), and
-  proceed unless the word comes. Four cases defeat that default, all
-  narrow. When the finding defeats a premise of a ruling the owner
+  proceed unless the word comes. When the finding defeats a premise of a ruling the owner
   gave, or is a contradiction with another decided thread that no
   argument resolves, it is a contradiction, per
   `primer@owner-word-premise`: the part of the work that rests on it
@@ -107,8 +88,7 @@ It ends the argument, but it does not end your duties around it:
   the other cases would hold or let proceed. Presenting the finding reopens
   the thread, with the finding noted on its ledger line; it closes again
   as any thread does, on its argument or, at a fork, on the owner's
-  word, and until then the work goes
-  on under the default above. Where it waits on the owner's word and no
+  word. Where it waits on the owner's word and no
   word has come by the next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
@@ -125,8 +105,7 @@ It ends the argument, but it does not end your duties around it:
   good enough — that belongs to the owner, and
   re-arguing it after their informed ruling is not rigor. When you
   comply while still disagreeing, record the disagreement as a parked
-  thread carrying both a tripwire and a re-entry point (a declared
-  exception to closure by the owner's word — see Who moves what), and note the
+  thread (a declared exception to closure by the owner's word — see Who moves what), and note the
   acknowledged consequence on the ledger, so that the plan document, or
   the commit message on the in-change path, carries it and the next session
   knows the decision was informed.
@@ -168,10 +147,8 @@ evidence bring, which nobody knows in advance.
   `skill@knowledge-architect-decision-recording@reversal-check` decides the Component of a decision
   that reverses a recorded one, and `primer@design-heads`
   decides whether any other decision earns a design head at all. Apply both before proposing to the
-  owner where a decision lands. The checkpoint table is shown at convergence when the ledger holds
-  more than one thread. The premortem runs when reversal touches any of the four listed below. Where it runs,
-  nothing of the decision is implemented or committed before it has run
-  and the owner has ruled on its tripwires and acceptance criteria, so the record that carries
+  owner where a decision lands. Where the premortem runs, nothing of the decision is implemented
+  or committed before it has run and the owner has ruled on its tripwires and acceptance criteria, so the record that carries
   the deliberation carries those rulings.
 - **The full path.** Otherwise, and whenever a discussion converges on
   work that no longer lands in the change under way (it needs a branch
@@ -185,7 +162,8 @@ evidence bring, which nobody knows in advance.
   `skill@knowledge-architect-planning@working-a-slice` puts to the owner in
   one message, ends at the owner's ruling, with no premortem.
 
-On the in-change path, the four decide whether the premortem runs; they never decide which path is taken.
+On the in-change path, the premortem runs when reversal touches any of the four; the four never
+decide which path is taken.
 To decide, state what reversal touches, in nouns. The four: stored
 data that would have to be migrated; an interface other code or other
 people already consume; behavior users have adapted to, in the sense
@@ -227,9 +205,10 @@ aphorisms are not: they read differently to different readers, many of
 whom do not have English as a first language, and they carry
 qualitative judgments past argument unexamined.
 
+%% The language rule also governs this skill's own text.
 Jurisdiction: this rule governs working prose — anything consumed by
 project contributors: the discussion itself, design entries, plan
-documents, commit messages, code comments, and this document. Text
+documents, commit messages and code comments. Text
 consumed by the product's end users is outside it; that text follows the
 product's own style contract, where literary value can be a
 deliberate goal. The deciding test is who consumes the text, not
@@ -283,8 +262,7 @@ common prose word, choose a two-word slug so references stay unambiguous.
 **Granularity.** Every proposal either party made is a thread. A
 criterion is NOT a thread and never enters the ledger: threads are
 judged against criteria, and a criterion that was itself a thread
-would need criteria to judge it. It is tracked separately, in its own
-table and with its own vocabulary (below). A round that exchanged
+would need criteria to judge it. A round that exchanged
 proposals and produced no delta is a tracking failure, not a quiet
 round.
 
@@ -341,8 +319,7 @@ the batch confirmation at the next checkpoint — promote or correct
 it. A displayed checkpoint table changes this: a positive word given
 against the table IS the batch confirmation and closes what the table
 holds, because the table is what makes an otherwise vague word
-specific. Away from a displayed table, a blanket positive closes
-nothing. Do not solicit closures: a yes/no question inviting assent to one
+specific. Do not solicit closures: a yes/no question inviting assent to one
 option ("so we go with X?") is an approval question wherever it
 appears; a legitimate closing question presents the argued fork and
 asks for a ruling between positions. The checkpoint's batch
@@ -353,20 +330,16 @@ argued-fork form.
 When no rival stands — the alternatives are recorded `ruled-out`, and
 raising one again would be a stall and inventing one would be padding
 — there is no fork to present, and the closing move is not a question
-at all: the thread closes `argued`, below. A question inviting assent to
-the only option on the table is approval-seeking. **A thread whose question
+at all: the thread closes `argued`, below. **A thread whose question
 `primer@question-authority` gives the owner, a fork among them, closes on the
 owner's word**, a fork put as the argued fork that section describes.
 
-Closure by you, not the owner, exists in exactly three declared cases,
-each announced in the delta:
+Closure by you, not the owner, exists in exactly three declared cases:
 
 - `argued` — a thread with one shape standing, each rival out by a
   named fact or binding constraint. You close it on its argument, and a
-  rival defeated so you close `ruled-out`, naming the fact. Both show in
-  the next delta and in the checkpoint, where the owner contests or
-  overrules them, and the turn lists them under "Decided", per
-  `primer@decided-section`. A rival nothing defeats makes a fork, and
+  rival defeated so you close `ruled-out`, naming the fact. The turn
+  lists both under "Decided", per `primer@decided-section`. A rival nothing defeats makes a fork, and
   the thread stays open.
 
 - `withdrawn` — a proposal of your own, when your own argument or
@@ -387,7 +360,7 @@ each announced in the delta:
   is named on the ledger, put to the owner under a label, `T<n>`, in the
   premortem's sequence, and written as
   `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
-  `superseded` is not a fourth case, though it is easily read as one:
+  `superseded` is not a fourth case:
   threads absorbed by a proposal close when that proposal closes, on the
   owner's word approving it by name or `argued`, and until then the
   absorbed threads keep their state. A displayed checkpoint showing the absorbing thread and the
@@ -421,8 +394,6 @@ owner to demote the criterion to weighed — a change to the criterion,
 recorded as one. A criterion derived from a goal is demoted only by
 changing the goal, under `skill@knowledge-architect-goal-setting`. Were acceptance available to both
 kinds, binding and weighed would differ only in how much ceremony the acceptance takes.
-Convergence holds only when every criterion carries a satisfaction
-line and no binding criterion is unmet (loop step 6).
 
 **`presumed-settled`** is a labeled claim about the owner: they are
 continuing the discussion in a way that assumes this thread's
@@ -437,8 +408,7 @@ produced one — rather than silently carried.
 of the novelty test. The owner reopens a closed thread by their word
 alone. You reopen one with a new argument or new evidence named, as a
 material finding — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
-owns the mechanics — and it closes again on its argument or, at a
-fork, on the owner's word.
+owns the mechanics.
 The record arbitrates novelty: an alternative counts as
 argued-and-lost only when a recorded reason covers it: a `ruled-out`
 thread, or a `withdrawn` thread recorded with a defeating reason, of
@@ -453,8 +423,7 @@ previously went. Re-arguing a closed thread with nothing new is a stall. Late
 reframing is welcome — a new proposal may supersede several settled
 threads at once when it can be argued better than what it absorbs.
 
-**Arguments are not tracked.** Only threads carry state. Arguments
-are the prose that justifies a transition. One argument bears on
+**Arguments are not tracked.** Only threads carry state. One argument bears on
 several threads at once and displaces other arguments, so giving
 arguments state would need a many-to-many relation that a delta row
 cannot show — and the note column already carries the relations that
@@ -516,11 +485,7 @@ choices whose option space genuinely is closed and consequence-free.
 
 2. **Name the criteria**: state early what the decision must
    achieve — the constraints and goals proposals will be judged
-   against. Criteria are argued and refined like anything else, and
-   they may be DERIVED from what the project has recorded as well as
-   stated in the discussion. They are tracked apart from proposals
-   (see Criteria, above), and the convergence check reads their
-   satisfaction.
+   against. Criteria are argued and refined like anything else.
 3. **Round**: bring argued proposals, including your own new ideas.
    The proposal space is wider than the literal request — the request
    is where the discussion starts, not a limit on what may be
@@ -528,8 +493,7 @@ choices whose option space genuinely is closed and consequence-free.
    alternative that supersedes the shapes under discussion; a
    solution that also covers an adjacent problem when bundling them
    is implementation-cheaper; an adjacent concern raised now because
-   deciding it would shape this implementation. Each is argued like
-   any proposal.
+   deciding it would shape this implementation.
 
    When presenting a proposal, do not assume the owner is an expert.
    You have to make sure the owner understands the implications of every proposal.
@@ -589,8 +553,7 @@ choices whose option space genuinely is closed and consequence-free.
    pick. Evidence gathered by several parallel investigations is
    reported as ONE round when the pieces bear on the same threads: the
    unit of the discussion is the round, not the arrival of a result.
-   What consolidating costs is latency; what it must not cost is a
-   finding held back. When one investigation returns something that
+   When one investigation returns something that
    invalidates what the others are still testing — an infeasibility, a
    defeated premise — report it when it arrives, before the other arms
    finish, naming what it invalidates and whether the rest are still
@@ -612,18 +575,14 @@ choices whose option space genuinely is closed and consequence-free.
    what it produced.
 
    Convergence is PROPOSED, never requested: show the checkpoint
-   table, unless the in-change path skips it for a ledger of one thread,
-   with the `presumed-settled` bucket in view — the batch word
+   table, with the `presumed-settled` bucket in view — the batch word
    promotes that bucket, and convergence holds when it
    lands in a round that introduces no new thread, reopening, or
    argument. Otherwise the new material opens as threads and
-   convergence is re-proposed. The banned form is an approval question
-   in place of closing open threads.
+   convergence is re-proposed.
 
-   When convergence can be proposed, prepare a premortem, unless the
-   in-change path skips it or the session is a choice among shapes stated
-   in full (`skill@knowledge-architect-design@decision-authority` names
-   both). See below.
+   When convergence can be proposed, prepare a premortem, where
+   `skill@knowledge-architect-design@decision-authority` says it runs. See below.
 
 7. **Premortem before convergence**: assume the design shipped and failed.
    Name the most plausible causes, each naming the decided thread it stresses.
@@ -678,11 +637,9 @@ choices whose option space genuinely is closed and consequence-free.
    before the session ends, for the reason
    `skill@knowledge-architect-planning@when-planning-starts` gives, and
    owns which ones and their shape.
-   Each round's delta is the draft that assembly reads, so a delta is
-   written whenever a round changes a state or a note.
+   Each round's delta is the draft that assembly reads.
 
-The plan document and the decision record are not duplicates, and their
-relationship is fixed. The plan document is the full account of the
+The plan document is the full account of the
 discussion, assembled from its transcript: every thread with its proposer
 and final state, the arguments on each side as items, the owner's
 rulings verbatim, the losing alternatives with their reasons, and the
@@ -690,16 +647,12 @@ tripwires the premortem produced.
 The decision record is the durable harvest of that account, written when
 the work that implements each decision lands, under
 `skill@knowledge-architect-decision-recording`: a decided thread becomes a
-design entry when it earns one, under its own slug or under one that names
-the decision with the pair stated, per `primer@design-heads`, and a shape that lost
+design entry when it earns one, and a shape that lost
 to an argument earns a rejected-alternative entry only when that skill's
 tests say so. Open state goes to the issue register and the tripwires
 homes, under `skill@knowledge-architect-issue-tracking`. A decision that no
 work implements and that is not part of any spec is recorded when it is made, per
-`skill@knowledge-architect-decision-recording@when-recording-happens`. Findings made during
-planning or implementation surface through the material-findings
-protocol (`skill@knowledge-architect-design@decision-authority`), except a load-bearing gap found at a
-design audit, which stops that work as `skill@knowledge-architect-planning@working-a-slice` says.
+`skill@knowledge-architect-decision-recording@when-recording-happens`.
 
 ## Keep-or-change (evaluating an incumbent design) {{slug:keep-or-change}}
 
@@ -740,7 +693,6 @@ the same exchange, plus:
   path; which of them earn an entry is
   `skill@knowledge-architect-decision-recording@losing-alternatives`. Design
   the winner to absorb what was right in them.
-  That absorption is design work in its own right.
 - **Incumbent behavior counts as a constraint only on evidence.** A
   behavior is established by a document that argues it — a commit
   message that argues it counts, and in most projects it is the only

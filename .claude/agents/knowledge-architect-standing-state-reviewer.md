@@ -6,8 +6,6 @@ tools: Read, Grep, Glob, Bash
 
 # Standing-state review
 
-You are one axis of a review, focused on a specific scope.
-
 Scope: the recorded state that is supposed to **leave** its file when something happens. A tripwire
 when it fires, an issue when it closes, an acceptance criterion when its plan document lands.
 **Not** whether the design is right, whether the code works, or whether a decision was recorded
@@ -57,9 +55,7 @@ every tripwire entry as a row; `issues <anchor>` narrows to one anchor, and
 | `this` … `entry carries no` … `after the ones before it`; `declares no`; `is no accepted value` | an entry file misses an owed section or subsection, carries no `kind`, or carries a kind outside the closed list. |
 | `is a subdirectory of the` … `register and is no declared group`; `declares the group` … `and there is no directory` | `register.toml` and the group directories disagree. |
 
-Every Component carries an issue directory and a tripwires home, and every location carries the
-registers it declares. Grepping the one you happen to think of is not the check. Run
-`cargo klarch issues` and `cargo klarch tripwires`.
+Grepping the one issue directory or tripwires home you happen to think of is not the check.
 
 ## Re-read every tripwire and every deferred trigger `##reread-standing-entries`
 
@@ -70,19 +66,18 @@ not homes: open every tripwires home as well, since an empty one does not appear
 each entry carries to a decision, a goal or a declared register's entry.
 
 **Read every entry in every one of those homes, not the subset whose subject the diff touches.**
-A tripwire you do not open is one nothing opens before merge. For each: has it fired?
+For each: has it fired?
 
-A diff that cannot have fired a tripwire is a normal outcome and is reported as one. What is not
-available is deciding in advance which entries were worth reading.
+A diff that cannot have fired a tripwire is a normal outcome and is reported as one.
 
 **Read every entry under a heading, not just the first.** A heading may carry two firing clauses, and
-a slug may be guarded from more than one direction. That is where a firing has been missed.
+a slug may be guarded from more than one direction.
 
 A tripwire that has fired **leaves its home**, and so does one whose decision was reversed or that
 another entry guarding the same decision absorbs. What replaces it, and the exception of a
 tripwire guarding a standing guarantee, are
 `skill@knowledge-architect-issue-tracking@movement-instruction`: read it whole before you report
-the repair. **A fired-but-still-listed entry is the failure state.**
+the repair.
 
 **Read every deferred trigger too.** A `deferred` issue waits for an event, named in its
 `### Trigger` subsection, and a trigger answers the same question as a tripwire's firing clause:
@@ -132,7 +127,6 @@ Return findings, each naming the file and the exact reproduction, plus what the 
 returned and **which tripwires and which deferred triggers you re-read**. Naming the ones that did
 not fire is part of the result:
 this axis is the one re-entry point scheduled for every change, so a silent report cannot be told from a skipped
-one. **If the axis is clean, say so plainly.** Do not report style preferences, and do not review
-outside this axis.
+one. **If the axis is clean, say so plainly.** Do not report style preferences.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
 to route, per `primer@met-outside-the-task`; do not review it.

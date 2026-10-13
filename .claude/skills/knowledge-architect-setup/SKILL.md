@@ -14,10 +14,9 @@ existing documentation into the new homes**, which is planned work of its own
 (`skill@knowledge-architect-setup@existing-documentation`); **writing the project's own skills**,
 `skill@knowledge-architect-agent-configuration`.
 
-**Reaching this skill.** The skill is one of the files the install writes, so a session reads it
-once the project holds a manifest the install accepts and the install has run. The smallest such
-manifest is the file `knowledge-architect.toml` at the project's root, where `<version>` is the
-version of the checker the project runs, as `skill@knowledge-architect-setup@pin-the-checker` says:
+**Reaching this skill.** The smallest manifest the install accepts is the file
+`knowledge-architect.toml` at the project's root, where `<version>` is the version of the checker
+the project runs, as `skill@knowledge-architect-setup@pin-the-checker` says:
 
 ```toml
 [project]
@@ -41,10 +40,9 @@ Rust toolchain, whatever the project's own language.
 **Setting up is done with the owner.** Every step that writes a durable statement on the owner's
 behalf is shown to the owner first: the Components, the goals, the place of each existing document
 that no row of the knowledge table settles,
-and each choice below that changes the project's build or a file it already has. The owner rules;
-the agent proposes. The skill is built on an owner present to rule: a run without one, such as a
-trial, makes those choices itself, except the goals, which only the owner states: such a run writes
-no goal, and leaves each goals home with no entry, awaiting the owner's.
+and each choice below that changes the project's build or a file it already has. A run without
+the owner, such as a trial, makes those choices itself, except the goals, which only the owner
+states: such a run writes no goal, and leaves each goals home with no entry, awaiting the owner's.
 
 ## Pin the checker, and decide how it runs `##pin-the-checker`
 
@@ -75,11 +73,11 @@ them.
 
 **The manifest declares the pin**, in `[project] checker-version = "<version>"`, the version of the
 checker the project runs, exactly. Every command refuses to run when the binary is another version,
-and says which side is older, so an install or a build left behind is caught at its first run. Two
-values that are not versions serve a project's own tests: `"fixture"` in a mock project that lies
-inside the directory of a library the binary links, such as the project's extension crate, and
-`"self"` in a project that builds the checker from its own tree. Each is accepted only where the
-binary's build confirms it; anywhere else it is refused. **A test that copies a mock project out
+names the two versions and says which side is older, so an install or a build left behind is
+caught at its first run. A value that is not a version serves a project's own tests: `"fixture"`
+in a mock project that lies inside the directory of a library the binary links, such as the
+project's extension crate. It is accepted only where the binary's build confirms it; anywhere else
+it is refused. **A test that copies a mock project out
 of its library's directory**, for instance into a temporary directory where it runs `git init`,
 writes the version of the checker it links into the copy's manifest: the library's constant
 `CHECKER_VERSION`. It never spells the version in the test, so the pin stays written in one place.
@@ -129,7 +127,7 @@ Every Component carries the same documents. `cargo klarch check` names each one 
 | --- | --- |
 | `README.md` | how a user uses the Component |
 | `CLAUDE.md` | the contracts and traps a developer needs, true of the code as it stands |
-| `register@*@goal`, one file, or a directory with a `README.md` | what the Component is for: at least one goal, under `skill@knowledge-architect-goal-setting` |
+| `register@*@goal`, one file, or a directory with a `README.md` | what the Component is for |
 | `register@*@design`, one file, or a directory with a `README.md` | how it is built and why; it may hold no entry yet |
 | `path@*@docs/rejected-alternatives.md` | what lost, and why; it may hold no entry yet |
 | `register@*@tripwire`, one file, or a directory with a `README.md` | evidence that would flip a decision; it may hold no entry yet |
@@ -184,8 +182,7 @@ document check, the commit messages, the linters, the tests), runs them all even
 and exits non-zero when any fails. A verdict is then one exit code, and nothing is read from output
 filtered through a pipe. In a Rust project, the shape is the maintenance crate of
 `skill@knowledge-architect-setup@rust-project` below, run through the cargo alias `cargo x gates`, whose gates command hands the project's gate
-list to the published library knowledge-architect-gates. The library runs the gates; the list is
-the project's own.
+list to the published library knowledge-architect-gates.
 
 Recommend too, in the root `CLAUDE.md`, that a session run `cargo klarch check --staged` after
 staging and before each commit. It judges the tree the commit will record, HEAD's with the staged
@@ -262,9 +259,8 @@ To move to another version:
 
 1. Edit the pin: both versions in the maintenance crate's `Cargo.toml`, the checker's and the
    gates library's, which move together, or the version of the local install; and
-   `[project] checker-version` in the manifest, which moves with them. Until the checker's version
-   and the manifest's pin agree, every command refuses, naming the two versions. Nothing compares
-   the gates library's version, so it is edited in the same change.
+   `[project] checker-version` in the manifest, which moves with them. Nothing compares the gates
+   library's version, so it is edited in the same change.
 2. Read the changelog of every version crossed. Any version but a patch may make a check
    stricter, a version may make one looser, and either changes what a test that pins findings
    sees; a major version may ask for a change to the project's layout. Each published crate ships its

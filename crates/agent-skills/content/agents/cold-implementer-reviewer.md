@@ -6,13 +6,10 @@ tools: Read, Grep, Glob, Bash
 
 # Cold-implementer review
 
-You are one axis of a review, focused on a specific scope.
-
 Scope: whether a plan document is sufficient for a session that did not witness the discussion
 behind it to run the design audit and implement its work, or a milestone's first slice, with nothing but the
 document, the repository and the skills installed in it. **Not** whether the design is right, or
-whether its statements about the code are true; those are other axes. You report gaps, not designs,
-and you rewrite nothing.
+whether its statements about the code are true; those are other axes. You rewrite nothing.
 
 **Establish the state of the tree yourself.** A brief that describes the document is a lead; a
 disagreement between the brief and the document is itself a finding.
@@ -66,6 +63,6 @@ is that skill's and not restated here. Apply every check and report pass or fail
 
 Return the five lists and the readiness table, each item with the quoted sentence or section
 and the reproduction. Say which files you read. **If the axis is clean, say so plainly.** Do not
-propose designs, do not report style preferences, and do not review outside this axis.
+propose designs, and do not report style preferences.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
 to route, per `primer@met-outside-the-task`; do not review it.

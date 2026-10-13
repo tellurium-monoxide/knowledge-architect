@@ -5,10 +5,11 @@ description: MUST use when a design discussion has converged and its work needs 
 
 # Planning
 
+%% This skill is one activity.
 Scope: turning the converged design of a discussion into a plan document that a later session
-implements, then carrying that document through each landing until it leaves the repository. One
-activity. It begins in the session where the discussion converged, and it re-enters at each slice's
-audit and at each landing.
+implements, then carrying that document through each landing until it leaves the repository. It
+begins in the session where the discussion converged, and it re-enters at each slice's audit and at
+each landing.
 
 **Not covered here**, each named where it lives:
 
@@ -21,8 +22,7 @@ audit and at each landing.
 - **Dispatching the reviewers**: `skill@knowledge-architect-review`.
 - **Auditing one aspect of the whole project**, which the design audit of a slice or a spec is
   not: `skill@knowledge-architect-project-audit`.
-- **Recording** what a landing establishes. Recording is not done once at the end of the
-  discussion: it is done at each landing, as the harvest of `skill@knowledge-architect-planning@working-a-slice`. The procedure is
+- **Recording** what a landing establishes. The procedure is
   `skill@knowledge-architect-decision-recording` for the decisions and the losing alternatives, and
   `skill@knowledge-architect-issue-tracking` for the tripwires and the issues.
 
@@ -31,11 +31,11 @@ audit and at each landing.
 | word | meaning |
 | --- | --- |
 | **plan document** | a spec, a milestone document, or the spec of a slice. Temporary: it leaves when its work lands |
-| **plans directory** | docs/plans/ at the project's root, the one directory where a project keeps its plan documents. The checker fixes the path and constructs the anchor `plans` there (`skill@knowledge-architect-planning@plans-layout`) |
+| **plans directory** | docs/plans/ at the project's root, the one directory where a project keeps its plan documents. The checker fixes the path (`skill@knowledge-architect-planning@plans-layout`) |
 | **spec** | the plan document of work done in one branch and one PR: the converged design and a concise implementation sequence. Cited `spec@plans@<id>` |
-| **step** | one item of an implementation sequence, in a spec or in a slice. How many commits a step takes is the implementing session's to judge |
+| **step** | one item of an implementation sequence, in a spec or in a slice |
 | **slice** | a part of a milestone that is one branch and one PR, with its own spec, cited `spec@<milestone>@<slice>` |
-| **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per slice. Cited `milestone@plans@<id>`, and a slice's spec `spec@<milestone>@<slice>` |
+| **milestone** | work across several PRs, with design sessions between them. Its plan documents are one directory: the **milestone document**, its `README.md`, and one spec per slice. Cited `milestone@plans@<id>` |
 | **item** | a thread, an argument, a criterion or an acceptance criterion, defined in a plan document as a level-three heading ending with its slug, under the section of its kind (`skill@knowledge-architect-planning@spec-contents`) |
 | **roadmap** | docs/roadmap.md at the project's root, optional: the order in which the owner wants known work done (`skill@knowledge-architect-planning@spec-or-milestone`) |
 | **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
@@ -44,7 +44,7 @@ audit and at each landing.
 | **thread** | one proposal of the discussion, carrying a state; a thread closed `approved` or `argued` is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
 | **acceptance criterion** | a check on a decision of the plan, a thread closed `approved` or `argued`, that only the work's built code can apply |
-| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named; presenting it reopens the thread, which closes again on its argument or, at a fork, on the owner's word, per `skill@knowledge-architect-design@decision-authority` |
+| **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A material finding is presented once, with a default named; presenting it reopens the thread, which closes again on its argument or, at a fork, on the owner's word, per `skill@knowledge-architect-design@decision-authority` |
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
@@ -80,8 +80,7 @@ what is known and undesigned. There is no record of landed work: history lists w
 **The roadmap orders known work, and holds nothing else.** docs/roadmap.md at the project's root
 is optional. Each row cites an issue entry, `issue@<anchor>@<id>`, or a whole plan document,
 `spec@plans@<id>` or `milestone@plans@<id>`, in the order the owner wants the work done. An
-unordered section may follow. The work stays in the issue register and the plans directory; the
-roadmap holds only its order. **The order is the owner's**: a row is added or moved on the owner's
+unordered section may follow. **The order is the owner's**: a row is added or moved on the owner's
 word. Three edits need no word, because the row keeps pointing at the same work, or that work is
 done:
 
@@ -125,6 +124,7 @@ docs/plans/
       └─ <slice>.md        the spec of one slice
 ```
 
+%% The milestone document is a README because the checker resolves a relative link only there.
 - The checker constructs the anchor `plans` at docs/plans/, one anchor per milestone directory and
   one per spec file. A file or a directory directly under docs/plans/ outside this layout is a
   finding, and so is a directory under milestones/ with no `README.md`. `{{command}} index` writes
@@ -133,8 +133,7 @@ docs/plans/
   `{{command}} index --staged` writes them into git's index from what is staged, and
   `{{command}} check --staged` checks what the commit will record.
 - The milestone document links each slice's spec as a navigation row, `[<slice title>](<slice>.md)`.
-  The checker resolves a relative link only in a `README.md` or an `index.md`, which is why the head
-  is a README.
+  The checker resolves a relative link only in a `README.md` or an `index.md`.
 - **The plans directory holds plan documents and nothing else**, except its `README.md` files and
   generated indexes, which keep its homes in the tree while no plan is open. A document with
   another lifetime, such as a record of how far a subject is implemented or a survey that outlives
@@ -253,14 +252,13 @@ assembly, and the transcript reviewer of `skill@knowledge-architect-planning@pla
 transcript files read, so that a reviewer reads the same ones. Each file is found by the
 discussion's opening message, never by a session identifier, as `skill@knowledge-architect-review`
 says. Where the harness keeps no
-transcript, assemble from the conversation, and say so in the commit that adds the document.
+transcript, assemble from the conversation, and say so, and why, in the commit that adds the
+document.
 
 ## Cutting the steps and the slices {{slug:cutting-steps-and-slices}}
 
-A step is one item of an implementation sequence. A spec's work is a sequence of steps on one
-branch. A milestone's work is a sequence of slices, each one branch and one PR with its own spec,
-and each slice a sequence of steps. The tests below hold for the steps of a spec and of a slice,
-and for the slices of a milestone, unless one names the slice alone.
+The tests below hold for the steps of a spec and of a slice, and for the slices of a milestone,
+unless one names the slice alone.
 
 **Each step must be able to fail without another step's new machinery entangled in the
 failure.** Every other test here serves that one.
@@ -322,8 +320,8 @@ Evidence that bears on it before the design session is an issue entry of its own
 %% habitual criterion, in place of a specific one that is harder to find.
 **The result a scheduled review is expected to give is not a criterion.** Passing the reviews that
 every plan document and every slice owes is the baseline. A criterion names an observable specific to
-the decision it guards; listing "the reviews pass" in every plan document would be noise, and would
-stand in for the specific criterion that is harder to find.
+the decision it guards; listing "the reviews pass" in every plan document would stand in for the
+specific criterion that is harder to find.
 
 %% `design@agent-skills@acceptance-criteria-on-the-owners-word`; the label,
 %% `design@agent-skills@ruled-items-labelled`.
@@ -359,8 +357,7 @@ default marked as the owner's to reset.
 
 ## Working a slice, and the work of a spec {{slug:working-a-slice}}
 
-The milestone document points to this procedure, so a cold session finds it from there. The work
-of a spec follows it too, as its last paragraph says.
+The work of a spec follows this procedure too, as its last paragraph says.
 
 **Where the owner's word is awaited.** A default the plan documents list as awaiting the owner is
 built as they write it until the owner rules on it. A scope change listed there does not start
@@ -412,8 +409,7 @@ design the gap defeats.
    - **Load-bearing.** The gap is material, or is a choice between two shapes neither of which the
      document rules out, or needs a ruling the document marks as the owner's. Record it in the
      slice's spec as open at the audit, with the discriminating fact, stop the slice, and open a
-     design session with the owner under `skill@knowledge-architect-design`. **The session's depth
-     follows the gap.**
+     design session with the owner under `skill@knowledge-architect-design`.
      - A choice among shapes that can be stated in full, each with its consequence, is put to the
        owner in one message, with a default; several such gaps go in one question, each under a
        label, `Q<n>`, since each is written in place as a thread with its slug. The slice's
@@ -428,10 +424,9 @@ design the gap defeats.
        and owes the reviews of `skill@knowledge-architect-planning@plan-reviews`.
 
      The slice resumes from the ruling or the converged design.
-3. **Claims, tests, implementation, gates, commits**, per the project's development procedure, in
-   as many commits as the session judges the work needs. The commits name how each claim's test was
-   shown to fail against a wrong implementation, and say of any claim whose test cannot yet do so
-   why not.
+3. **Claims, tests, implementation, gates, commits**, per the project's development procedure. The
+   commits name how each claim's test was shown to fail against a wrong implementation, and say of
+   any claim whose test cannot yet do so why not.
 4. **Review of the work**, per `skill@knowledge-architect-review`. A repair lands as
    `skill@knowledge-architect-review@what-review-leaves` says.
 5. **The report** on each acceptance criterion judged at this slice, as
@@ -465,10 +460,9 @@ design the gap defeats.
   converged, or when commits other than the spec's own have landed on the main branch since the
   spec was written. Otherwise the session goes straight to the work, since the design was read
   against the tree as it stands;
-- point 3, the claims and checks of each step, in the commits the session judges right;
+- point 3, the claims and checks of each step;
 - point 4, the review of the work, once;
-- points 5 and 6, the report and the harvest, in the commits that land the work, the harvest's
-  review being the review before the merge;
+- points 5 and 6, the report and the harvest, in the commits that land the work;
 - point 7, the deletion of the spec, in the commit that completes its harvest, as in `skill@knowledge-architect-planning@plan-document-leaves`.
 
 Where a point names the milestone document or the slice's spec, the work of a spec reads the spec:
@@ -488,8 +482,7 @@ two into one. A change that only a check of the working tree sees does not count
 again after a design session converges on a change to its decided design, as at a load-bearing gap
 of a design audit. A change made in answer to its review, a default written in included, is a
 repair, reviewed again only as `skill@knowledge-architect-review@what-review-leaves` says, and an
-audit applied in place is no revision. Its reviewers are fresh, and did not witness the
-discussion. **Fresh, never a fork**: a fork inherits the discussion and reads the document as its
+audit applied in place is no revision. Its reviewers are **fresh, never a fork**: a fork inherits the discussion and reads the document as its
 author. Dispatch them through `skill@knowledge-architect-review`, with the invariants that
 skill lists, the blind brief included, on every axis of its table whose condition holds, among them
 these four:
@@ -511,10 +504,7 @@ these four:
   durable outcome, and that no ruling of the owner is recorded wider, narrower or in another state
   than the owner gave it. Dispatch it on every assembled document, in the batch or alone and last
   as `skill@knowledge-architect-review@review-axes` says, and name in its brief the transcript
-  files the assembly read, each found
-  by its opening message as the assembly says, with the
-  message where the discussion begins in each. When no
-  transcript exists, say so, and why, in the commit that adds the document.
+  files the assembly read, with the message where the discussion begins in each.
 
 %% The `D` label of a default: `design@agent-skills@ruled-items-labelled`.
 **What their findings become.** Check each finding against the tree, or against the transcript,
@@ -525,14 +515,12 @@ defaults awaiting the owner, and is reported in the turn's "Decided" section, pe
 `primer@decided-section`, where the owner can contest it. A
 default that `primer@question-authority` gives the owner, a fork among them, is listed under the
 defaults awaiting the owner, with the thread it bears on and a label, `D<n>`, numbered as
-`primer@labelled-items` says. Until the owner rules on a default, it is built as
-written, as `skill@knowledge-architect-planning@working-a-slice` says. A ruled default stays in that list,
+`primer@labelled-items` says. A ruled default stays in that list,
 marked as ruled, with its label, since the sections it was written into cite it by its label. A
 finding that is a gap with one answer is applied in place. A finding that is wrong is dropped, with
 the reproduction that showed it wrong kept in the commit message. A scope change, a clause that
 widens or narrows a ruling or adds an obligation to it, is put to the owner, listed under the
-defaults awaiting the owner. **A gap whose one answer widens or narrows a ruling of the owner, or
-adds an obligation to one, is a scope change**, as at the design audit. Detail the author added
+defaults awaiting the owner. Detail the author added
 inside the scope of a ruling, and a wording better than the one the owner was shown, are no
 findings.
 

@@ -5,8 +5,6 @@ description: MUST use before diagnosing any behaviour as a new problem or defect
 
 # Tracking open issues and tripwires
 
-Two registers. They hold different things and an entry moves between them.
-
 | register | home | holds | it needs doing |
 | --- | --- | --- | --- |
 | `issue` | the directory `open-issues/`, one file per entry | what is **outstanding**: a defect, an observation nobody has explained, a question nobody has answered, work known to be missing | yes |
@@ -103,7 +101,7 @@ The three subsections are the three fields every kind owes:
   nothing can be ranked and nothing can be deleted with confidence.
 - **What would close it**: the measurement, experiment or work that retires the entry. An issue
   with no named way to close it is a wish. Write the wish down as a question with an experiment
-  attached, or leave it out. For a `deferred` entry this field is the **Trigger** instead.
+  attached, or leave it out.
 
 **`Why it matters` names what the entry stands against**: the decision it strains, as
 `design@<anchor>@<id>`, and the goal it threatens, as `goal@<anchor>@<id>`, when it does directly.
@@ -139,9 +137,6 @@ own documents being one plan: does the citing plan
 still hold now that the leaving plan is built? Its `Why it matters` cites what the leaving plan
 harvested, and the entry cites the citing plan, so it cannot outlive it. When it is opened is
 `skill@knowledge-architect-planning@plan-document-leaves`.
-
-Anything not verified carries an explicit `assumption` or `not established` label. **A plausible
-mechanism is not a finding.**
 
 **Groups.** A directory holding many entries may declare group subdirectories in a `register.toml`
 beside its README, `groups = ["a", "b"]`, and file entries under them. A group is not part of the
@@ -207,12 +202,10 @@ fires on whoever happened to add the last line, and that is nobody in particular
 **Enforcement does not rescue a failing trigger: it sharpens the failure.** An assertion in the
 checker or in the project's tests fires on the session that crosses the bound, and every commit
 must pass it, so at the bound that session can neither do the work mid-task nor leave the tree
-committable. Two instructions, no legal move. An unenforced failing trigger is ignored; an enforced
-one blocks.
+committable.
 
 **When a trigger fails the test there are two answers, and only two:** name a different occasion,
-one whose own work includes this, or do the work now, in a change of its own. Writing the trigger
-down anyway is the move this test exists to stop.
+one whose own work includes this, or do the work now, in a change of its own.
 
 ## A tripwire entry {{slug:tripwire-entry}}
 
@@ -226,8 +219,6 @@ A level-two heading carrying a slug at its end, in the anchor's tripwires home, 
 **Re-entry:** …
 ```
 
-Four parts:
-
 - **the decision it guards**, as a `design@<anchor>@<id>` reference in the heading or the body, so
   that a reversed decision dangles its tripwires mechanically, and `tripwires --guarding <ref>`
   finds them. One guarding an instruction, a guarantee, or a decision that earned no head names
@@ -239,10 +230,9 @@ Four parts:
 - **the re-entry point**: the checkpoint at which it is read again.
 
 The slug is what `tripwire@<anchor>@<slug>` references name, and it follows the id grammar above.
-A tripwire is a level-two heading, and every level-two heading of a tripwires home is one: a heading
-there with no slug is reported. A slug at another level, at the head of a plain line, or in the
-`README.md` of a directory-shaped home, defines nothing, and outside a fenced block it is reported
-as misplaced.
+Every level-two heading of a tripwires home is a tripwire: a heading there with no slug is
+reported. A slug at another level, at the head of a plain line, or in the `README.md` of a
+directory-shaped home, defines nothing, and outside a fenced block it is reported as misplaced.
 
 When a tripwire is written, and on whose word, is
 `skill@knowledge-architect-decision-recording@ruled-tripwires`.
@@ -260,8 +250,6 @@ than scheduling anyone.
 
 ## The movement instruction {{slug:movement-instruction}}
 
-The two kinds are coupled by movement, and that is what keeps both honest.
-
 - A tripwire that **fires** has its heading and body **deleted** from the tripwires home, and an
   issue file is **created**, or the decision is reopened. It never becomes a fired-but-still-listed
   entry. Where the reopened decision's reversal is recorded only at a plan document's harvest, the
@@ -278,8 +266,7 @@ The two kinds are coupled by movement, and that is what keeps both honest.
   reversal voids only half of itself.
 - A tripwire is **retired** when its firing evidence names an artifact the project's own
   instructions prevent from existing. It is deleted, and the guard becomes a predicate a reader
-  applies, in whichever review axis owns its subject or in the instruction itself. The answer to an
-  unfireable tripwire is sometimes that it was never a tripwire.
+  applies, in whichever review axis owns its subject or in the instruction itself.
 - An `observation` that becomes reproducible is **promoted in place** to `defect`: its `kind`
   changes and it acquires the checklist at that moment. Do not rewrite it from scratch, and keep
   what was already ruled out.
@@ -328,7 +315,7 @@ as far as they exist:
 - what was **ruled out and by what evidence**, so the next reader does not repeat the eliminations;
 - an explicit `assumption` or `not established` label on anything unverified.
 
-**This is verbosity with a purpose.** These entries are longer than the text around them on purpose,
+These entries are longer than the text around them on purpose,
 and the length is not a reason to compress them.
 
 ## Reviews {{slug:reviews-and-entries}}
