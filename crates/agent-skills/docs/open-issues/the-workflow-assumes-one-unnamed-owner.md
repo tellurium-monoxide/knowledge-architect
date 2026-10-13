@@ -5,8 +5,8 @@ kind: design
 
 ## Summary
 
-The installed text routes every decision to "the owner", a single person it never names. A project
-with several contributors has several people who rule, and a record that says "the owner ruled"
+The installed text gives the questions the record does not settle to "the owner", a single person
+it never names. A project with several contributors has several people who rule, and a record that says "the owner ruled"
 does not say who. The owner's stated goal: refer to contributors by name in a project's documents.
 Raised from finding W4 of 2026-10-07-knowledge-architect-workflow.
 
@@ -20,15 +20,17 @@ writes "the owner" and the singular "they", as "Their explicit word" in
 `path@agent-skills@content/skills/design/SKILL.md`, and never a gendered pronoun. No installed text
 says how to refer to the owner.
 
-The owner ruled that the pronoun is part of a larger problem, in their words: "This one is part of
-a larger problem, which is that this workflow expects an owner (unnamed). This cannot work under a
-multi contributor project. This should become an issue about the larger problem, and not handled
-now. I have a solution in mind, but I'll detail it in the design discussion when handling this
-issue. The goal would be to refer to contributors by name in project docs."
+The owner ruled that the pronoun is part of a larger problem: the workflow expects one unnamed
+owner, which cannot work in a project with several contributors. The owner asked for an issue on
+that larger problem, not handled at once, and has a solution in mind, to be detailed in the design
+discussion that handles this issue. The owner gave its goal as referring to contributors by name in
+a project's documents.
 
 Where the assumption is stated: the expectation set of the design skill, in
 `path@agent-skills@content/skills/retrospective/SKILL.md`, "The owner is the person who can
-decide"; and `goal@knowledge-architect@the-owner-decides`.
+decide what is the owner's"; and `goal@knowledge-architect@the-owner-decides`. What is the owner's
+is the set of questions `primer@question-authority` gives the owner, so a decision on who rules
+inherits that set as the questions a person rules on.
 
 The suspected mechanism, in one sentence: the workflow models authority as one anonymous role, so
 nothing in its text or its record can say which person ruled.

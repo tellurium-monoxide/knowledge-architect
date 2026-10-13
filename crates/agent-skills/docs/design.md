@@ -2564,17 +2564,11 @@ cannot be told apart from a plugin's.
 
 For a project that already has documentation, the setup skill takes an inventory of it,
 proposes a destination for each document, places a document a row of the knowledge table fits,
-takes the owner's rulings on the others, and opens one `todo` issue for the move. The move itself is
-planned work of its own, written under the planning skill. A migration
-is a decision with arguments of its own, such as which recorded decisions still hold, and it fits
+per `design@agent-skills@questions-go-to-their-authority`, takes the owner's rulings on the others,
+and opens one `todo` issue for the move. The move itself is planned work of its own, written under
+the planning skill. A migration is a decision with arguments of its own, such as which recorded decisions still hold, and it fits
 in one session only for a small project. The issue keeps the old documents beside the new homes
 listed as outstanding work, per `design@agent-skills@undesigned-work-is-an-issue`.
-
-A destination a row of the knowledge table fits is settled by the record, so it is the session's
-decision, reported with its row, per `design@agent-skills@questions-go-to-their-authority`. A
-document no row fits is the case the table's last row sends to the owner. The rival, the owner
-ruling on every document, asks the owner a question the record answers for each document a row
-fits. The setup skill's expectation set states the same split, on the owner's word.
 
 ### A project pins the checker exactly, and its manifest declares the pin `##exact-pin`
 

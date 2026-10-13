@@ -40,7 +40,8 @@ Without the counts, `goal@knowledge-architect@agents-get-a-complete-workflow` ca
 or unmet, and a proposal to add or cut workflow text, which
 `design@agent-skills@capabilities-not-structure` weighs, is argued from intuition. The counts are
 also the evidence `goal@knowledge-architect@the-workflow-improves-through-real-use` names: real
-sessions as the test of the workflow.
+sessions as the test of the workflow. The count of drift corrections would also measure the
+"rather than correcting drift" of `goal@knowledge-architect@agents-work-without-drift`.
 
 ### What would close it
 
