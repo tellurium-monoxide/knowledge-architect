@@ -1068,7 +1068,7 @@ included; a string literal bound to a name yields none, per
 as live as a sentence in a document, and closing the issue reaches the code. This serves
 `goal@knowledge-architect@design-is-recorded-with-its-arguments`.
 
-### A sentence about the past whose reference dangles is rewritten to the present or removed, except a deleted skill's or agent's reference in a released changelog section, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
+### A sentence about the past whose reference dangles is rewritten to the present or removed, except a deleted skill's or agent's reference in a released changelog section and an absent entry in a record of a deliberation, and a quotation of the owner is kept with a reference beside it `##a-past-sentence-is-rewritten`
 
 When an entry is deleted or renamed, a sentence that recorded its past, such as what an earlier
 step wrote, is rewritten to state the present, or removed, and its history stays in the commit
@@ -1079,9 +1079,10 @@ it, since rewriting it at a rename, with no change to what it decides, risks mis
 the risk `design@agent-skills@attribution-replaces-quotation` names, against
 `goal@knowledge-architect@the-owner-decides`.
 In a released section of CHANGELOG.md, a reference to a deleted skill or agent goes back to the
-bare name instead, per `design@agent-skills@plain-text-is-no-repair`.
+bare name instead, per `design@agent-skills@plain-text-is-no-repair`. In a record of a deliberation,
+an entry its tree does not hold is named by its bare slug instead, per the same head.
 
-### Plain text is never the repair of a finding, except text in the checker's syntax beside the issue that records its missing form and a deleted skill's or agent's name in a released changelog section, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
+### Plain text is never the repair of a finding, except text in the checker's syntax beside the issue that records its missing form, a deleted skill's or agent's name in a released changelog section, and an absent entry's bare slug in a record of a deliberation, and no instruction offers an unchecked form as the way to clear one `##plain-text-is-no-repair`
 
 A form a writer can use is either one the checker judges, and the workflow recommends it, or one
 the checker does not read, and the workflow never directs a pointer into it to clear a finding. So
@@ -1136,7 +1137,29 @@ reference could cite.
 Its repair is the bare name, which `design@core@bare-skill-name-reported` leaves silent. It evades
 nothing, since no checked form remains that it could have used. The rival, rewriting the sentence
 as `design@agent-skills@a-past-sentence-is-rewritten` asks elsewhere, would change a released
-section's content. The set of exceptions is closed: each lets a finding clear without a checked form,
+section's content.
+
+The third exception is an entry that the tree of a record of a deliberation does not hold, removed
+or renamed by the work the record carries, or still to be created by it, named there by its bare
+slug in backticks. A record of a deliberation is where
+`design@agent-skills@attribution-replaces-quotation` keeps the deliberation, a plan document or a
+committed file that leaves once its outcomes are carried out, and a commit message. The exception
+is the owner's proposal: for such an entry the checker has nothing left to check, and what this
+head refuses is avoiding the check on a live entry, which leaves dangling references and makes
+grounding less efficient. It evades nothing, as the changelog exception does not: no entry remains,
+or none exists yet, that a checked form could cite, and a one-segment span is silent, per
+`design@core@candidate-rule-and-retired-forms`. The owner chose the form among three, and the scope:
+records of a deliberation only, since every other document states current reality, where a
+sentence naming an absent entry is rewritten, per `design@agent-skills@a-past-sentence-is-rewritten`.
+The other two forms lost: a description in words, which the owner judged confusing to every reader,
+and the full reference with its backticks removed, which is the evasion this head refuses. A
+checked form for an entry still to be created, as `design@core@planned-path-form` is for a path,
+lost too: a plan document and a committed file leave with or before the branch that creates the
+entry, so such a check would fire on a file about to be deleted; a commit message is judged against
+its own commit's tree, where the check would assert only that the entry is absent, which nothing
+reads again; and the form would need a grammar of its own in the core.
+
+The set of exceptions is closed: each lets a finding clear without a checked form,
 so another one weakens the check, and is argued as a change of this decision.
 
 The argument: an unchecked form that clears a finding clears it for good, so a habit of writing one

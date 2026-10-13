@@ -124,7 +124,8 @@ message holds its counts.** The file is `docs/audit-reports/<YYYY-MM-DD>-<axis>-
 the project's root, the axis named by its section's slug. The session writes it after its reading
 of the pass: the run's report as the session's verification left it. The owner list closes it, as
 point 2 says. A span the checker would refuse is quoted in words, since the file is checked like
-any other. The file and every commit
+any other, and an entry the pass removes, renames or creates is named as
+`primer@where-knowledge-goes` says. The file and every commit
 message of the audit name a commit of the audit's branch by its subject, never by its SHA, since a
 rebase merge gives the branch's commits new SHAs. The file is committed once every `Outcome` line
 holds the owner's ruling, or, at the audit's stop, the issue entry point 4 gives an item the owner

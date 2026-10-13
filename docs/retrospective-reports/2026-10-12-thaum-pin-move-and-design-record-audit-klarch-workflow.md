@@ -7,9 +7,9 @@
 - **Analysed against**: main at `v0.6.0-75-g5fca230`.
 - **Standing entries that bear on it**: one search over the 83 issues and 58 tripwires covered the
   seven files received together. For this file it returned:
-  - `issue@agent-skills@an-audit-report-cites-the-heads-its-own-pass-removes`, the defect W5
+  - `an-audit-report-cites-the-heads-its-own-pass-removes`, the defect W5
     reports again;
-  - `tripwire@agent-skills@audit-edit-leaves-an-entry-stale`, whose firing clause W3 meets, judged
+  - `audit-edit-leaves-an-entry-stale`, whose firing clause W3 meets, judged
     in its own section;
   - `tripwire@agent-skills@attribution-loses-the-scope`, judged in the attribution cluster below,
     with the evidence of two other files;
@@ -83,7 +83,7 @@
 - **Default**: handle now, under the design skill's in-change path.
 - **Outcome**: approved.
 
-## W3, and `tripwire@agent-skills@audit-edit-leaves-an-entry-stale`
+## W3, and `audit-edit-leaves-an-entry-stale`
 
 - **a. What it says.** The cross-check maps "the tripwires and issues an edit would leave false".
   It missed two that the standing-state reviewer found on the audit's branch: a tripwire whose
@@ -98,7 +98,7 @@
   whether the edit leaves it false". The clause-by-clause reading against the head that now holds
   the guarded part is not instructed.
 - **c. Whether it is already recorded.** It meets the firing clause of
-  `tripwire@agent-skills@audit-edit-leaves-an-entry-stale`: "a review of an audit's branch finds a
+  `audit-edit-leaves-an-entry-stale`: "a review of an audit's branch finds a
   tripwire guarding, or an issue naming, a head an edit of the design-record axis changed, left
   false." The second tripwire is plainly left false: its guard sits under a head that no longer
   holds the guarded decision. The tripwire's re-entry, "the standing-state review of every audit's
@@ -163,7 +163,7 @@
 - **b. Whether it still applies.** Yes.
   `path@agent-skills@content/skills/project-audit/SKILL.md`:126-127, unchanged since 0.6.0.
 - **c. Whether it is already recorded.** Yes:
-  `issue@agent-skills@an-audit-report-cites-the-heads-its-own-pass-removes` is the same defect, seen
+  `an-audit-report-cites-the-heads-its-own-pass-removes` is the same defect, seen
   in this repository on the first pass of the same axis, where the session repaired the dangling
   spans by removing their backticks. This is a second instance, in a second project, with the
   other workaround. Its closing condition is the first fix proposed: "The audit skill states how a
@@ -184,7 +184,7 @@
   "Editing an installed skill or agent", which closes the issue.
 - **h. The proposal.** In `skill@knowledge-architect-project-audit@record-of-an-audit`: an entry
   the pass's own findings remove or rename is named in the file by a description in words, not by
-  its reference. Close `issue@agent-skills@an-audit-report-cites-the-heads-its-own-pass-removes`
+  its reference. Close `an-audit-report-cites-the-heads-its-own-pass-removes`
   with it.
 - **Default**: handle now, and close the issue with it.
 - **Outcome**: handle now, under the design skill's in-change path, in the shape the owner gave, which replaces the default. The owner, in the file: "If the entry is removed, the reference can be kept with only the slug, in plain text. This is not checker avoidance, because the checker has nothing left to check there. A description in word would just be confusing to everyone. Maybe the text that forbids plain text checker syntax should be reworded to allow this case. What's forbidden is avoiding the checker on live entries, which would lead to dangling references and less efficient grounding." And, in the conversation, choosing the bare slug in backticks among three forms and the records of a deliberation as the scope: "agreed, with shape b. This holds only in records of deliberation, the list you proposed. Everything else is supposed to be current reality only, no stale refs."

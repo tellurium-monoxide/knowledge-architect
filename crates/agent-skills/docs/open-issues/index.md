@@ -1,11 +1,10 @@
 **Generated — do not edit.** `cargo klarch index`
 
-39 entries
+38 entries
 
 | kind | title |
 | --- | --- |
 | defect | [A criterion derived from a decision binds until the owner says otherwise](a-criterion-derived-from-a-decision-binds-until-the-owner-says-otherwise.md) |
-| defect | [An audit's report file cites the heads its own pass removes, and the session turned those references into plain text](an-audit-report-cites-the-heads-its-own-pass-removes.md) |
 | defect | [In an adopting project, a finding sent upstream is counted again as a violation left on old text at every later pass](an-upstream-finding-stays-in-every-later-old-text-count.md) |
 | deferred | [A plan document deleted in the commit that completes its harvest is absent from the tree of the acts that still need it](a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it.md) |
 | design | [A tripwire on a procedure of the workflow states no bound on how much the failure must matter](a-procedure-tripwire-states-no-severity-bound.md) |

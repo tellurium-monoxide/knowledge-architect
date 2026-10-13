@@ -40,6 +40,12 @@ check left silent. Whether the three mentions were backticked is not established
 fired is not established either. Its first response, widening the candidate rule, is the owner's
 preferred fix.
 
+The check meets bare slugs written on purpose. In a record of a deliberation, an entry its tree does
+not hold, removed or still to be created, is named by its bare slug in backticks, per
+`design@agent-skills@plain-text-is-no-repair`. A removed entry is not declared, so a check of
+declared slugs never reports its slug. A slug still to be created would be reported once the entry
+exists, in a record still in the tree, and its reference is then the right repair.
+
 ### Why it matters
 
 A dangling mention misleads every reader of the text that holds it, against

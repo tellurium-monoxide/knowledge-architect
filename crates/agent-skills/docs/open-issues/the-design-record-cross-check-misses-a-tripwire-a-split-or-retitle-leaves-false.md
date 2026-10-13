@@ -8,9 +8,9 @@ kind: design
 The design-record axis asks its cross-check for every tripwire and issue that an edit of the pass
 would leave false. In a real pass, two tripwires on heads the pass split or retitled were left
 false, the cross-check did not list them, and the standing-state review of the audit's branch found
-them. Both still resolved, so the checker reported neither. This fired
-`tripwire@agent-skills@audit-edit-leaves-an-entry-stale`, whose response reopens
-`design@agent-skills@design-record-axis`; this entry carries that reopening.
+them. Both still resolved, so the checker reported neither. The tripwire that guarded the axis's
+premise fired on this, and was deleted at its firing; its response, to reopen
+`design@agent-skills@design-record-axis`, is what this entry carries.
 
 ## Details
 
@@ -44,9 +44,8 @@ retrospective reaches it, or earlier on the owner's word.
 
 ### Why it matters
 
-`design@agent-skills@design-record-axis` rests on the premise, guarded by the tripwire that fired,
-that reading each head's tripwires and issues before judging it keeps them true of the head the
-audit edits. A tripwire left false either fires on expected growth, which costs the owner a ruling,
+`design@agent-skills@design-record-axis` rests on the premise that reading each head's tripwires
+and issues before judging it keeps them true of the head the audit edits. A tripwire left false either fires on expected growth, which costs the owner a ruling,
 or guards nothing, which leaves its decision watched by no one, against
 `goal@knowledge-architect@agents-work-without-drift`.
 

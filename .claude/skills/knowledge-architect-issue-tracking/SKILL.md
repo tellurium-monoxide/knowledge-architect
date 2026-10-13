@@ -289,7 +289,8 @@ before you delete.
 removed**: what an earlier step wrote, what an entry once said. Its history stays in the commit
 messages. It is never retargeted to the new name, which would make it false, and never turned into
 plain text, which takes it out of the check. A verbatim quotation of the owner that names a renamed
-entry is left as it is, with a reference to the current entry beside it.
+entry is left as it is, with a reference to the current entry beside it. A record of a deliberation
+names the entry as `primer@where-knowledge-goes` says instead.
 
 **An entry that records a missing checked form** is what a pointer the checker cannot express is
 written beside, in plain text, as `primer@where-knowledge-goes` says. Its `What` names the

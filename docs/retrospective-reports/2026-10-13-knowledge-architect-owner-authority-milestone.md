@@ -5,7 +5,7 @@
 - **Version used**: the checker built from this repository, main at `v0.6.0-46-ge619a1e`.
 - **Analysed against**: main at `v0.6.0-75-g5fca230`.
 - **Standing entries that bear on it**: from the one search over the 83 issues and 58 tripwires,
-  `issue@knowledge-architect@three-findings-of-a-received-retrospective-await-an-intake`, P3's own
+  `three-findings-of-a-received-retrospective-await-an-intake`, P3's own
   case, and `issue@agent-skills@the-message-check-after-a-commit-is-delivered-by-no-installed-text`,
   whose closing condition P1 does not meet, since it asks for a project that follows the installed
   text, and this repository runs `commits` after each commit by its own root.
