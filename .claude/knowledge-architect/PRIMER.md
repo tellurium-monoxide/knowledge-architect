@@ -209,7 +209,8 @@ or a rewritten sentence. A record of a deliberation (a plan document, a committe
 once its outcomes are carried out, or a commit message) names by its bare slug in backticks an
 entry that the work it records removes, renames or is still to create, where its tree does not hold
 it, nor, for a commit message, its first parent's: a name, not a reference, since there is nothing
-for the checker to judge. A reference or a path that no checked form expresses is
+for the checker to judge. A renamed entry's old slug carries beside it the reference to the entry
+under its new slug, so a reader reaches the live entry by a checked pointer. A reference or a path that no checked form expresses is
 written without backticks only beside a reference to an issue entry of this project that records
 the missing form.
 A gap of the checker itself gets that entry in this project's own register, since a reference
