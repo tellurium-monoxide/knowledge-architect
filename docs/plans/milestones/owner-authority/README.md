@@ -334,9 +334,9 @@ added and removed.
 - **Arguments:** a14, a28, a31, a39, a50, a51.
 - **Closed by:** R1: "derived-decision-proceeds-on-default: I agree on this, as you might have seen
   from what I said above, this is in the direction I want to take."
-- **Shape:** "Decided design". **Harvest:** `design@agent-skills@bounded-path-in-design` rewritten,
-  slice 3. For defaults, it is a delivery of #questions-go-to-their-authority, added to that head at
-  slice 4.
+- **Shape:** "Decided design". **Harvest:** a head of its own, slug its thread's, split at slice 3
+  from `design@agent-skills@bounded-path-in-design`, which points to it; slice 4 adds its deliveries
+  for defaults to it.
 - **Relations:** holds the owner's evidence that defaults the heads answer are put to the owner
   (a31, a39). Its closure inside a discussion is given by #owner-rules-at-a-fork.
 
@@ -965,7 +965,7 @@ Each with what it lost to, and its route under
 | --- | --- | --- |
 | the owner's words as a ground, quoted, the old winner of #attribution-replaces-quotation | the bent quotations and the owner's approval, a16 | an entry, at slice 2: refuted by evidence that cost work, and T4 keeps a doubt open |
 | thaum's first draft, the premise procedure with the text as its default | two of thaum's reviewers, a13 | an entry, at slice 1: refuted by evidence that cost work |
-| #thread-closes-on-the-argument | the owner's ruling on the discussion form, R2 | an entry, at slice 3: some doubt remains that #owner-rules-at-a-fork reaches G3, which T1 watches |
+| #thread-closes-on-the-argument | the owner's ruling on the discussion form, R2 | an entry, at slice 3: some doubt remains that #owner-rules-at-a-fork reaches G3 |
 | thaum's W1 as proposed, a sentence on specifications only | a4, a11 | the deliberation only: the argument is derived again in one round |
 | #agent-decides-owner-overrules | the owner's ruling on scope, R2 | the deliberation only |
 | the round-2 drafts of G1 and of the authority section | the owner's ruling on scope, R2 | the deliberation only |

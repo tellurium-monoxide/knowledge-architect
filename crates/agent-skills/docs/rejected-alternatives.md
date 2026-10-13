@@ -32,8 +32,8 @@ exchange in which the agent does not make every choice, judging that the owner's
 of the time, though not always, end up the better direction, and that the exchange drives a
 design's quality; the fork rule keeps that exchange where two shapes survive. A doubt remains that
 keeping forks with the owner's word reaches `goal@knowledge-architect@agents-work-without-drift`,
-which `tripwire@agent-skills@record-answered-questions-reach-the-owner` watches, and this is the
-candidate if it fires.
+and this is the candidate if forks put to the owner prove to be what keeps the owner answering
+what the record could settle.
 
 **Quoting the owner's words verbatim in a head whose ground is the owner's** — lost to
 `design@agent-skills@attribution-replaces-quotation`. `live`. Two sessions bent such a quotation to
