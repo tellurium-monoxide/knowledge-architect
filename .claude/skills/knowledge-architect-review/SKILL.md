@@ -155,7 +155,7 @@ last transcript review is still read by it.
 **An item whose outcome `primer@question-authority` gives the owner is put to the owner** before its
 outcome is recorded; an item whose outcome the record, a measurement or a source settles takes it
 from the session, and the record of the review and the turn's "Decided" section report it. Either
-way, its outcome is then one of the three above. Several such items go in one
+way, its outcome is then one of the three above. Several items put to the owner go in one
 message, each under a label, `Q<n>`, so the owner rules on each by its label; the record of the
 review names each item by its content, not by the label. Where the dispatching skill gives such an
 item a label of its own, as the planning skill gives a plan document's defaults `D<n>`, that label
