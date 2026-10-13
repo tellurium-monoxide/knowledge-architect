@@ -176,8 +176,8 @@ question is whether **a shape lost to an argument**.
 
 **An alternative earns an entry only if at least one of these holds:**
 
-1. it would change a signature crossing the boundary of a separately built unit, or a serialized
-   format;
+1. it would change an interface others consume, as entry test 1 of `primer@design-heads` defines
+   it;
 2. its reason rests on a reading of an external specification the project implements;
 3. it was refuted by **evidence that cost work to obtain**: a measurement, a prototype, a survey of
    other projects;
@@ -257,8 +257,8 @@ Every reference you wrote must resolve.
 
 Then re-read each head you wrote: present tense, as if the design had always been so (`primer@design-heads`).
 
-Then apply the entry tests of `primer@design-heads` again to each decision of the change, now that every text of it is
-written: a site the change itself wrote counts, a skill or a restatement of the project's own
+Then apply the tests of `primer@design-heads` again to each decision of the change, and to each
+head it writes or extends, now that every text of it is written: a site the change itself wrote counts, a skill or a restatement of the project's own
 included. A decision judged while its texts were still being written misses the second site the
 same change adds.
 
@@ -267,6 +267,9 @@ every text that cites it, and re-read the head's whole body, its argument includ
 change; repair in the change each text it leaves false. A reference is a claim that its text is
 revisited when the entry changes, and an edit that keeps the slug dangles no reference, so no check
 reports a citing text it made false.
+
+Then, for each attribution of the owner the change writes, read the owner's words beside it, from
+the plan document or the transcript, and check that it keeps their scope and every hedge.
 
 Then re-read what you wrote against the head you replaced: **rewriting argued text is where
 fidelity gets lost.** If you cannot restate a losing alternative as strongly as it was written, you

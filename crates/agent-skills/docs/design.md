@@ -724,8 +724,11 @@ state what the owner decided and how far the decision reaches, never the owner's
 The verbatim words stay where the deliberation is kept: a plan document's items, per
 `design@agent-skills@plan-records-the-exchange`, and a committed file that leaves once its outcomes
 are carried out, per `design@agent-skills@committed-audit-report`. An attribution is checked against
-the question it answered, as a quotation is, by the transcript reviewer, the decision-record
-reviewer and the auditors' verifiers, and it keeps the scope and the hedges of the words. A
+the question it answered, as a quotation is: by its writer, with the owner's words beside it, at
+the close of the decision-recording skill,
+`skill@knowledge-architect-decision-recording@before-you-finish`, and by the transcript reviewer,
+the decision-record reviewer and the auditors' verifiers, and it keeps the scope and the hedges of
+the words. A
 quotation already in a head is converted when a change touches the head, per
 `design@agent-skills@existing-heads-on-touch`; the reference a rename sets beside a quotation does
 not count, per `design@agent-skills@a-past-sentence-is-rewritten`.
@@ -825,8 +828,8 @@ save is not measured: `issue@agent-skills@the-retrospective-counts-no-review-cos
 ### An alternative earns an entry by the recording tests, not by having lost `##losing-alternatives-filter`
 
 A losing alternative earns an entry in the rejected alternatives only if it passes the tests of the
-installed decision-recording skill: it would change a signature crossing the boundary of a
-separately built unit or a serialized format, its reason rests on a reading of an external
+installed decision-recording skill: it would change an interface others consume, as entry test 1
+of `primer@design-heads` defines it, its reason rests on a reading of an external
 specification the project implements, it was refuted by evidence that cost work, or a doubt
 remains that the winner meets every goal. The rest stay in the spec and the commit message.
 `goal@knowledge-architect@design-is-recorded-with-its-arguments` asks that a later session need not
@@ -1016,7 +1019,9 @@ as the work and their decided entries and citations as seeds, and at the design 
 where one runs, with the spec as the work. The audit lists as a gap every
 standing entry the slice's code bears on: a tripwire whose firing condition, or a deferred trigger,
 the planned code meets, and an issue of any kind the slice's code touches, closes, makes worse or
-depends on. The slice's grounding, point 1 of `skill@knowledge-architect-planning@working-a-slice`, reads no issues and no tripwires, since the audit's
+depends on. A tripwire of the milestone document's premortem whose firing condition the planned
+code meets is listed with them: it enters a tripwires home only at the harvest, so the search
+cannot return it, and the audit reads it in the milestone document. The slice's grounding, point 1 of `skill@knowledge-architect-planning@working-a-slice`, reads no issues and no tripwires, since the audit's
 search covers every anchor. Work that does not go through the design skill sends no search: the
 standing-state review reads its deferred triggers, per
 `design@agent-skills@standing-state-review-before-every-merge`, which this search adds to and never

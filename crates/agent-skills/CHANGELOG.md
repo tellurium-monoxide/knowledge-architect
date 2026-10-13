@@ -115,6 +115,16 @@ subsection is omitted.
   `applied` to the application's commit: every head and rejected alternative the application
   changed, with the tripwires and issues that cite it; and the run's check judges a proposed retitle
   as it judges a created head.
+- `agent-skills`, patch: before finishing a change that writes into a design home, the
+  decision-recording skill applies every test of the primer's section on design heads again to each
+  head the change writes or extends, and reads the owner's words beside each attribution of the owner
+  it writes, checking that their scope and every hedge are kept.
+- `agent-skills`, patch: the commits of a slice or a spec name each claim of its spec with its test
+  and its outcome, and a claim over every site of a corpus is tested by reading the corpus, not by a
+  phrase search alone; the slice's design audit reads the tripwires of the milestone document's
+  premortem against the planned code.
+- `agent-skills`, patch: a commit message that states a plan a later commit of the branch changes is
+  not reworded when the later commit's message names the change.
 
 ## 0.6.0
 

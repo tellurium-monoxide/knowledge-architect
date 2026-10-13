@@ -177,7 +177,8 @@ the reviewer finds misstated is the owner's, and is put to the owner.
   by a history edit of the branch after that. Either only with no uncommitted work in the tree, and
   each confirmed afterwards to have lost no content: for an amend, that it changed no file. A
   correction written into a later commit's message is not a repair: the mistaken message still
-  reads as it did.
+  reads as it did. A message is judged against its own commit: a plan it states that a later commit
+  of the branch changes is no mistake when the later commit's message names the change.
 - **A paragraph in the commit message** records the review: the message of the last repair
   commit, or, where no repair commit is left, the message of the branch's last commit, reworded
   with no uncommitted work in the tree. A record carried by a message rides on a commit that
