@@ -106,7 +106,8 @@ subsection is omitted.
 - `agent-skills`, patch: a record of a deliberation, a plan document, an audit's report file or a
   commit message, names an entry its tree does not hold, nor, for a commit message, its first
   parent's, removed or renamed by the work or still to be created by it, by its bare slug in
-  backticks, instead of a description in words; the audit's report file does so for the entries its
+  backticks, instead of a description in words, and a renamed entry's old slug carries the reference
+  to the entry under its new slug beside it; the audit's report file does so for the entries its
   pass removes, renames or creates.
 - `agent-skills`, patch: a branch that builds a default put to the owner merges once the owner has
   ruled on it, an acceptance criterion awaiting the owner included; the session puts every default
