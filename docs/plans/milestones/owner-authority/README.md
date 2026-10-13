@@ -24,7 +24,8 @@ by its opening message, "There is a retrospective at
 /home/catA/tb266682/Documents/retrospectives/2026-10-13-thaum-slice-numbers-merge-klarch-workflow.md,
 that I want to handle". The discussion begins at that message and ends at the owner's message that
 opens "Drop T5, keep the other tripwires." This document was assembled from that transcript.
-Rounds are numbered by the owner's messages, R0 the opening one to R5 the last. The log holds R5
+Rounds are numbered by the owner's messages, R0 the opening one to R5 the last of the discussion;
+R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved." The log holds R5
 twice: the first copy lacks its last paragraph, and no reply lies between the two. The complete
 copy, the second, is R5.
 
@@ -316,10 +317,12 @@ added and removed.
   its premises". Answer 2, R1: "Whether a specifiation is followed, and how much closely, should be
   left to consumer projects. What we have to account for is the fact that a project can be following
   a specification, and we must avoid conflicting with that."
-- **Shape:** "Decided design". **Harvest:** a head of its own, slice 1. The thread's name narrows
-  the decision to a specification, where the decision covers any source and a measurement, so the
-  head takes a slug that names it, the pair
-  `#specification-outranks-an-owner-answer → a-source-outranks-an-owner-answer`.
+- **Shape:** "Decided design". **Harvest:** one head, slice 1, for the whole of
+  `primer@owner-word-premise`: the premise rule, the source rule and the hold on a ruling on intent
+  stay together, since the source rule is the premise rule's exception for an answer on a reading,
+  per `tripwire@agent-skills@split-rule-from-exception`. The thread's name narrows the decision to a
+  specification, so the head takes a slug that names it, the pair
+  `#specification-outranks-an-owner-answer → owner-word-holds-as-far-as-its-premise`.
 - **Relations:** carries W1; its goal is #owner-word-is-verified, read with it per D12. Guarded by
   T3.
 
@@ -1038,17 +1041,17 @@ can contest.
   route. Slice 1 rewrites the hold of `primer@intent-and-claims` and
   `design@agent-skills@head-prevails-over-diverging-code` to say so. It bears on G1, whose four
   kinds hold no divergence as such.
-- **D12.** G2's "contradiction it finds" reads as a contradiction no source or argument resolves,
+- **D12, ruled R6: approved.** G2's "contradiction it finds" reads as a contradiction no source or argument resolves,
   as G1 and the authority section say. An owner's answer on a reading that a source contradicts is
   then no contradiction: the source answers it, per #specification-outranks-an-owner-answer. A
   ruling on intent whose premise proves false is one, and its part of the work waits, which replaces
   today's "proceed on the default" of `primer@owner-word-premise` for that case. Proposed
   rewording of G2's second sentence: "A contradiction it finds that no source or argument resolves
   goes to the owner, and the part of the work that rests on it waits for the owner's answer; the
-  rest goes on." The rewording changes a goal, so it is not written before the owner's word, per
-  `skill@knowledge-architect-goal-setting`: until then, slice 1 writes G2 as approved, and only the
-  reading above applies. It bears on #owner-word-is-verified.
-- **D13.** The authority section's own text says that it prevails over any installed instruction
+  rest goes on." The rewording changes a goal, so it was not written before the owner's word, per
+  `skill@knowledge-architect-goal-setting`; the owner approved it in R6, and slice 1 writes G2 with
+  it. It bears on #owner-word-is-verified.
+- **D13, ruled R6: approved.** The authority section's own text says that it prevails over any installed instruction
   that sends to the owner a question it gives the session, the same rank `primer@goals-bind` gives
   a goal over a decision. The sentence holds between slice 1 and slice 4, and stays after slice 4,
   since a later edit of a skill can bring the same conflict back. With it, no session meets two
@@ -1063,7 +1066,7 @@ can contest.
   `design@knowledge-architect@committed-findings-analysis` and
   `design@knowledge-architect@intake-shares-the-repair-standard` stand. This replaces D6, which
   contradicted that goal. It bears on #derived-decision-proceeds-on-default.
-- **D15.** W3, W4 and W5 get a durable outcome in slice 1: one `todo` issue in the root's register,
+- **D15, ruled R6: approved.** W3, W4 and W5 get a durable outcome in slice 1: one `todo` issue in the root's register,
   which names the retrospective file and its three findings, and closes by an intake of them under
   `skill@klarch-retrospective-intake`. Without it, nothing in the tree records them once this
   document leaves. No analysis file is written now, on the owner's direction in R0 quoted under
@@ -1072,7 +1075,7 @@ can contest.
   reply to R4 (a80) had it last, and the "Decided" section in slice 1, as a primer directive. The
   reason is in "Order rationale". The owner agreed "on the milestone path" in R5 with the earlier
   order in view.
-- **D17.** G1 is written as approved, seven sentences, though
+- **D17, ruled R6: approved, as written.** G1 is written as approved, seven sentences, though
   `skill@knowledge-architect-goal-setting@goal-entry-shape` asks for "two to four sentences": the
   owner approved its wording verbatim, and every sentence states a part of the goal. The rival is a
   shortened G1, put to the owner before slice 1.
