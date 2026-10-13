@@ -21,10 +21,18 @@ derived again in one discussion round, and workflows that write such plans are i
 alternative will be proposed again.
 
 **Reporting a finding met outside the task without recording it** ("finish the task, then say what
-you found") — lost to `design@agent-skills@primer-content`. `live`. The owner observed, over real
+you found") — lost to `design@agent-skills@met-outside-the-task-outcomes`. `live`. The owner observed, over real
 sessions, that an agent left a small defect neither fixed nor recorded, as a one-line mention inside
 a long report, where it is easy to miss. That observation cannot be derived again in one discussion
 round, and the rule it defeats is the common one.
+
+**Putting an owner's answer on a reading back to the owner, with the source's reading as the
+default, when the source contradicts it** — lost to
+`design@agent-skills@owner-word-holds-as-far-as-its-premise`. `live`. thaum, a project that
+implements a published rules text, built this first, as a local addition to the premise procedure.
+Two of its reviewers found that it still contradicted the rules' authority: it put to the owner a
+question the text answers, and the question offered, as one option, a behaviour the text forbids.
+That review evidence cost a review pass to obtain.
 
 **Writing the design skill so that weaker models can follow it** — lost to
 `design@agent-skills@frontier-tier-only`. `live`. Rejected as a design goal: the workflow uses

@@ -446,3 +446,32 @@ head in the wrong Component, on at least 4 such findings; the bounds are the own
 **Re-entry:** the session's verification of each report of the design-record axis, and the owner's
 ruling on its owner list.
 
+## Guarding `design@agent-skills@questions-go-to-their-authority`: questions the record answers still reach the owner `##record-answered-questions-reach-the-owner`
+
+T2 of the premortem of the discussion that made the decision, recorded in
+`milestone@plans@owner-authority`. The decision rests on the premise that routing a question by its
+authority, stated in the primer every session reads, overcomes the weight agents give to the
+owner's word, which `design@agent-skills@misstated-ruling-rated-by-what-it-changes` records the
+owner judging that no further instruction would reduce.
+
+**Fires when:** a retrospective of a session after this decision's landing finds 2 or more
+questions put to the owner that a goal, a design head or a source's text answered.
+**Response:** reopen `design@agent-skills@questions-go-to-their-authority` on how the routing is
+delivered, for example at the points where a skill writes a default for the owner.
+**Re-entry:** the retrospective of each session, with the limit
+`issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.
+
+## Guarding `design@agent-skills@owner-word-holds-as-far-as-its-premise`: a deliberate departure from a specification is overridden as a reading `##departure-overridden-as-a-reading`
+
+T3 of the premortem of the discussion that made the decision, recorded in
+`milestone@plans@owner-authority`. The decision rests on the premise that a project states its
+departures from a specification it follows, so that a session can tell an owner's answer on a
+reading from a scope decision.
+
+**Fires when:** a session applies a source's text over an answer the owner gave as a deliberate
+departure from that source.
+**Response:** reopen `design@agent-skills@owner-word-holds-as-far-as-its-premise` on how a
+departure is recorded, so that a session can tell it from a reading.
+**Re-entry:** the retrospective of each session, and the standing-state review before every merge,
+with the limit `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`
+names.
