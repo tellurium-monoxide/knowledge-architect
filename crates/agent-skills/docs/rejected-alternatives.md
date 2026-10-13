@@ -384,3 +384,20 @@ auditor judging it** — lost to `design@agent-skills@design-record-axis`. `live
 misfiled head unread until a change touches it. It is kept here because a doubt remains:
 `tripwire@agent-skills@component-judgement-noisy` watches whether the auditors' judgements of a
 head's Component are mostly rejected, and this alternative is the candidate if they are.
+
+**The standard on agent-facing text held in the primer** — lost to
+`design@agent-skills@admission-rules-home`. `live`. Writing agent-facing text is not every session's
+work, and the agent-configuration skill's trigger delivers the standard when it is, per
+`design@agent-skills@primer-limit`; the session that wrote the statement its owner judged useless
+had loaded that skill. It is kept here because a doubt remains: a session that edits agent-facing
+text inside another task may not load the skill, which
+`tripwire@agent-skills@agent-text-written-without-the-standard` watches.
+
+**An agreement threshold between two readers before the need test is applied** — lost to
+`design@agent-skills@need-test`. `live`. Measured in a census of this repository's agent-facing
+text, two readers per part: of the first run's 26 statements one reader flagged and the other did
+not, 15 were a hard case of the other reader, 10 were not mentioned by it, and 1 was an explicit
+pass. A threshold on such counts measures what readers leave silent, and readings tuned to it left
+2 statements failing in about 2,200 lines of the primer, the `CLAUDE.md` files and the design and
+planning skills. The owner ruled the threshold out, accepting some variation between readers, since
+a statement one pass misses is met by a later one.

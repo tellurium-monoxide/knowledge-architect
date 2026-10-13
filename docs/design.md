@@ -400,8 +400,8 @@ retrospective's workflow file, per `design@agent-skills@audit-outcomes`. Here th
 repository, so such a finding is edited at its source, under `path@agent-skills@content/`, with the
 outcomes of a finding on the project's own text, and no upstream file is written: the file would
 only carry the findings back to the session that found them. Each repair of such a finding, its
-proposal and its check included, is an edit of the installed text, so it passes the tests
-that `path@agent-skills@CLAUDE.md` gives every such edit. The installed text holds no branch for
+proposal and its check included, is an edit of the installed text, so it passes the standard that `path@agent-skills@CLAUDE.md` sends every such edit
+through. The installed text holds no branch for
 the project that publishes it, as the owner stated of this repository's use of the workflow for its
 own text: "I don't want to cater too much to this use case in the installed files". So the root
 `CLAUDE.md` states this case, in `instructions@repository-skills`.
@@ -428,22 +428,22 @@ on a file whose findings all end in no change: that commit changes no file, and 
 drops a commit that changes no file, per
 `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
 
-### The intake of received findings judges a repair of agent-facing text by the installed audit's repair standard `##intake-shares-the-repair-standard`
+### The intake of received findings judges a fix of agent-facing text by the standard every writer and judge of that text applies `##intake-shares-the-repair-standard`
 
 `skill@klarch-retrospective-intake` judges a finding's fix by
-`skill@knowledge-architect-agent-configuration@admission-standard`: the repair by cause, the count of
-instructions and the net growth, and the record check. It names the section at the step that shapes
-a finding's fix and reads it against the record, beside its own four tests and its rivals. The
-intake keeps its own evidence, a real session behind each finding, its kind for a lapse of the
-session, and the owner's ruling on every finding.
+`skill@knowledge-architect-agent-configuration@admission-standard`, read whole where it judges a
+finding's kind and where it shapes a fix: the need test, the evidence an addition needs and the
+kind of a gap, the lapse rule, the repair by cause with its instruction count and net growth, and
+the record check. What admits a finding is the intake's own: a real session behind each finding,
+and the owner's ruling on every finding.
 
-The direction is the owner's: "I think it's important we ensure it analyzes findings and repairs on
-the same standard as our workflow." The evidence that admits a finding differs between an audit and
-the intake: the intake has a real session behind each finding, as
+The direction is the owner's: the owner asked that the intake analyse findings and repairs on the
+same standard as the workflow. The evidence that admits a finding differs between an audit and the
+intake: the intake has a real session behind each finding, as
 `design@agent-skills@behaviour-additions-need-real-use` asks of an addition, and an audit never has
-one. The worth of a repair and its shape do not differ, since both decide edits to the same text at
-the same cost. The standard has one home, the audit's section, per
-`design@agent-skills@root-cause-repair`, and the intake reads it where the worth is judged: at its
-step that shapes a fix, before any edit is written. The nearest rival, the shared standard in
-`skill@knowledge-architect-agent-configuration@admission-standard`, is read when an edit is written,
-after that judgement is made.
+one. The worth of a fix and its shape do not differ, since both decide edits to the same text at the
+same cost. The standard's home is the agent-configuration skill, per
+`design@agent-skills@admission-rules-home`, and the intake reads it where the worth is judged: a
+pointer read whole at its step that shapes a fix, before any edit is written, wherever the section
+lives.
+
