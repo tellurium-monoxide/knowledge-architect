@@ -24,7 +24,7 @@ each of the three, and the extraction none, and each was repaired before that co
 before the commit, so it did not fire; it is why the guard exists. Two later instances, in the
 discussion that produced the milestone load-bearing-records and in an earlier spec, recorded a
 hedged word of the owner firmer than given, on details that were not load-bearing; the owner ruled
-that such a slip is "not a critical defect", still repaired, and under the firing condition above
+that such a slip is no critical defect, still repaired, and under the firing condition above
 neither fires.
 
 ## Guarding `design@agent-skills@expectation-set-bounds-scope` `##expectation-set-closes-a-contradiction`
@@ -45,7 +45,7 @@ its argument does not cover.
 
 **Fires when:** a commit creates a design head, contradicts a statement of one, or adds to it a
 member its argument does not cover, and neither its message nor a plan document carries the
-deliberation: no thread, no rival, and no attribution of the owner's ruling where the owner ruled. A relocation
+deliberation: no thread, no rival, and no record of the owner's ruling where the owner ruled. A relocation
 or rewording that adds or removes no decision does not count.
 **Response:** open a `defect` naming the head and the commit, and reopen
 `design@agent-skills@new-or-reshaped-head-needs-design` on where its trigger is delivered; for a
@@ -210,7 +210,7 @@ design-conformance reviews, which read the heads a change writes.
 ## Guarding `design@agent-skills@head-ground-is-the-argument`: the owner's own ground is removed from a head `##owner-intent-stripped`
 
 T2 of the premortem of the discussion that made the decision. The decision rests on the premise
-that the repair of an approval cited as a ground does not remove the owner's own words with it.
+that the repair of an approval cited as a ground does not remove the owner's own ground with it.
 
 **Fires when:** a commit removes, or rewords as an argument, the owner's ground in a design head,
 quoted or attributed, and the transcript or the plan document shows that the decision, or that

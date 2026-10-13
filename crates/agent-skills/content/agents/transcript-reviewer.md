@@ -102,7 +102,8 @@ A ruling of the owner is a word on a question `primer@question-authority` reserv
 An answer of the owner on a reading or a fact, a question a source, a measurement or the record
 answers, is no ruling: check it against its source instead. Report a reading the record calls the
 owner's ruling, as `primer@labelled-items` says it must not, and report a source the record misreads
-as a reading, for the review of that source, not as a misstated ruling.
+as a reading, not as a misstated ruling. Where the source leaves the point open and the owner chose
+among the readings it permits, the choice is a ruling, and its scope is checked as below.
 
 For each ruling of the owner that the tree or the history records:
 
@@ -128,7 +129,11 @@ Findings, each with:
   caught;
 - the quotation from the transcript, and for `agent@knowledge-architect-transcript-reviewer@check-recorded-rulings` the quotation from the tree or the history;
 - where you searched, and the commands;
-- the repair: for a misstated ruling, put it to the owner; for an item with no outcome, the home
+- for a reading the record calls the owner's ruling, **minor**; for a source the record misreads,
+  **major**; neither goes to the owner, since the source answers it;
+- the repair: for a misstated ruling, put it to the owner; for a reading, the record rewritten as a
+  reading with its source, and for a misread source, the dispatcher reads the source again and
+  repairs the record; for an item with no outcome, the home
   its kind is routed to, or an issue, or a judgement that it needs nothing, which the dispatcher
   makes and reports to the owner.
 
