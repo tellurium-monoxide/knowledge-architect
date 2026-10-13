@@ -475,8 +475,8 @@ choices whose option space genuinely is closed and consequence-free.
    automated report, a prescribed change nobody ruled on — grounds
    the discussion without settling it: open a thread against its
    prescription and argue it like any proposal. A recorded decision is
-   different; it carries the owner's ruling, and the Reopening rule
-   governs it.
+   different; it carries its argument, and the owner's ruling where its
+   ground is the owner's, and the Reopening rule governs it.
 
    Grounding also runs outward, under a narrow test. Propose a
    prior-art survey only when other projects have faced THE SAME
