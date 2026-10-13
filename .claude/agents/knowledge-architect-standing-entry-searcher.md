@@ -47,7 +47,10 @@ id. The reference of an issue entry is `issue@<anchor>@<id>`, and of a tripwire 
 
 **The order is fixed, so that every search agent of one search takes the same slice**: the issue
 rows sorted by anchor, then by id; then the tripwire rows sorted by anchor, then by id, each sort in
-byte order (`LC_ALL=C sort`), since other collations order hyphenated ids differently. The issue
+byte order, since other collations order hyphenated ids differently. Write each row as its
+reference, `<kind>@<anchor>@<id>`, and sort by fields, `LC_ALL=C sort -t@ -k2,2 -k3,3`, never by
+the whole line: `-` sorts before `@`, so a whole-line sort puts an anchor that another anchor
+prefixes in another place. The issue
 listing prints its rows by kind first, so always sort it. Your group is the rows at your first to
 your last position in that order, both included.
 
