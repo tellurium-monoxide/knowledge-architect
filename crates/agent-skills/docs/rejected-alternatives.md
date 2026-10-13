@@ -26,6 +26,14 @@ sessions, that an agent left a small defect neither fixed nor recorded, as a one
 a long report, where it is easy to miss. That observation cannot be derived again in one discussion
 round, and the rule it defeats is the common one.
 
+**Every design thread closing on its argument, the owner's word only overruling** — lost to
+`design@agent-skills@owner-rules-at-a-fork`. `live`. The owner chose to keep the discussion an
+exchange in which a fork closes on the owner's word, judging that the owner's rough designs most of
+the time end up the better direction and that the exchange drives a design's quality. A doubt
+remains that closing only forks on the owner's word reaches
+`goal@knowledge-architect@agents-work-without-drift`, which
+`tripwire@agent-skills@argued-closure-reopened` watches, and this is the candidate if it fires.
+
 **Quoting the owner's words verbatim in a head whose ground is the owner's** — lost to
 `design@agent-skills@attribution-replaces-quotation`. `live`. Two sessions bent such a quotation to
 get it past the checker, one by turning spans of reference kinds still to come into placeholders,
