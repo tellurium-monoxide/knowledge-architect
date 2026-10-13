@@ -1165,9 +1165,9 @@ section's content.
 
 The third exception is an entry that the tree of a record of a deliberation does not hold, nor, for
 a commit message, its first parent's, removed or renamed by the work the record carries, or still to
-be created by it, named there by its bare slug in backticks. A record of a deliberation is where the deliberation is kept, per
-`skill@knowledge-architect-decision-recording@three-homes`: a plan document, a committed file that
-leaves once its outcomes are carried out, and a commit message. The exception
+be created by it, named there by its bare slug in backticks. A record of a deliberation is where the deliberation is kept: a plan document
+or a commit message, per `skill@knowledge-architect-decision-recording@three-homes`, and a committed
+file that leaves once its outcomes are carried out, per `primer@design-heads`. The exception
 is the owner's proposal: for such an entry the checker has nothing left to check, and what this
 head refuses is avoiding the check on a live entry, which leaves dangling references and makes
 grounding less efficient. It evades nothing, as the changelog exception does not: no entry remains,
@@ -2093,7 +2093,7 @@ judged alone. One checker per group reads the rules once for every created head 
 one per proposal reads them once per head. A retitle is judged with them, since the owner rules on
 its new title as on a created head.
 
-### Every entry an audit's application changes is judged after the application, in a second run of the axis's saved workflow `##application-judged-by-diff`
+### Every entry the application of a design-record pass changes is judged after the application, in a second run of the axis's saved workflow `##application-judged-by-diff`
 
 After the owner's ruling, the session commits its application of a pass of the design-record axis
 and runs the axis's saved workflow on it, in its mode `application`: one design-record auditor per
@@ -2116,8 +2116,8 @@ the owner stops the audit. The standing-state review before the merge reads the 
 issues against the change, not each changed entry against every rule. A dispatch by hand from the
 skill puts a step outside the saved workflow, against
 `design@agent-skills@audit-axis-runs-a-workflow`. The cross-check's reading of tripwires runs
-before the application, and can only predict what the edits will do. The run judges and applies
-nothing, so `design@agent-skills@apply-stays-with-the-session` holds.
+before the application, and can only predict what the edits will do. The run applies nothing,
+so `design@agent-skills@apply-stays-with-the-session` holds.
 
 ### The agentic-workflow axis reads every text the harness delivers to a session as an instruction, and neither the scoped CLAUDE.md files nor the registers are in its corpus `##workflow-axis-corpus`
 

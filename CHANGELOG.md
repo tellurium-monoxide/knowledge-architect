@@ -104,9 +104,10 @@ subsection is omitted.
   reports statements that fail the need test; its findings are deleted, moved to a comment of the
   source, or put to the owner, as the standard's table gives.
 - `agent-skills`, patch: a record of a deliberation, a plan document, an audit's report file or a
-  commit message, names an entry its tree does not hold, removed or renamed by the work or still to
-  be created by it, by its bare slug in backticks, instead of a description in words; the audit's
-  report file does so for the entries its pass removes, renames or creates.
+  commit message, names an entry its tree does not hold, nor, for a commit message, its first
+  parent's, removed or renamed by the work or still to be created by it, by its bare slug in
+  backticks, instead of a description in words; the audit's report file does so for the entries its
+  pass removes, renames or creates.
 - `agent-skills`, patch: a branch that builds a default put to the owner merges once the owner has
   ruled on it, an acceptance criterion awaiting the owner included; the session puts every default
   still open to the owner by the merge at the latest, and the work goes on with the default

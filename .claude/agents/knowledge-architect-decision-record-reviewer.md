@@ -109,8 +109,8 @@ ruling recorded in the plan document or the commit message is a finding.
 
 **Does the commit cite anything that does not exist, or claim what it did not do?** Slugs, paths,
 section numbers, test names, run identifiers, tool flags: resolve each one, except the bare slug of
-an entry that the commit's work removes or is still to create, which `primer@where-knowledge-goes`
-asks of a commit message. A discussion's working
+an entry that neither the commit's tree nor its first parent's holds, as
+`primer@where-knowledge-goes` asks of a commit message. A discussion's working
 vocabulary is the usual source: a thread name is not a slug anchor until something defines it. A
 sentence in the message that states what was searched, counted or renamed is checked against the
 tree as well.
