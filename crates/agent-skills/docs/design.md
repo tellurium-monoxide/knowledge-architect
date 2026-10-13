@@ -520,9 +520,9 @@ The question the test asks is the owner's proposal, made on a statement an agent
 go stale with no work in the project. Whose act counts is the owner's ruling: an agent that
 maintains the text counts, a statement for the maintainer alone is at most one sentence, and in
 the installed text it is a `%%` line, per `design@agent-skills@shipped-text-line-comments`, since
-no installing project maintains the installed text. That the primer and the root `CLAUDE.md` that
-imports it are one text, since the two are loaded together, is the owner's reading, given as such;
-that the primer's copy is the one that stays is the owner's ruling. The test's reach, stripping what
+no installing project maintains the installed text. Where the standard left it open, the owner chose
+to count the primer and the root `CLAUDE.md` that imports it as one text, since the two are loaded
+together, and ruled that the primer's copy is the one that stays. The test's reach, stripping what
 is not fully necessary at the price of some variation between its readers, is the owner's
 weighing: a statement one reader passes is met by a later pass.
 

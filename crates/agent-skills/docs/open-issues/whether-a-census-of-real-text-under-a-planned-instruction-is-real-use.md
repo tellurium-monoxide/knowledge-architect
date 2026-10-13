@@ -20,7 +20,9 @@ point open to discussion. Which is it?
 The census ran independent read-only agents, two per part of the text, each listing the statements
 that fail the test. The session compared what the two agents of a part flagged, and refined the
 test's readings on the count; the owner then reopened the readings on the argument that the test's
-aim is to strip what is not needed, not to make two readers agree. The decisions recorded rest on
+aim is to strip what is not needed, not to make two readers agree. The owner held that the bias of
+that comparison, which counted a reader's silence on a statement as disagreement, is the kind of
+reason to avoid synthetic evidence: its results are hard to judge fairly, and likely to mislead. The decisions recorded rest on
 arguments and the owner's word, and on no count of the census, so the question decides no built
 shape. Not established: how the head's "a run is admitted only when its verdict reproduces" applies
 to such a census.
