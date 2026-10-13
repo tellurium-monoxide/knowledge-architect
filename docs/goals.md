@@ -63,8 +63,9 @@ follow, so the reviews need these tools to keep up.
 The owner states the project's intent in its goals. Agents decide what the argument from the goals,
 the record and the sources the project follows settles, and record each such decision on that
 ground. What that leaves open is the owner's: a choice between shapes that all survive the
-argument, a contradiction no argument resolves, a goal to set or change, and an action that cannot
-be undone, such as a publication. A decision the owner made is recorded as the owner's. The owner
+argument, a contradiction no argument resolves, a goal to set or change, a fact only the owner
+holds, such as an intent, a plan or a weighing the owner made, and an action that cannot be undone,
+such as a publication. A decision the owner made is recorded as the owner's. The owner
 is informed of every decision, and can overrule any of them, at any time and for any reason. It is
 met while the owner rules only on what is theirs, and learns of every other decision from the
 record and the reports.

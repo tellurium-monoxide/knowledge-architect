@@ -41,8 +41,8 @@ subsection is omitted.
   re-reads the head's whole body against the change.
 - `agent-skills`, patch: a session answers from its source a question that a specification's text,
   a measurement or the argument from the goals and the record answers, cites the source and tells
-  the owner, instead of asking; the owner is asked about a goal, a contradiction no argument
-  resolves, an action that cannot be undone, and a choice between shapes that all survive the
+  the owner, instead of asking; the owner is asked about a goal, a fact only the owner holds, a
+  contradiction no argument resolves, an action that cannot be undone, and a choice between shapes that all survive the
   argument. An answer of the owner on a reading that a source contradicts gives way to the source at
   once, with the owner told, instead of being put back to the owner. A ruling of the owner whose
   premise proves false, or a contradiction met outside the task, holds the part of the work that
