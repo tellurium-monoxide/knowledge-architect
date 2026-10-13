@@ -35,6 +35,7 @@ rather than a diff (`skill@knowledge-architect-project-audit`).
 | self-consistency | does the result contradict itself. Two instructions a reader cannot both obey, a pointer into content that is not there, a statement no longer true | nearly all the time |
 | fidelity of relocation | where content moved, was anything lost? A reason dropped, a number changed, an argument compressed to an assertion | content was relocated, or forked from another source |
 | routing of knowledge | `agent@knowledge-architect-routing-reviewer` | a durable statement was added or moved |
+| agent-facing text | `agent@knowledge-architect-agent-text-reviewer` | the diff adds to or changes agent-facing text, installed or the project's own |
 | decision recording | `agent@knowledge-architect-decision-record-reviewer`. If a plan document was written, hand it to this reviewer too | a decision was made, reversed or harvested |
 | standing state | `agent@knowledge-architect-standing-state-reviewer` | at the review before a merge, since it is the standing re-entry point of every tripwire and every deferred trigger |
 | cold implementer | `agent@knowledge-architect-cold-implementer-reviewer`: can a session that did not see the discussion act on the plan document | a spec or a milestone was written under `skill@knowledge-architect-planning`, or a decided shape in one revised; that skill names the moment |

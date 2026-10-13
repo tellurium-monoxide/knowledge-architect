@@ -257,5 +257,6 @@ longer ships. When it changes any of them, in the same commit:
 ## Reviewing a configuration change {{slug:reviewing-a-change}}
 
 Dispatch a review when an instruction is written and a mechanism is in place to deliver it, per
-`skill@knowledge-architect-review`. This skill adds no axis of its own: a change to the
-configuration is a change to prose, which that skill's axes cover.
+`skill@knowledge-architect-review`. Its axis on agent-facing text,
+`agent@knowledge-architect-agent-text-reviewer`, judges the change against
+`skill@knowledge-architect-agent-configuration@admission-standard`.

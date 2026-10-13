@@ -52,7 +52,7 @@ The work of a spec, as `skill@knowledge-architect-planning@working-a-slice` says
 | R1 to R5 | labels the discussion gave the need test's readings in Round 3 and its addendum, kept here only because the owner's words quoted below use them: R1, whose act counts; R2, a reason; R3, a duplicate inside one text; R4, a definition and an example; R5, a remark about the text itself. Outside this spec a reading is named by its content |
 | Q1, Q2 | questions put to the owner in the discussion: Q1, which file held the thaum line and whether that session had loaded the agent-configuration skill; Q2, what "it" meant in the root `CLAUDE.md`'s release status |
 | the new lens | L9, the need-test lens of `agent@knowledge-architect-workflow-auditor` |
-| the new agent | the installed agent of the new review axis, `agent-text-reviewer`, installed as `knowledge-architect-agent-text-reviewer` |
+| the new agent | the installed agent of the new review axis, `agent-text-reviewer`, installed as `agent@knowledge-architect-agent-text-reviewer` |
 | the intake | `skill@klarch-retrospective-intake` |
 
 ## What the work is
@@ -551,8 +551,8 @@ existing: skill@knowledge-architect-project-audit@repair-standard, which leaves 
 existing: skill@knowledge-architect-agent-configuration@content-and-style, which leaves (its content moves)
 ```
 
-The new files are `planned@agent-skills@content/agents/agent-text-reviewer.md` and its installed copy
-`planned@agent-config@agents/knowledge-architect-agent-text-reviewer.md`.
+The new files are `path@agent-skills@content/agents/agent-text-reviewer.md` and its installed copy,
+`agent@knowledge-architect-agent-text-reviewer`.
 
 ## Decided design
 
