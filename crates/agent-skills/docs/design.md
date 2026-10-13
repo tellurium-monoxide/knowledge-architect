@@ -2352,8 +2352,10 @@ the record leave open, and `goal@knowledge-architect@agents-work-without-drift`,
 owner not answer what the record already answers. A workflow whose only authority is the owner
 sends every question to the owner, and records every answer as a ruling. In thaum, which implements a published rules text, at least three of
 the eleven questions one session put to the owner were answered by the rules, and in this
-repository the owner reported defaults put to the owner first that, the owner believes, the
-recorded design heads should answer. The nearest rival, a sentence that gives an external specification alone a rank above
+repository the owner reported many defaults put back to the owner that, the owner believes, the
+recorded design heads should answer, and which appear to have been proposed without reading those
+heads; the owner thinks the workflow sends such a question to the owner before it looks at the
+heads. The nearest rival, a sentence that gives an external specification alone a rank above
 the owner's word, loses on that second instance: the mechanism runs in a project that implements
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
 choice, since nearly every choice has a cost or can be made to have one. The rank sentence holds because an edit of a skill can bring
