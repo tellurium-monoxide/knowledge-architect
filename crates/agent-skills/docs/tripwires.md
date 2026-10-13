@@ -139,8 +139,8 @@ decision it makes fails the entry tests, and does not use the path to skip a dis
 that passes an entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, at the second
 instance.
 **Response:** reopen `design@agent-skills@bounded-path-in-design` on its three conditions.
-**Re-entry:** the decision-record review before every merge: the commit carries the proposal and
-the owner's words.
+**Re-entry:** the decision-record review before every merge: the commit carries the proposal and,
+if one came, the owner's answer.
 
 ## Guarding `design@agent-skills@a-head-is-owed-by-an-entry-test`: the owner overrules a review's verdict on a head `##a-head-verdict-is-overruled`
 
@@ -500,7 +500,6 @@ closes `argued` is what the owner would not have decided otherwise.
 **Fires when:** in one discussion, the owner reopens 2 or more threads closed `argued`, saying a
 rival was not defeated.
 **Response:** reopen `design@agent-skills@owner-rules-at-a-fork` on what defeats a rival, with the
-rejected alternative that closes every thread on its argument, and the one that sends a cost to the
-owner, among the candidates.
+rival its head names that sends to the owner every choice weighing a cost among the candidates.
 **Re-entry:** the retrospective of that session, with the limit
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.

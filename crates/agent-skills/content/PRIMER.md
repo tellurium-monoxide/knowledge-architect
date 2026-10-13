@@ -131,7 +131,8 @@ outside the task", and the session that dispatched it routes each item by this t
 
 **A turn in which the session decided something the owner could have decided ends with a section
 titled "Decided"**, before "Met outside the task" where both are owed: one line per decision, each
-with its ground, a reference or a source. A design thread closed on its argument, a default the
+with its ground, a reference or a source. A design thread closed on its argument, with the rivals
+it rules out, a default the
 record answered, a source applied over an answer of the owner, and a rewording of a tripwire's
 clauses are such decisions; an implementation choice that a commit message records is not. A
 subagent reports its decisions at the end of its report, under the same title, and the session that

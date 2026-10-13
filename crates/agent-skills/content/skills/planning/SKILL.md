@@ -41,14 +41,14 @@ audit and at each landing.
 | **transcript** | the harness's log of a session, on disk. It keeps the records from before a compaction |
 | **assembly** | writing a plan document from the discussion's transcript (`skill@knowledge-architect-planning@spec-contents`) |
 | **converged** | convergence holds, as loop step 6 of `skill@knowledge-architect-design@discussion-loop` defines it |
-| **thread** | one proposal of the discussion, carrying a state; an approved thread is a decision |
+| **thread** | one proposal of the discussion, carrying a state; a thread closed `approved` or `argued` is a decision |
 | **criterion** | what proposals were judged against: **binding** rules a proposal out, **weighed** makes failing it a cost the owner rules on |
-| **acceptance criterion** | a check on a decision of the plan, an approved thread, that only the work's built code can apply |
+| **acceptance criterion** | a check on a decision of the plan, a thread closed `approved` or `argued`, that only the work's built code can apply |
 | **material** | a finding made after a thread closed that defeats a reason the closure gave, a premise it rested on, or a criterion it claimed to meet. A finding that defeats none of these is not material. A material finding is presented once, with a default named; presenting it reopens the thread, which closes again on the owner's word, per `skill@knowledge-architect-design@decision-authority` |
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
-**The owner** is the person whose word closes a thread. Every ruling in this activity is theirs.
+**The owner** is the person whose word closes a fork, and every question `primer@question-authority` reserves to the owner. Every ruling in this activity is theirs.
 The word "plan" alone never names a document: say spec, milestone document, or plan document.
 
 ## When this skill starts {{slug:when-planning-starts}}
@@ -165,10 +165,10 @@ so in one line rather than being omitted, so a reader can tell an empty section 
 | What the work is | what exists today at each site the work touches; what is outside the work and why, each exclusion naming the work or the decision that owns it |
 | What is already decided | the recorded decisions the design rests on and does not argue again, as references; and each recorded decision the work reverses or rewrites, with every text that `{{command}} show` lists as referencing it (a tripwire, an issue, a restatement in a `CLAUDE.md` or a skill, a README, a comment), and the step, slice or harvest that judges or updates each; and each standing entry the discussion's search returned, with its outcome: how it bears on the work, or that it bears on nothing |
 | Criteria | one item per criterion, ``### <criterion> `##<id>` ``: its kind, its source and its satisfaction |
-| Threads | one item per thread, ``### <resolution> `##<id>` ``: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round |
+| Threads | one item per thread, ``### <resolution> `##<id>` ``: who proposed it and in which round, its final state, the arguments that moved it, the section that carries its shape, the durable home that will harvest it, and the owner's words that closed it, verbatim, with their round, or, for a thread closed `argued`, the argument that closed it |
 | Arguments | one item per argument of the discussion, ``### <argument> `##a<n>` ``: its round, who gave it, the threads it bears on, and its key words verbatim |
 | New names, in one place | every new name the design uses (a type, a function, a field, an event, a bound, a counter) in one fenced block with the file it goes in; a name that exists in the code is listed as existing |
-| Decided design | one subsection per approved thread: the shape, the argument, the nearest rival and the fact that defeated it |
+| Decided design | one subsection per thread closed `approved` or `argued`: the shape, the argument, the nearest rival and the fact that defeated it |
 | Mapping tables | one table per total function the code will need, over its whole domain: which existing thing becomes which new thing. Empty when the work needs none |
 | Losing alternatives | every ruled-out thread, every thread withdrawn with its defeating reason, and every superseded thread under the thread that absorbed it, each with the thread it lost to and the fact that decided it |
 | Readings | where the work reads an external specification the project implements: each reading it makes, and where it is recorded. Empty for work that reads none |
@@ -423,7 +423,7 @@ design the gap defeats.
        the audit's other answers, and the audit's commit lists it among its gaps. It is no
        converged design session, so it owes no new review of
        `skill@knowledge-architect-planning@plan-reviews`.
-     - A gap that defeats a reason, a premise or a criterion an approved thread rests on needs the
+     - A gap that defeats a reason, a premise or a criterion a thread closed `approved` or `argued` rests on needs the
        full session. Its converged design goes into the milestone's documents by the rule of `skill@knowledge-architect-planning@spec-contents`,
        and owes the reviews of `skill@knowledge-architect-planning@plan-reviews`.
 

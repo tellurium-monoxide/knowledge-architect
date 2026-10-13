@@ -11,9 +11,11 @@ Design by open, argued exchange: both parties propose, push back with
 arguments, and converge through rounds.
 **The discussion is fully symmetric; only the decision is not.**
 Both parties' proposals are held to one standard, stated in loop step 4.
-The asymmetry lives in decision authority alone: closure belongs to the
-owner's word (see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
-person whose word closes a thread.
+The asymmetry lives in decision authority alone: a fork, and every question
+`primer@question-authority` reserves to the owner, closes on the owner's word
+(see `skill@knowledge-architect-design@decision-authority`). **The owner** is the
+person whose word closes those, and can overrule any closure. A **decided thread** is one
+closed `approved` or `argued`.
 
 Terms this skill defines and then uses as vocabulary:
 
@@ -75,7 +77,7 @@ It ends the argument, but it does not end your duties around it:
   from the first, is a new finding and returns on its own; bringing
   the SAME finding back a second time is the stall. The common cases: a
   concrete failure the owner has not acknowledged, an infeasibility, a
-  contradiction with an approved thread, a stronger alternative the
+  contradiction with a decided thread, a stronger alternative the
   discussion has never seen (whether an alternative is genuinely new
   is decided by the Reopening rule's record test). Present a finding
   at the top of the turn it appears in — before the delta, before the
@@ -83,7 +85,7 @@ It ends the argument, but it does not end your duties around it:
   ("unless you say otherwise, I build the decided shape"), and
   proceed unless the word comes. Four cases defeat that default, all
   narrow. When the finding defeats a premise of a ruling the owner
-  gave, or is a contradiction with another approved thread that no
+  gave, or is a contradiction with another decided thread that no
   argument resolves, it is a contradiction, per
   `primer@owner-word-premise`: the part of the work that rests on it
   is held until the word comes, and the rest proceeds on the default.
@@ -105,8 +107,8 @@ It ends the argument, but it does not end your duties around it:
   the thread, with the finding noted on its ledger line; it closes again
   as any thread does, on its argument or, at a fork, on the owner's
   word, and until then the work goes
-  on under the default above. If no word has come by the
-  next checkpoint — or the end of the current change, whichever comes
+  on under the default above. Where it waits on the owner's word and no
+  word has come by the next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
   unacknowledged, and is carried into the plan document that
   `skill@knowledge-architect-planning` writes from the ledger, among its
@@ -123,7 +125,7 @@ It ends the argument, but it does not end your duties around it:
   re-arguing it after their informed ruling is not rigor. When you
   comply while still disagreeing, record the disagreement as a parked
   thread carrying both a tripwire and a re-entry point (a declared
-  exception to owner-only closure — see Who moves what), and note the
+  exception to closure by the owner's word — see Who moves what), and note the
   acknowledged consequence on the ledger, so that the plan document, or
   the commit message on the in-change path, carries it and the next session
   knows the decision was informed.
@@ -157,7 +159,7 @@ evidence bring, which nobody knows in advance.
   that earns none, of the commit that implements it, or, where neither
   exists, where `skill@knowledge-architect-review@what-review-leaves`
   puts a record carried by a message: every thread with its final state, the
-  owner's ruling on each closure, attributed to the owner with what it
+  ground of each closure: the owner's ruling, attributed to the owner with what it
   reaches, as `primer@design-heads` says, the rivals that lost with
   their reasons, and the owner's rulings on tripwires and acceptance criteria. The decision is
   recorded at that landing like any other, under
@@ -209,8 +211,8 @@ that defeats it, the consequences the owner must know, and the default, which yo
 work proceeds on it unless the owner answers otherwise, a part that cannot be undone waiting for the
 owner's word, per `primer@question-authority`.
 A reply that brings an argument, a new shape or a doubt returns the work to the loop, on the
-in-change path or the full path. The commit that implements bounded work carries the proposal and
-the owner's answer, attributed to the owner, as `primer@design-heads` says.
+in-change path or the full path. The commit that implements bounded work carries the proposal and,
+if one came, the owner's answer, attributed to the owner, as `primer@design-heads` says.
 
 Misclassifying costs in both directions: a bounded problem does not need a discussion, and an open
 one needs argument. Territory that looks technical is often not bounded (error handling can turn out
@@ -261,7 +263,7 @@ threads, new arguments, and proposals that supersede settled points
 enter freely at any time.
 
 **Naming.** A thread gets a short content-named slug in the grammar of an
-entry id, `[a-z0-9]+(-[a-z0-9]+)*`, since an approved thread whose
+entry id, `[a-z0-9]+(-[a-z0-9]+)*`, since a decided thread whose
 decision earns a design entry gives that entry its slug, or a slug and a
 stated pair, per `primer@design-heads`. Name the thread by the decision it
 would record if approved, not by the change it proposes: #retention-window,
@@ -351,12 +353,9 @@ When no rival stands — the alternatives are recorded `ruled-out`, and
 raising one again would be a stall and inventing one would be padding
 — there is no fork to present, and the closing move is not a question
 at all: the thread closes `argued`, below. A question inviting assent to
-the only option on the table is approval-seeking. **Only a fork goes to
-the owner**: two or more shapes that meet every binding constraint,
-with no fact defeating either, so that choosing between them weighs a
-cost or a scope no goal or decision ranks. A cost alone makes no fork,
-per `primer@question-authority`. Put a fork as the argued fork: each
-surviving shape, the binding constraints it meets, and what it trades.
+the only option on the table is approval-seeking. **A thread whose question
+`primer@question-authority` gives the owner, a fork among them, closes on the
+owner's word**, a fork put as the argued fork that section describes.
 
 Closure by you, not the owner, exists in exactly three declared cases,
 each announced in the delta:
@@ -388,9 +387,9 @@ each announced in the delta:
   premortem's sequence, and written as
   `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
   `superseded` is not a fourth case, though it is easily read as one:
-  threads absorbed by a proposal close on the owner's word approving that
-  proposal by name, and until it comes the absorbed threads keep their
-  state. A displayed checkpoint showing the absorbing thread and the
+  threads absorbed by a proposal close when that proposal closes, on the
+  owner's word approving it by name or `argued`, and until then the
+  absorbed threads keep their state. A displayed checkpoint showing the absorbing thread and the
   threads it absorbs satisfies that by-name requirement, for the reason
   the batch confirmation works there at all: the table is what makes an
   otherwise vague word specific. Away from a displayed table, the word
@@ -411,7 +410,7 @@ the owner says otherwise, because a decision binds only as a presumption
 that a better argument may rebut, per `primer@goals-bind`.
 
 Each criterion carries a satisfaction line, and this is what the owner
-reads at convergence: **met**, naming the approved threads that meet
+reads at convergence: **met**, naming the decided threads that meet
 it; **unmet-and-accepted**, which needs the owner's word naming that
 criterion rather than a blanket confirmation; or **unmet**.
 `unmet-and-accepted` is available to a WEIGHED criterion only. A
@@ -626,7 +625,7 @@ choices whose option space genuinely is closed and consequence-free.
    both). See below.
 
 7. **Premortem before convergence**: assume the design shipped and failed.
-   Name the most plausible causes, each naming the approved thread it stresses.
+   Name the most plausible causes, each naming the decided thread it stresses.
    A premortem whose causes stress no decided thread is not finished.
 
    During this step, it is possible for a new MATERIAL finding to surface against
@@ -689,7 +688,7 @@ rulings verbatim, the losing alternatives with their reasons, and the
 tripwires the premortem produced.
 The decision record is the durable harvest of that account, written when
 the work that implements each decision lands, under
-`skill@knowledge-architect-decision-recording`: an approved thread becomes a
+`skill@knowledge-architect-decision-recording`: a decided thread becomes a
 design entry when it earns one, under its own slug or under one that names
 the decision with the pair stated, per `primer@design-heads`, and a shape that lost
 to an argument earns a rejected-alternative entry only when that skill's

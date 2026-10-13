@@ -28,11 +28,12 @@ round, and the rule it defeats is the common one.
 
 **Every design thread closing on its argument, the owner's word only overruling** — lost to
 `design@agent-skills@owner-rules-at-a-fork`. `live`. The owner chose to keep the discussion an
-exchange in which a fork closes on the owner's word, judging that the owner's rough designs most of
-the time end up the better direction and that the exchange drives a design's quality. A doubt
-remains that closing only forks on the owner's word reaches
-`goal@knowledge-architect@agents-work-without-drift`, which
-`tripwire@agent-skills@argued-closure-reopened` watches, and this is the candidate if it fires.
+exchange in which the agent does not make every choice, judging that the owner's rough designs most
+of the time, though not always, end up the better direction, and that the exchange drives a
+design's quality; the fork rule keeps that exchange where two shapes survive. A doubt remains that
+keeping forks with the owner's word reaches `goal@knowledge-architect@agents-work-without-drift`,
+which `tripwire@agent-skills@record-answered-questions-reach-the-owner` watches, and this is the
+candidate if it fires.
 
 **Quoting the owner's words verbatim in a head whose ground is the owner's** — lost to
 `design@agent-skills@attribution-replaces-quotation`. `live`. Two sessions bent such a quotation to
