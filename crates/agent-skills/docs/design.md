@@ -825,8 +825,8 @@ truly thinks that the discussion format drives the improvement and the quality o
 rival, every thread closing on its argument, gives up that exchange where it matters, at a fork. A
 second rival, the owner closing any thread whose choice weighs a cost, closes every thread on the
 owner's word, since nearly every choice has a cost or can be made to have one. The rule is the
-design skill's tie for the owner at loop step 5 and its "no fork where no rival stands", joined to
-closure. The
+design skill's tie for the owner at loop step 5 and its rule that no fork remains where no rival
+stands, joined to closure. The
 risk, a session judging a rival defeated on a weak argument, is what the checkpoint's contest and
 `tripwire@agent-skills@argued-closure-reopened` watch.
 
@@ -834,15 +834,14 @@ risk, a session judging a rival defeated on a weak argument, is what the checkpo
 
 The bounded path's one message names its default, which the session builds: the owner's answer
 stops or redirects it, and a part that cannot be undone waits for the owner's word, per
-`skill@knowledge-architect-design@bounded-work`. A default whose every premise comes from the
-record, a measurement or a source is the session's decision in the same way, and the turn lists it
-under "Decided", per `design@agent-skills@decisions-reported-to-the-owner`.
+`skill@knowledge-architect-design@bounded-work`, and the turn lists it under "Decided", per
+`design@agent-skills@decisions-reported-to-the-owner`.
 
 It serves `goal@knowledge-architect@the-owner-decides`, under which the record settles what such a
 default decides, a bounded proposal holding no fork, while the owner, told in the one message,
 overrules it at any time. The nearest rival, the wait for the owner's word, sends the owner defaults
-the record answers: the owner reported such defaults put to the owner before the recorded design
-heads were read, so that the owner pointed the agent to the heads. It is a delivery of
+that, the owner believes, the recorded design heads should answer: the owner reported such defaults
+put to the owner before the heads were looked at, so that the owner pointed the agent to them. It is a delivery of
 `design@agent-skills@questions-go-to-their-authority` for the bounded path, and a head of its own
 because its rival, the wait, is another than that head's.
 
@@ -2350,7 +2349,7 @@ repository the owner reported defaults put to the owner first that, the owner be
 recorded design heads should answer. The nearest rival, a sentence that gives an external specification alone a rank above
 the owner's word, loses on that second instance: the mechanism runs in a project that implements
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
-choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
+choice, since nearly every choice has a cost or can be made to have one. The rank sentence holds because an edit of a skill can bring
 back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
 owner thought that a list keeping only goals, contradictions and irreversible actions with the
 owner left too large a scope to agents. The fork is the fusion of that list with one that kept scope and weighing with the
