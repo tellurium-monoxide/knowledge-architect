@@ -42,5 +42,5 @@ plain enough to follow without guessing what it means.
 
 The sentence rewritten so that a criterion derived from a decision binds until the decision is
 reversed, by the session where its argument is defeated and no fork or owner's ground stands, or
-by the owner otherwise. The rewrite passes the standard that `path@agent-skills@CLAUDE.md` names under "Editing
-an installed skill or agent".
+by the owner otherwise. The rewrite is written as `path@agent-skills@CLAUDE.md`, "Editing an installed skill or
+agent", says.

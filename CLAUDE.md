@@ -68,8 +68,8 @@ This section is a restatement. The decisions live in the core's design home,
 - **The manifest is `path@knowledge-architect@knowledge-architect.toml`.** It declares the
   Components, the locations and the registers. Nothing about this repository is compiled into the
   checker, per `design@core@nothing-of-a-project-is-compiled-in`. Its pin, `checker-version`, is
-  `"self"`, which the checker accepts only in the tree it is built from, so no version is pinned
-  here.
+  `"self"`, which the checker accepts only in the tree it is built from, per
+`design@core@checked-sentinel-values`, so no version is pinned here.
 
 - A **register** is one kind of recorded thing together with its storage. Ten are built in.
   Every Component carries four of them: `design`, `goal` and `tripwire` are **heading
@@ -462,8 +462,9 @@ unshipped, per `design@core@owned-namespace-check`, and the install deletes it.
 **The findings of both files of `skill@knowledge-architect-retrospective`, and those of the
 agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text, are handled
 here as `design@knowledge-architect@workflow-findings-stay-here` says, read whole.** Each repair of
-an audit's finding on the installed text, its proposal and its check included, passes the standard as
-`path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", says, read whole, per that head. The
+an audit's finding on the installed text, its proposal and its check included, is written as
+`path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", says, read whole, per that
+head. The
 audit's checker-rules auditors, L7, also read the checker's design home, `register@core@design`,
 beside its README: the installed lens names the README alone, since an adopting project holds no
 design home of the checker, and here the checker's rules are decided in that home.

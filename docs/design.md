@@ -403,7 +403,7 @@ only carry the findings back to the session that found them. Each repair of such
 proposal and its check included, is an edit of the installed text, so it passes the standard that `path@agent-skills@CLAUDE.md` sends every such edit
 through. The installed text holds no branch for
 the project that publishes it, as the owner stated of this repository's use of the workflow for its
-own text: "I don't want to cater too much to this use case in the installed files". So the root
+own text: the owner did not want the installed files to cater too much to that use. So the root
 `CLAUDE.md` states this case, in `instructions@repository-skills`.
 
 ### Each finding of a received workflow file gets an outcome the owner rules, in a committed analysis that leaves when its last outcome is carried out `##committed-findings-analysis`
@@ -428,17 +428,16 @@ on a file whose findings all end in no change: that commit changes no file, and 
 drops a commit that changes no file, per
 `design@knowledge-architect@a-record-rides-on-a-commit-that-changes-a-file`.
 
-### The intake of received findings judges a fix of agent-facing text by the standard every writer and judge of that text applies `##intake-shares-the-repair-standard`
+### The intake of received findings judges a fix of agent-facing text by the standard every writer and judge of that text applies `##intake-shares-the-admission-standard`
 
 `skill@klarch-retrospective-intake` judges a finding's fix by
-`skill@knowledge-architect-agent-configuration@admission-standard`, read whole where it judges a
-finding's kind and where it shapes a fix: the need test, the evidence an addition needs and the
+`skill@knowledge-architect-agent-configuration@admission-standard`, read whole where it shapes a fix, and by its lapse rule where it judges a finding's kind: the need test, the evidence an addition needs and the
 kind of a gap, the lapse rule, the repair by cause with its instruction count and net growth, and
 the record check. What admits a finding is the intake's own: a real session behind each finding,
 and the owner's ruling on every finding.
 
-The direction is the owner's: the owner asked that the intake analyse findings and repairs on the
-same standard as the workflow. The evidence that admits a finding differs between an audit and the
+The direction is the owner's: the owner judged it important, as the owner's view, that the intake
+analyse findings and repairs on the same standard as the workflow. The evidence that admits a finding differs between an audit and the
 intake: the intake has a real session behind each finding, as
 `design@agent-skills@behaviour-additions-need-real-use` asks of an addition, and an audit never has
 one. The worth of a fix and its shape do not differ, since both decide edits to the same text at the

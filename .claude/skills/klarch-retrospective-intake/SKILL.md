@@ -115,9 +115,8 @@ The order is a suggestion; the content is not.
   - no change.
 
   The fix is shaped, and read against the record, as
-  `skill@knowledge-architect-agent-configuration@admission-standard` says, read whole: it is the
-  standard of every text that writes or judges agent-facing text, per
-  `design@knowledge-architect@intake-shares-the-repair-standard`.
+  `skill@knowledge-architect-agent-configuration@admission-standard` says, read whole: it is the standard of every actor that writes or judges agent-facing text, per
+  `design@knowledge-architect@intake-shares-the-admission-standard`.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
   - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration` for
     this repository's own configuration, and for the installed text, at its source under
