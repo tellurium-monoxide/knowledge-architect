@@ -102,7 +102,7 @@ no plan document schedules the work that would, open a `todo` issue for that wor
 - **The owner states a new purpose, abandons one, or rewords one.** A goal is added or reworded
   through `skill@knowledge-architect-goal-setting@drawing-out-intent`. When one is removed, every reference to it dangles, and `{{command}} check` lists each
   one: each is a text that derived something from the goal, and is read again.
-- **A decision conflicts with a goal**, and the primer's rule sends the conflict to the owner. The
+- **A decision conflicts with a goal**, and the primer's rule, `primer@goals-bind`, sends the conflict to the owner. The
   goal prevails until the owner rules; if the ruling changes the goal, it changes through `skill@knowledge-architect-goal-setting@drawing-out-intent`.
 
 The goals of one round of rulings are written in one commit, whose message records each ruling,
