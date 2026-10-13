@@ -67,8 +67,7 @@ session writes them, and this procedure does not depend on a plan document exist
 
 **Every claim's test must be shown to fail against a plausible wrong implementation.** A test
 written first can still be written to the implementation its author already has in mind. It then
-passes on its first run, and nothing was ever at risk. Two ways to show it, and the second is not a
-lesser one:
+passes on its first run, and nothing was ever at risk. Two ways to show it:
 
 - **Observed failing before its code exists.** Available when the answer is not yet known.
 - **A recorded mutation check.** When the trap is known before either the test or the code is
@@ -102,7 +101,7 @@ the main tree would not run the other's build, but each checkout would rebuild a
 cargo test -p <package>                # the baseline: it passes over the unmutated work
 # apply the mutation, then
 git diff --quiet && { echo "NOT APPLIED"; exit 1; }   # an empty diff tested nothing: stop
-git diff                               # shows the mutation alone: the record quotes its - and + lines
+git diff                               # shows the mutation alone
 cargo test -p <package> --no-run       # it compiles, or it proves nothing
 cargo test -p <package> --no-fail-fast # the test under check fails: caught; it passes: SURVIVED
 ```
@@ -132,14 +131,12 @@ shortening it.
 `-` and `+` lines `git diff` printed, the file and the function or type that holds them, and the
 verdict, naming the failing test for a catch.
 
-The property being bought is that **the test discriminates**. Watching it fail first is one way of
-learning that. A claim already settled by a probe beforehand enters as a regression guard, and is
-recorded as such.
+A claim already settled by a probe beforehand enters as a regression guard, and is recorded as
+such.
 
 ### Unreachable states, and which of them earn a test
 
 A guard, a refusal or an `expect` often stands against a state nothing can currently produce.
-**Three kinds, and only the third owes a test.**
 
 - **The language or a format makes it unreachable**, and stays so for the life of the project: a
   type that cannot hold the value, or a format the parser guarantees. No test: the state would have

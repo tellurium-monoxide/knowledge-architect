@@ -6,8 +6,6 @@ tools: Read, Grep, Glob, Bash
 
 # Knowledge-routing review
 
-You are one axis of a review, focused on a specific scope.
-
 Scope: **where** each durable statement landed, and whether the pointers between statements resolve.
 **Not** whether the design is right, whether the code works, or whether a decision earned recording
 at all. Those are other axes.
@@ -42,7 +40,7 @@ reverse is a family of pointers about to dangle.
 %% The table below restates `design@core@an-unresolved-reference-is-reported`, `design@core@candidate-rule-and-retired-forms`, `design@core@every-path-names-its-anchor`, `design@core@trailing-slash-claims-directory`, `design@core@a-slug-elsewhere-defines-nothing`, `design@core@an-entry-is-a-heading-at-the-register-level`, `design@core@an-entity-belongs-to-its-anchor` and `design@core@links-are-navigation-rows`.
 | failure | what it actually means |
 | --- | --- |
-| `is referenced and` … `defines no` | a pointer into nothing: the anchor carries the register and no entry there has that id. Cheap to create and expensive to notice later. Define it where the decision is made, or point at the entry that exists. |
+| `is referenced and` … `defines no` | a pointer into nothing: the anchor carries the register and no entry there has that id. Define it where the decision is made, or point at the entry that exists. |
 | `names` … `which is no anchor of this project`, or `which carries no` … `register` | the wrong segment of the reference: an anchor nobody declares, or one that does not carry that register. The finding lists the anchors that would resolve. |
 | `opens with` … `an anchor, where the kind goes`; `is the retired slug reference form` | a pointer in a retired grammar. It resolves to nothing until it is rewritten as `<kind>@<anchor>@<id>`. |
 | `is shaped like a path and names no anchor` | an unanchored path in prose, checked by nothing until it is anchored. |
@@ -61,15 +59,13 @@ segment the tree does not hold is silent too: a typo in that segment, a pointer 
 directory, a pointer written after its directory left. So is a `<word>#<id>` form whose id is no
 entry and whose word is neither an anchor nor a kind, such as a copied slug whose entry has
 left. A reference in a file or a part of a file the checker does not read, per
-`primer@where-knowledge-goes`, is read by nobody but you. Those are yours to resolve by reading,
-and they are where this axis's real failures survive.
+`primer@where-knowledge-goes`, is read by nobody but you. Those are yours to resolve by reading.
 
 ## The predicates {{slug:routing-predicates}}
 
-Each has a named consequence when the answer is wrong. The table they are judged against is the
-knowledge table, which maps each kind of statement to its one home: the workflow's rows in the
-installed primer, which the root `CLAUDE.md` imports, and the project's own rows in the root
-`CLAUDE.md`. Read both before judging.
+The table they are judged against is the knowledge table, which maps each kind of statement to its
+one home: the workflow's rows in the installed primer, which the root `CLAUDE.md` imports, and the
+project's own rows in the root `CLAUDE.md`. Read both before judging.
 
 **Does an argument have two homes?** What is bound is the *why*: an argument, a losing argument, the
 evidence a decision rests on. Added to a second document it becomes a copy, and the copy a reader
@@ -115,8 +111,7 @@ references an entry, which `{{command}} show` computes.
 ## Reporting {{slug:how-to-report}}
 
 Return findings, each naming the file and the exact reproduction, plus what the mechanical run
-returned. **If the axis is clean, say so plainly**: that is a real result, and a report padded to
-look productive costs the dispatcher a verification pass per invented finding. Do not report style
-preferences, and do not review outside this axis.
+returned. **If the axis is clean, say so plainly**: a report padded to look productive costs the
+dispatcher a verification pass per invented finding. Do not report style preferences.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
 to route, per `primer@met-outside-the-task`; do not review it.

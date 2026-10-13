@@ -5,9 +5,8 @@ This project keeps its design record with knowledge-architect. Its documents are
 register declares, and every generated listing is current. A register is one kind of record, such
 as the design decisions or the issues, and its home is the file or the directory that stores its
 entries; the two words stay apart because a rule can need both, as "a slug is defined in its
-register's home". This primer is installed, and the
-project's root `CLAUDE.md` imports it. It holds what every session needs and no installed skill
-delivers. The project's own rules are in its root `CLAUDE.md`, beside this primer, and add to it.
+register's home". This primer is installed, and the project's root `CLAUDE.md` imports it. The
+project's own rules are in its root `CLAUDE.md`, beside this primer, and add to it.
 
 ## Goals bind; decisions bind as a presumption `##goals-bind`
 
@@ -17,7 +16,7 @@ miss a detail or an implication, more often as the volume of agentic work grows.
 as a presumption, which a better argument may rebut, and reversing one is an ordinary move with a
 procedure (`skill@knowledge-architect-decision-recording`). **When a decision conflicts with a goal,
 the likely cause is that the owner missed the conflict: the goal prevails, and the conflict goes to
-the owner.** It is not resolved by following the decision.
+the owner.**
 
 ## A question goes to the authority that answers it `##question-authority`
 
@@ -35,7 +34,7 @@ cost alone makes no fork: a shape that fails a goal, or loses to a fact, is out,
 save. A question put to the owner names the authorities consulted and, for a fork, each surviving
 shape and what it trades. Which further actions a project reserves to its owner, such as a merge,
 is the project's to state. **Where an installed instruction sends to the owner a question this
-section gives the session, this section prevails**, as a goal prevails over a decision.
+section gives the session, this section prevails**.
 
 ## The owner's word and its premise `##owner-word-premise`
 
@@ -88,9 +87,8 @@ to judge is never room to act against an instruction.
   argument defeated, the head's
   reversal goes to `skill@knowledge-architect-design`, and to the owner where reversing it is a
   fork or the head's ground is the owner's; the part of the task that rests on the point in
-  divergence waits for that answer, and the rest of the task goes on. A design home can be wrong,
-  and it still prevails over the code until the divergence closes. It closes when the code changes
-  to meet the head, or when the head is reversed under
+  divergence waits for that answer, and the rest of the task goes on. The divergence closes when
+  the code changes to meet the head, or when the head is reversed under
   `skill@knowledge-architect-decision-recording`; it never closes by following the code. Work on
   that point that goes on meanwhile builds on the head.
 - **A reason recorded at the code** (an inline comment saying why the code is shaped so, or the
@@ -227,10 +225,9 @@ content.
 ## Design heads `##design-heads`
 
 A design head is an entry of a design home: a level-three heading that states a decision, and its
-body. This section holds what earns a head, what a head holds and how it is shaped. Read it to read
-a head, to tell in advance whether a change bears on one, and before writing or judging one;
-`skill@knowledge-architect-decision-recording` holds the procedures of recording, and is loaded
-before any write into a design home.
+body. Read this section to read a head, to tell in advance whether a change bears on one, and
+before writing or judging one; `skill@knowledge-architect-decision-recording` holds the procedures
+of recording.
 
 ### What earns a head
 
@@ -265,15 +262,14 @@ records dozens per unit of work stops being readable and stops being ranked.
    owner's answer, as the next section says.
    With no answer, the decision earns no head by this test.
 
-Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
-choice that turns on what the specification means, or on how the tool behaves, is expensive to get
-wrong and expensive to derive again, and it is visible: the argument quotes the specification or
-the documentation, or names the measurement.
+A choice that turns on what the specification means, or on how the tool behaves, is expensive to
+get wrong and expensive to derive again, and it is visible: the argument quotes the specification
+or the documentation, or names the measurement.
 
 Otherwise it belongs in an **inline comment at the code it explains, plus the commit message**.
-That is not a lesser home: the comment is read by every session that touches the code, which a head
-is not, and the commit carries the argument. A reason that fits in one comment at one site, about
-that site's own code, fails test 2.
+The comment is read by every session that touches the code, which a head is not, and the commit
+carries the argument. A reason that fits in one comment at one site, about that site's own code,
+fails test 2.
 
 **The backstop. A decision that creates a head, contradicts a statement of one, its argument
 included, or adds a member the head's argument does not cover, goes to the design skill before its
@@ -303,8 +299,9 @@ design skill, as the backstop says.
 **The standing argument** is every premise whose failure would reopen the decision: the goal it
 derives a constraint from and a decision of another Component it depends on, as references; the
 measurement it rests on, with the command that takes it again; the fact that defeated its nearest
-rival. **The test: if this premise turned false, would the decision have to be argued
-again? If yes, it is in the head.** If no, it is deliberation.
+rival. A constraint from a goal binds outright, where one from a decision is a presumption, and the
+reference is what tells a reader which. **The test: if this premise turned false, would the
+decision have to be argued again? If yes, it is in the head.** If no, it is deliberation.
 
 **A head stands on its argument, and cites the owner only for what came from the owner.** Most
 decisions are proposed, argued over their costs and rivals, and approved by the owner. The head
@@ -343,12 +340,7 @@ for, and how it is arranged in order to get there, belongs here. How a particula
 work belongs in a comment at that function. The test: **if changing a piece of code would force a
 change to the design home, it is design; if the design home would be unaffected, it is a comment.**
 
-**Name what the argument depends on.** The goal a constraint is derived from,
-`goal@<component>@<slug>`: a constraint from a goal binds outright, where one from a decision is a
-presumption, and the reference is what tells a reader which. A decision of another Component the
-head depends on. **A reference is a claim that this head is revisited when that entry changes**,
-so a reference whose entry's change would leave the head unaffected is not written. Never list what
-cites this head: `cargo klarch show design@<component>@<slug>` computes it.
+Never list what cites a head: `cargo klarch show design@<component>@<slug>` computes it.
 
 A decision that relies on the checker of this workflow states that it relies on the checker
 working as intended. It cannot reference the checker's own decisions: a reference resolves only

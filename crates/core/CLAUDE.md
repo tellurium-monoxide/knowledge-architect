@@ -11,8 +11,7 @@ which is its crate's `CARGO_MANIFEST_DIR`, and the same function in each extensi
 so that the string literals of the tool's own source are read as data, per
 `design@core@checker-source-literals-are-data`. Each crate's own
 directory and package name are compiled in too, so a binary built from another checkout of the
-tool is refused, per `design@core@a-foreign-build-is-refused`. That is a fact about the tool,
-not about any tree.
+tool is refused, per `design@core@a-foreign-build-is-refused`.
 
 **`git` 2.36 or newer is a hard dependency, and every invocation lives in
 `path@core@src/git.rs`.** The floor is `cat-file --batch -z`, which `commits`
@@ -45,11 +44,11 @@ reaches some helpers, per `issue@core@the-tests-read-the-machine-s-git-configura
 
 A test that deletes or rewrites a fixture file after the first add stages again, or git's listing
 still names what the working tree no longer holds. The in-place tests under
-`path@core@tests/projects/` need none of this: they build under this repository's own worktree,
-so a mock file is walked because this repository's listing holds it. **Staging is not what puts
-it there.** The listing is `--cached --others --exclude-standard`, so a new fixture file is
-walked the moment it exists, tracked or not; what removes one is an ignore rule, and what a
-deletion needs is staging, or the path stays in the listing with no bytes behind it.
+`path@core@tests/projects/` need none of this: they build under this repository's own worktree, so a
+mock file is walked because this repository's listing holds it. The listing is
+`--cached --others --exclude-standard`, so a new fixture file is walked the moment it exists,
+tracked or not; what removes one is an ignore rule, and what a deletion needs is staging, or the
+path stays in the listing with no bytes behind it.
 
 **Five mock projects for the core binary, and each is for one thing.** They declare no table the
 core does not own. The head comment of each `knowledge-architect.toml` says what its project

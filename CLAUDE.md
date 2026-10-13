@@ -2,8 +2,8 @@
 
 @.claude/knowledge-architect/PRIMER.md
 
-The line above imports the installed primer of the workflow: its directives and the workflow's
-rows of the knowledge table. This file adds what is this repository's own.
+The line above imports the installed primer of the workflow: its directives. This file adds what
+is this repository's own.
 
 A documentation checker and an agent workflow, shipped as Rust crates. The checker verifies that a
 project's documents stay consistent with its code and with each other, through declared registers
@@ -43,7 +43,7 @@ rule restates `skill@knowledge-architect-design@discussion-overview`, not that s
 - No undefined metaphors, no aphorisms. The meaning is always carried explicitly: a metaphor that
   names a defined concept, such as a tripwire, is vocabulary once defined.
 - Prefer explicit quantities, units and invariants over qualitative wording.
-- Readers are non-native speakers. Keep that in mind.
+- Readers are non-native speakers.
 
 ### When presenting content to the user
 
@@ -52,9 +52,6 @@ Answer with precise content, not vague or ambiguous descriptions.
 - For prose, a verbatim is better than a reformulation.
 - For code, an example or a snippet is better than a description of the effect.
 
-Verify every claim you present to the user, per the subsection "Verify a claim before writing it" of
-`instructions@verify-before-relying`.
-
 State the consequences of a request explicitly. Never assume the user has considered all of them.
 
 ### When writing into durable files in the project
@@ -62,20 +59,17 @@ State the consequences of a request explicitly. Never assume the user has consid
 - Prefer lists and tables over long prose paragraphs when listing different items.
 - **Current reality only**: no dates in a head, no changelogs outside CHANGELOG.md, no "formerly
   known as".
-- Avoid numbers that may go stale, except in issues that follow the cold-reader standard of the
-  `skill@knowledge-architect-issue-tracking` skill.
 
 ## Mechanical validation of documents `##mechanical-validation`
 
-The project keeps a precise record of decisions, their arguments, the alternatives that lost, and
-what is still open. The checker verifies that record mechanically, and this repository is checked
-by its own checker. This section is a restatement. The decisions live in the core's design home,
-`register@core@design`, under the heads named below, and where the two disagree those heads
-win.
+This section is a restatement. The decisions live in the core's design home,
+`register@core@design`, under the heads named below, and where the two disagree those heads win.
 
 - **The manifest is `path@knowledge-architect@knowledge-architect.toml`.** It declares the
   Components, the locations and the registers. Nothing about this repository is compiled into the
-  checker, per `design@core@nothing-of-a-project-is-compiled-in`.
+  checker, per `design@core@nothing-of-a-project-is-compiled-in`. Its pin, `checker-version`, is
+  `"self"`, which the checker accepts only in the tree it is built from, so no version is pinned
+  here.
 
 - A **register** is one kind of recorded thing together with its storage. Ten are built in.
   Every Component carries four of them: `design`, `goal` and `tripwire` are **heading
@@ -170,7 +164,8 @@ win.
   - A span with no space whose head before the first `@` is a kind or an anchor is a candidate.
     Any other span holding an `@`, such as an email address or a git remote, is silent. A typo
     inside the kind is silent too.
-  - **A reference is live wherever it is prose, fenced blocks included, for every kind.** An
+  - **A reference is live wherever it is prose, in Markdown and in Rust source, a Rust comment
+    and fenced blocks included, for every kind.** An
     illustration that must not resolve writes a placeholder in angle brackets, as in
     `<kind>@<anchor>@<id>`, which is not a candidate. A string literal bound to a name in Rust
     yields no reference. In the checker's own source every literal is data, bound or not, per
@@ -255,10 +250,7 @@ unaffected is decoration, and it costs a repair for nothing.
 | a commit message | every entry it opens, closes, reverses or argues from |
 | a restatement of a directive sentence | its home |
 
-A reference in prose is checked in Markdown and Rust source, a Rust comment and a fenced block
-included, per `primer@where-knowledge-goes`. So a Rust comment that names an issue is reached when
-the issue closes. Never keep a hand-written
-list of what references an entry: `show` computes it.
+A Rust comment that names an issue is reached when the issue closes.
 
 ### Plan documents
 
@@ -275,8 +267,6 @@ A document can describe the shape the code was committed at rather than the shap
 the core's documents measured in another project, thaum, names thaum as its source.
 Confidence is not correlated with correctness: the more obvious a behaviour looks, the less likely
 anyone has checked it.
-
-**Three classes of statement, and the instruction differs.**
 
 - **Built intent**: the root's design home, and a Component's design home, are authority over the
   code until a divergence closes, per `primer@intent-and-claims`, read whole.
@@ -313,8 +303,8 @@ failing test. Build it rather than trading intuitions.
 
 ### Verify a claim before writing it
 
-The same principle, pointed the other way. **A checkable claim is checked before it is written
-down.** Check each of these against the tree at the moment you write the sentence.
+**A checkable claim is checked before it is written down.** Check each of these against the tree at
+the moment you write the sentence.
 
 - **Every number comes from a measurement you can point to, with the machine named.** Re-take a
   figure whose instrument you changed in the same commit.
@@ -363,12 +353,11 @@ next to what you are editing. What already exists in the repository is evidence 
 not of what should be done.
 
 - **"The existing ones do it this way" is not an argument, and neither is how many of them do.**
-  Prevalence records history, not endorsement. Where an instruction here and the surrounding
-  practice disagree, the instruction wins. If you think the instruction is wrong, say so and argue
-  it. Changing an instruction is a normal move. Silently following the older practice is not.
+  Where an instruction here and the surrounding practice disagree, the instruction wins. If you
+  think the instruction is wrong, say so and argue it. Changing an instruction is a normal move.
+  Silently following the older practice is not.
 - **Match local idiom only where the instructions are silent.** Naming and the shape of the
-  surrounding prose are worth matching, so a diff stays readable. An instruction stated here is not
-  idiom, and no quantity of surrounding text overrides it.
+  surrounding prose are worth matching, so a diff stays readable.
 - **Do not spread non-conformance while working around it.** Starting from an existing document or
   entry copies its defects with it. Read what you copied against the instructions before extending
   it.
@@ -440,20 +429,17 @@ What this project declares conformant, and what it exempts, is the manifest at t
 **Which gates you owe depends on what you touched.** Anything that writes a reference or touches a
 register entry owes `cargo klarch check`. Any change to the Rust source owes fmt, clippy and the
 test suite. Every commit owes `commits`: its message and its tree. **Run
-`cargo klarch check --staged` after staging and before each commit, which judges the tree the
-commit will record, and `cargo klarch commits origin/main..HEAD` after it, which judges the
-message's pointers.** The staged check is a restatement; its home is
-`design@agent-skills@staged-check-before-each-commit`. Before the commit, list every factual claim
-its message makes and check each one, per `instructions@verify-before-relying`: `commits` reads none
-of them. The range is the whole branch because this repository refuses citations of its
-branch's own commits by SHA, and `commits` sees a citation only of a commit in the range it judges,
-per `design@core@branch-shas-are-refused`; the checker-side fix is
-`issue@core@branch-sha-citations-are-judged-within-the-range-only`. A failing staged check is
-repaired before the commit is made. A commit whose tree fails `commits` is repaired by a new
-commit, folded into the failing one by a history edit with a clean tree, and one whose message
-fails it by a reword, both per `## Git` point 2. A branch
-about to merge owes all of them: one `cargo x gates --require-rebased`.
-CI runs them on every push to a ready pull request.
+`cargo klarch check --staged` after staging and before each commit, which judges the tree the commit
+will record, and `cargo klarch commits origin/main..HEAD` after it, which judges the message's
+pointers.** The staged check is a restatement; its home is
+`design@agent-skills@staged-check-before-each-commit`. The range is the whole branch because this
+repository refuses citations of its branch's own commits by SHA, and `commits` sees a citation only
+of a commit in the range it judges, per `design@core@branch-shas-are-refused`; the checker-side fix
+is `issue@core@branch-sha-citations-are-judged-within-the-range-only`. A failing staged check is
+repaired before the commit is made. A commit whose tree fails `commits` is repaired by a new commit,
+folded into the failing one by a history edit with a clean tree, and one whose message fails it by a
+reword, both per `## Git` point 2. A branch about to merge owes all of them: one
+`cargo x gates --require-rebased`.
 
 ## Skills `##repository-skills`
 
@@ -519,8 +505,8 @@ commands and procedures that carry those rules out are this file's own.
   files.** Examples (non-exhaustive): `reset --hard`, `checkout -- <path>`, `restore`, `clean`,
   `stash`, `commit --amend`, `rebase`. The one exception is `git rebase --continue` on a rebase
   whose conflicts the tree now resolves, as point 3 does.
-- **Take extra care when applying a mutation that will need reverting.** Stage the file before
-  applying the mutation, so the revert does not depend on a restore.
+- **Before applying a mutation that will need reverting, stage the file**, so the revert does not
+  depend on a restore.
 - **With a clean tree, editing the branch's own history is an ordinary move**: rewording or
   amending a commit message, squashing, rebasing. It is bounded by two verifications before the
   old head is dropped: that the tree was clean, and that no content was lost. For a rewrite that
@@ -546,9 +532,8 @@ commands and procedures that carry those rules out are this file's own.
   be rewritten and force-pushed, since origin holds the old head until then. A branch that a live
   worktree has checked out is rewritten only after that worktree is removed.
 - To test a previous state of the project, create a worktree in a place where it pollutes
-  nothing, such as the worktrees directory under .claude, which is ignored. Do not use
-  `git stash` or another operation that can lose content. Remove the worktree and its branch once
-  done.
+  nothing, such as the worktrees directory under .claude, which is ignored. Remove the worktree
+  and its branch once done.
 - **Confirm that what you committed is what you wrote** before moving on. A file reverted to an
   earlier state passes every check it passed then, so only this comparison finds it.
 
@@ -603,7 +588,7 @@ git checkout main && git pull --ff-only
   rather than the exit code of `gh pr checks`: right after `gh pr ready`, the only run on the head
   can be the one skipped while it was a draft, and `gh pr checks` then exits 0.
 - GitHub's rebase merge gives main the branch's commits with the same trees and messages, and new
-  SHAs, as a probe repository measured, **except a commit that changes no file, which it drops**:
+  SHAs, **except a commit that changes no file, which it drops**:
   a record carried by a message alone rides on a commit that changes a file. So **neither a commit message nor a document cites the
   SHA of a commit of its own branch**: name that commit by its subject. A SHA already on main may
   be cited. `cargo klarch commits` refuses such a citation, per

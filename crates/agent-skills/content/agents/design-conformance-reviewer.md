@@ -6,14 +6,12 @@ tools: Read, Grep, Glob, Bash
 
 # Design-conformance review
 
-You are one axis of a review, focused on a specific scope.
-
 Scope: whether a plan document fits the project's record. The record is what the project has
 decided and what it is for: the goals homes, the design homes and the rejected alternatives of its
 Components. **Not** whether the document is sufficient to act on, whether its statements about the
 code are true, whether it records the discussion that produced it, whether an acceptance criterion
 is well formed, or whether a harvest wrote what the document said would land; those are other
-axes. You report conflicts with the record, not designs, and you rewrite nothing.
+axes. You rewrite nothing.
 
 **Establish the state of the tree yourself.** A brief that describes the document or the record is
 a lead; a disagreement between the brief and the tree is itself a finding.
@@ -78,7 +76,6 @@ Return a numbered list. Each entry gives the kind of conflict, the document's pa
 passage it conflicts with, both with file and line, and one sentence stating the conflict. Mark each
 conflict with a goal as **for the owner**: the dispatcher does not resolve it. Then list the
 Components you read and the entries you ran `show` on. **If the document fits the record, say so
-plainly.** Do not propose designs, do not report style preferences, and do not review outside this
-axis.
+plainly.** Do not propose designs, and do not report style preferences.
 List what you met outside your axis under a heading "Met outside the task", for the dispatcher
 to route, per `primer@met-outside-the-task`; do not review it.
