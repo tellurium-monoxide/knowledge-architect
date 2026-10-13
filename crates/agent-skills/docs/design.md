@@ -437,9 +437,9 @@ one does would take the repeated runs this rule refuses.
   confirms.
 
 The rule derives from `goal@knowledge-architect@the-workflow-improves-through-real-use`, which
-states it for the whole workflow. The owner's argument: "the synthetic evidence is too unreliable.
-It would need at least statistical analysis, which is too costly, and a proper mock task cannot be
-created on a whim, it needs design and testing itself." One run of an agent is a sample of one. The
+states it for the whole workflow. The owner's argument: synthetic evidence is too unreliable, since
+reading it soundly would need at least a statistical analysis, which costs too much, and a proper
+mock task needs a design and a test of its own, so it cannot be created on demand. One run of an agent is a sample of one. The
 evidence the rule gives up is supplied otherwise: retrospectives of real work reach this repository,
 and this repository installs its own skills, so its own sessions use each change before a release
 reaches a consumer. The cost accepted is that a defect in a new text is found at its first real use,
