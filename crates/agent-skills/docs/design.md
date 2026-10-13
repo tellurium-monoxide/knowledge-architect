@@ -2273,15 +2273,15 @@ the owner's word, loses on that second instance: the mechanism runs in a project
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
 choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
 back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
-owner chose how much is left to the session, between a draft that kept only goals, contradictions
-and irreversible actions with the owner and one that kept scope and weighing too: "I think the
-direction I gave left too large of a scope for decisions that are left to agents", and asked for a
-fusion of the two, which the fork is. The merge is the owner's ruling: "a merge to main is not an
-irreversible action (it is a normal part of working in a project), but it should be left to each
-project to decide whether thay let agents merge, or do it themselves." The fact only the owner holds
-joined the kinds on the owner's word, since the primer asks the owner such facts, as at the fourth
-entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, and a ruling on intent is
-defined by these kinds.
+owner judged a list that kept only goals, contradictions and irreversible actions with the owner
+too wide for agents: "I think the direction I gave left too large of a scope for decisions that are
+left to agents". The fork is the fusion of that list with one that kept scope and weighing with the
+owner too, and keeps with the owner only the weighing no argument settles. A merge is no action that
+cannot be undone, since a revert commit undoes it, and whether agents merge is left to each project,
+as the owner directed. A fact only the owner holds is among the kinds because the primer asks the
+owner such facts, as at the fourth entry test of
+`design@agent-skills@a-head-is-owed-by-an-entry-test`, and a ruling on intent is defined by these
+kinds.
 
 ### An answer of the owner on a reading or a fact is recorded with its source, never as the owner's ruling `##answer-keeps-its-authority`
 
