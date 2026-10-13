@@ -84,8 +84,9 @@ to judge is never room to act against an instruction.
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
-  is a defect in one of them: say which. Where the head's argument stands, the code is the defect:
-  fix it, or open an issue. Where the session finds the head's argument defeated, the head's
+  is a defect in one of them: say which. Where the head stands, its argument or the owner's ground
+  undefeated, the code is the defect: fix it, or open an issue. Where the session finds the head's
+  argument defeated, the head's
   reversal goes to `skill@knowledge-architect-design`, and to the owner where reversing it is a
   fork or the head's ground is the owner's; the part of the task that rests on the point in
   divergence waits for that answer, and the rest of the task goes on. A design home can be wrong,
@@ -114,7 +115,7 @@ Something met while doing other work takes the first of these that applies:
 
 | # | test | outcome |
 | --- | --- | --- |
-| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | route it as `primer@question-authority` says: what a source, a measurement or the record answers, the session decides and reports; a fork, a goal to set or change, or a fact only the owner holds, goes to the owner at the top of the turn, with a default the work proceeds on unless the owner answers otherwise; a contradiction, or an action that cannot be undone, holds the part of the work that rests on it until the owner's answer; a divergence between a design home and the code is routed as `primer@intent-and-claims` says |
+| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | route it as `primer@question-authority` says: what a source, a measurement or the record answers, the session decides and reports; a fork, a goal to set or change, or a fact only the owner holds, goes to the owner at the top of the turn, with a default the work proceeds on unless the owner answers otherwise, a goal standing as it is meanwhile; a contradiction, or an action that cannot be undone, holds the part of the work that rests on it until the owner's answer; a divergence between a design home and the code is routed as `primer@intent-and-claims` says |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
 | 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`skill@knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |

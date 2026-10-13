@@ -82,10 +82,11 @@ It ends the argument, but it does not end your duties around it:
   ("unless you say otherwise, I build the decided shape"), and
   proceed unless the word comes. Four cases defeat that default, all
   narrow. When the finding defeats a premise of a ruling the owner
-  gave, it is a contradiction, per `primer@owner-word-premise`: the
-  part of the work that rests on that premise is held until the word
-  comes, and the rest proceeds on the default. When the finding is that the DECIDED SHAPE CANNOT BE BUILT
-  at all, there is nothing to proceed with: report it and stop,
+  gave, or is a contradiction with another approved thread that no
+  argument resolves, it is a contradiction, per
+  `primer@owner-word-premise`: the part of the work that rests on it
+  is held until the word comes, and the rest proceeds on the default.
+  When the finding is that the DECIDED SHAPE CANNOT BE BUILT at all, there is nothing to proceed with: report it and stop,
   because a default would name work that does not exist. A finding
   that you cannot decide something yourself is not this case — it
   returns with a default like any

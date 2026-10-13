@@ -556,11 +556,7 @@ structure the checker reads, per `design@core@plan-register`. This serves
 A head can be wrong, and while it
 diverges from the code it still prevails: the divergence closes when the code meets the head or when
 the head is reversed, never by following the code, and work that goes on meanwhile builds on the
-head. Where the head's argument stands, the code is the defect, and the session fixes it or opens
-an issue. Where the session finds the argument defeated, the reversal goes to the design skill, and
-to the owner where it is a fork or the head's ground is the owner's, per
-`design@agent-skills@questions-go-to-their-authority`; the part of the task that rests on the point
-waits for that answer. Without that, a session that must keep working would build on whichever
+head. Without that, a session that must keep working would build on whichever
 side it met first, and a divergence would close silently in the code's favour, against
 `goal@knowledge-architect@agents-work-without-drift`.
 
@@ -1184,9 +1180,8 @@ proposed later, at the assembly, by a review or at an audit, is written marked a
 owner, with its label under the plan document's defaults, and is not judged before the ruling; the
 work goes on without it, and one never ruled leaves with the document.
 
-A criterion's response reopens a decision, and choosing whether to watch with it is a fork, which is
-the owner's, per `goal@knowledge-architect@the-owner-decides`: applying it and not applying it both
-meet every binding constraint, and they trade the cost of the check against the risk. The owner
+A criterion's response reopens a decision, and choosing the observable that may reopen a decision
+is a weighing, which is the owner's, per `goal@knowledge-architect@the-owner-decides`. The owner
 sets a criterion's threshold, and a tripwire, the same check for built work, stands on the owner's
 word, per `design@agent-skills@premortem-tripwires-on-the-owners-word`, so a criterion's application
 stands on the same word as its threshold and as a tripwire. The wording stays the agent's, as a
@@ -2252,9 +2247,8 @@ to state.
 
 It serves `goal@knowledge-architect@the-owner-decides`, which gives the owner what the goals and
 the record leave open, and `goal@knowledge-architect@agents-work-without-drift`, which asks that the
-owner not answer what the record already answers. The mechanism it removes: with the owner as the
-only authority a session could defer to, every question went to the owner and every answer came
-back recorded as a ruling. In thaum, which implements a published rules text, at least three of
+owner not answer what the record already answers. A workflow whose only authority is the owner
+sends every question to the owner, and records every answer as a ruling. In thaum, which implements a published rules text, at least three of
 the eleven questions one session put to the owner were answered by the rules, and in this
 repository the owner reported defaults "answerable by reading the recorded design heads" put to the
 owner first. The nearest rival, a sentence that gives an external specification alone a rank above
@@ -2262,12 +2256,15 @@ the owner's word, loses on that second instance: the mechanism runs in a project
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
 choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
 back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
-owner set the kinds the owner answers, in a design discussion recorded by
-`milestone@plans@owner-authority`, and that a merge is no action that cannot be undone and is the
-project's to reserve. The fact only the owner holds joined the kinds on the owner's word, since the
-primer asks the owner such facts, as at the fourth entry test of
-`design@agent-skills@a-head-is-owed-by-an-entry-test`, and a ruling on intent is defined by these
-kinds.
+owner chose how much is left to the session, between a draft that kept only goals, contradictions
+and irreversible actions with the owner and one that kept scope and weighing too: "I think the
+direction I gave left too large of a scope for decisions that are left to agents", and asked for a
+fusion of the two, which the fork is. The merge is the owner's ruling: "a merge to main is not an
+irreversible action (it is a normal part of working in a project), but it should be left to each
+project to decide whether thay let agents merge, or do it themselves." The fact only the owner holds
+joined the kinds on the owner's word, since the primer asks the owner such facts, as at the fourth
+entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`, and a ruling on intent is
+defined by these kinds.
 
 ### An answer of the owner on a reading or a fact is recorded with its source, never as the owner's ruling `##answer-keeps-its-authority`
 
@@ -2293,7 +2290,7 @@ premise is false, and a premise the session supplied is the session's to check b
 rules on it. An answer of the owner on a reading or a fact that the source or a measurement
 contradicts gives way to the source at once, the owner told, and a part of the work that cannot be
 undone waits. A ruling on intent, a word on a question `primer@question-authority` reserves to the
-owner, whose premise proves false is a contradiction: the corrected premise goes to the owner, and
+owner per `design@agent-skills@questions-go-to-their-authority`, whose premise proves false is a contradiction: the corrected premise goes to the owner, and
 the part of the work that rests on it waits, the rest going on. Whether a project follows a
 specification is the project's goal or decision, and a departure from one is a scope decision the
 project states, never inferred from an answer to a reading question.
@@ -2303,19 +2300,22 @@ split by the authority of the question, per `tripwire@agent-skills@split-rule-fr
 hold derives from `goal@knowledge-architect@the-owner-s-word-is-verified`. The source rule's nearest
 rival, putting the owner's answer back to the owner with the source's reading as the default, is
 what thaum built first: it still asked, offered an option the specification forbids, and two of
-thaum's reviewers found it contradicted the specification's authority. The directive sits in the
-primer since a word of the owner can arrive in any session: it arrived twice outside a discussion,
+thaum's reviewers found it contradicted the specification's authority. The design skill holds the
+same duty for a closed thread, its material finding, and reaches only a session that has loaded it,
+where a word of the owner can arrive in any session, which is the content test of
+`design@agent-skills@primer-limit`. So the directive sits in the primer: it arrived twice outside a discussion,
 in a review repair and at the fourth entry test of `design@agent-skills@a-head-is-owed-by-an-entry-test`,
 the second on a premise the session supplied, that the decision failed the first three tests, when
 the same change had made the second pass. A word acted on past its premise records a decision the
 owner did not make, against `goal@knowledge-architect@the-owner-decides`.
 
-### Something met outside the task takes the first of four outcomes, routed by its authority, and the turn lists every item `##met-outside-the-task-outcomes`
+### Something met outside the task takes the first outcome of the primer's table that applies, routed by its authority, and the turn lists every item `##met-outside-the-task-outcomes`
 
 `primer@met-outside-the-task` gives four outcomes, the first that applies. An item that bears on
-the work is routed by `primer@question-authority`: what a source, a measurement or the record
+the work is routed by `primer@question-authority`, per
+`design@agent-skills@questions-go-to-their-authority`: what a source, a measurement or the record
 answers, the session decides and reports; a fork, a goal or a fact only the owner holds goes to the
-owner with a default the work proceeds on; a contradiction, or an action that cannot be undone, holds the part of the work
+owner with a default the work proceeds on, a goal standing as it is meanwhile; a contradiction, or an action that cannot be undone, holds the part of the work
 that rests on it, as a contradiction does wherever it is met, per
 `goal@knowledge-architect@the-owner-s-word-is-verified`, and as `primer@owner-word-premise` and the
 design skill's material finding say. A fix checkable from the diff alone lands in a commit of its
@@ -2341,9 +2341,8 @@ such decisions; an implementation choice a commit message records is not. A suba
 decisions under the same title, and the dispatching session carries them into its own.
 
 It serves `goal@knowledge-architect@the-owner-decides`, under which the owner is informed of every
-decision and can overrule any of them, now that
-`design@agent-skills@questions-go-to-their-authority` gives the session decisions the owner used to
-be asked. The nearest rival, the commit messages and the pull request, loses because a decision
+decision and can overrule any of them, and
+`design@agent-skills@questions-go-to-their-authority` gives the session many of those decisions. The nearest rival, the commit messages and the pull request, loses because a decision
 made and reverted within one session reaches no commit, while the owner reads the turn. An
 implementation choice is left out because a list of every choice would hide the few the owner could
 have made. The directive sits in the primer since a session of any activity makes such decisions.
