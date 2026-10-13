@@ -1001,9 +1001,9 @@ None. The one proposed, AC1, was not applied, R5.
 1. Goals and primer, landed: G1, G2, G3; the authority section; the premise procedure scoped; the
    label rule; the "Decided" section; the hold on a divergence; the design skill's material finding
    holding a defeated premise's part.
-2. [Attribution](attribution.md): the ground and test 4 attribute; the transcript reviewer's
-   ruling check scoped; the recording rules of plan documents, commit messages and audits; the
-   reviewers and auditors that check quotations; the tripwires that count quotations.
+2. Attribution, landed: the ground and test 4 attribute; the transcript reviewer's ruling check
+   scoped; the recording rules of commit messages and the plan record; the reviewers and auditors
+   that check quotations; the tripwires that count quotations; D19.
 3. [Design skill](design-skill.md): the fork, the state `argued`, the bounded path's default, the
    decision-authority wording, step 3, the expectation set, the texts that count closures.
 4. [Defaults and findings](defaults-and-findings.md): planning's and review's defaults, the

@@ -26,6 +26,13 @@ sessions, that an agent left a small defect neither fixed nor recorded, as a one
 a long report, where it is easy to miss. That observation cannot be derived again in one discussion
 round, and the rule it defeats is the common one.
 
+**Quoting the owner's words verbatim in a head whose ground is the owner's** — lost to
+`design@agent-skills@attribution-replaces-quotation`. `live`. Two sessions bent such a quotation to
+get it past the checker, one by turning spans of reference kinds still to come into placeholders,
+one by writing a reference form bare beside no issue entry; an intake of retrospective files found
+both. A doubt remains that an attribution keeps the scope a quotation showed, which
+`tripwire@agent-skills@attribution-loses-the-scope` watches, and this is the candidate if it fires.
+
 **Putting an owner's answer on a reading back to the owner, with the source's reading as the
 default, when the source contradicts it** — lost to
 `design@agent-skills@owner-word-holds-as-far-as-its-premise`. `live`. thaum, a project that

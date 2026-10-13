@@ -203,7 +203,7 @@ contradicts a statement of one, its argument included, or adds a member the head
 not cover. An addition that answers another question than the head's takes a head of its own, per
 `design@agent-skills@one-decision-per-head`. A member the head's argument covers is recorded
 directly, routed per `design@agent-skills@extension-follows-the-ground`; an approval the owner gave
-it is quoted in the commit, not in the head. A change that relocates or rewords recorded decisions, a split of a head included, and adds or
+it is recorded in the commit, attributed to the owner, not in the head. A change that relocates or rewords recorded decisions, a split of a head included, and adds or
 removes none, is not a decision and needs no design skill; the routing and fidelity-of-relocation
 review axes judge that it adds or removes none. A choice that earns no durable text stays in a code
 comment and a commit message.
@@ -624,18 +624,21 @@ without a clone of the repository cannot reach a deliberation.
 
 A head records a decision that was proposed, argued over its costs and rivals and approved, on that
 argument, with its costs and rivals in its body or in the rejected alternatives. An approval is no
-ground, whatever its words: it stays in the deliberation. The owner's words are a ground, quoted,
-only where the decision came from the owner: the owner proposed it, chose where the argued rivals
+ground, whatever its words: it stays in the deliberation. The owner's words are a ground,
+attributed to the owner per `design@agent-skills@attribution-replaces-quotation`, only where the decision came from the owner: the owner proposed it, chose where the argued rivals
 did not settle it, or stated a premise only the owner can state. A head holding a part of each
 says which part came from the owner. A head that stands on its argument is reversed by a better
-argument, which the owner approves; one whose ground is the owner's words is reversed by the owner,
+argument, which the owner approves where the reversal is a fork, per
+`design@agent-skills@questions-go-to-their-authority`; one whose ground is the owner's words is reversed by the owner,
 or by a defeated premise of those words.
 
-The rule is the owner's proposal: "it is the recorded **on the ground of the arguments that were
-discussed, with costs and rivals stated in the body or as rejected alternatives**, not on the
-ground of **owner ruled**. In particular when the decision was an agent's position or default, and I
-only approved it." And on why it matters: "This provenance of design heads matters a lot for agents
-to judg and weigh any design change or addition." It serves `goal@knowledge-architect@the-owner-decides`,
+The rule is the owner's proposal: a head is recorded on the arguments discussed, with its costs and
+rivals in its body or in the rejected alternatives, not on the ground that the owner ruled, in
+particular where the decision was the agent's position or default and the owner only approved it.
+The owner judged this provenance to matter for agents that weigh any change or addition to the
+design. The owner approved, in the discussion recorded by the owner-authority milestone, that a
+reversal of an argued head needs the owner only at a fork, since the record settles the rest. It
+serves `goal@knowledge-architect@the-owner-decides`,
 which asks that the record show the owner's decisions. The nearest rival, citing every ruling in its
 head, makes an approved default read as the owner's intent: an audit of the heads added or
 rewritten in the week entry test 4 was added, up to commit c282b00, finds about two in five of their
@@ -643,6 +646,29 @@ citations of the owner to be an approval of the agent's position, often a batch 
 defaults approved", and the citation, deleted, takes no argument with it. The figure is re-taken by
 a fresh read-only audit of those heads at that commit, against the commits and plan documents that
 wrote each citation.
+
+### A durable record attributes a decision to the owner, and the owner's words verbatim stay in the deliberation `##attribution-replaces-quotation`
+
+`primer@design-heads` states it: a design head, a commit message, a tripwire and an issue entry
+state what the owner decided and how far the decision reaches, never the owner's words verbatim.
+The verbatim words stay where the deliberation is kept: a plan document's items, per
+`design@agent-skills@plan-records-the-exchange`, and a committed file that leaves once its outcomes
+are carried out, per `design@agent-skills@committed-audit-report`. An attribution is checked against
+the question it answered, as a quotation is, by the transcript reviewer, the decision-record
+reviewer and the auditors' verifiers. A quotation already in a head is converted when a change
+touches the head, per `design@agent-skills@existing-heads-on-touch`.
+
+It serves `goal@knowledge-architect@the-owner-decides`, under which a decision the owner made is
+recorded as the owner's: the attribution carries that, and the record shows the owner's decisions.
+The owner judged verbatim quotations of little value as long as the attribution is correct, and
+found them out of place in design heads. A verbatim quotation also costs the checker's syntax: two
+sessions bent one to get it past the checker, one by writing spans of reference kinds still to come
+as placeholders, in the agent-configuration-entities milestone, and one by writing the owner's words
+naming a skill's reference form bare, in the session that wrote `spec@plans@path-quickfixes`, which
+`design@agent-skills@plain-text-is-no-repair` does not admit. The nearest rival, keeping the
+quotation in a head whose ground is the owner's words, keeps that cost where the ground is most
+read. The risk is that an attribution loses a scope the words showed; the transcript reviewer reads
+the words against the record, and `tripwire@agent-skills@attribution-loses-the-scope` watches.
 
 ### A decision approved with no argument is argued before it is recorded `##unargued-approval-is-argued`
 
@@ -1103,8 +1129,8 @@ where that change began before the discussion opened, as an issue fix or a revie
 its record, whenever the discussion opened, for a decision recorded when it is made, per
 `design@agent-skills@design-home-is-built-intent`. It writes no plan document. The message of the
 commit that writes the decision's design entry, or that implements a decision that earns none,
-carries what a plan document would: every thread with its final state, the owner's words verbatim
-for each closure, the rivals that lost with their reasons, and the rulings on tripwires. The
+carries what a plan document would: every thread with its final state, the owner's ruling on each
+closure, attributed per `design@agent-skills@attribution-replaces-quotation`, the rivals that lost with their reasons, and the rulings on tripwires. The
 premortem runs when reversal touches any of the four things the skill names: stored data, a
 consumed interface, behaviour users have adapted to, and a decided thread that would reopen. The four never open the in-change path: a decision that is cheap to
 reverse and whose work comes later takes the full path, per
@@ -1127,10 +1153,9 @@ its deletion for every requested change that is not bounded, including one the c
 builds in one pull request, which strains the "fewer review rounds" of
 `goal@knowledge-architect@agents-get-a-complete-workflow`. Widening the existing short path, rather
 than adding a path for one decision met during a task, is the owner's proposal, on the owner's
-argument: "The discussion
-starts with a single decision, but should not be bounded in threads or rounds IMO, because this depends only on
-what the grounding and investigation and experimentation brings to the table, and we cannot know
-about this in advance." The separate path bounded the discussion to one thread, against
+argument that a discussion that starts with one decision is bounded in neither threads nor rounds,
+since its size depends on what grounding, investigation and experiment bring, which nobody knows in
+advance. The separate path bounded the discussion to one thread, against
 `design@agent-skills@structure-the-flow`. The cost is a long commit message when a discussion
 inside a task grows to several threads; its length is not bounded, since a bound on it would bound
 the discussion.
@@ -1298,10 +1323,11 @@ each thing met outside the task has a durable outcome: recorded in its home, act
 an issue, or judged to need nothing with the reason written where the owner reads it. What lives
 only in a conversation is lost when the session ends or is compacted. Second, that no ruling of the
 owner is recorded in a state or a scope the owner did not give. Detail added inside a ruling, and a
-wording better than the one the owner was shown, are not findings. The owner's words: "It bothers
-me that it flags every small addition you make as a finding, even when they are clearly sane
-deviations. I would like it to focus more in the other direction: whether something from the
-transcript has been forgotten or not handled *durably*." The reviewer assumes no shape of
+wording better than the one the owner was shown, are not findings. The owner judged that a reviewer flagging every small addition as a finding, even a clearly sane
+deviation, missed the point, and asked it to look the other way: whether something from the
+transcript was forgotten or not handled durably. A ruling is a word of the owner on a question
+`primer@question-authority` reserves to the owner; an answer on a reading or a fact is checked
+against its source, per `design@agent-skills@answer-keeps-its-authority`. The reviewer assumes no shape of
 the work: a plan document is one home among the others.
 
 It is an agent, not a line in a skill, because its standard and its extraction rule are fixed, and
@@ -1528,7 +1554,8 @@ of them are its saved workflow's, per `design@agent-skills@audit-axis-runs-a-wor
 pass is one run of it, per `design@agent-skills@one-run-pass`. Each agent writes its drafts in a
 scratch directory of its own and edits nothing else, and nothing an agent proposes is applied before
 a reading by the session confirms it, per `design@agent-skills@synthetic-evidence-not-built`. A
-quotation of the owner is confirmed against the question it answered, as well as against its words.
+quotation or an attribution of the owner is confirmed against the question it answered, as well as
+against its words.
 The items that need the owner's word go on one list per pass, labelled `F<n>`, in the pass's report
 file, per `design@agent-skills@committed-audit-report`. The edits are applied and their diff read
 whole. How passes follow one another is
@@ -1993,7 +2020,7 @@ of its own, would carry the axis's standard outside the axis's agent, the shape
 
 The verifier is the axis's own auditor under a verify brief, per
 `design@agent-skills@audit-agent-per-axis`, in its auditor's worktree. It checks every quotation
-against the tree, a quotation of the owner against the question it answered, and that what a draft
+against the tree, a quotation or an attribution of the owner against the question it answered, and that what a draft
 describes exists. It marks known a draft whose finding an issue entry records, and kept a draft on
 the kept list. It marks a finding that a ruling's premise has proved false as bearing on that
 ruling, and leaves it to the session. Its verdict per draft is verified, refuted or plausible, with
@@ -2273,9 +2300,8 @@ the owner's word, loses on that second instance: the mechanism runs in a project
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
 choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
 back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
-owner judged a list that kept only goals, contradictions and irreversible actions with the owner
-too wide for agents: "I think the direction I gave left too large of a scope for decisions that are
-left to agents". The fork is the fusion of that list with one that kept scope and weighing with the
+owner judged that a list keeping only goals, contradictions and irreversible actions with the owner
+left too large a scope to agents. The fork is the fusion of that list with one that kept scope and weighing with the
 owner too, and keeps with the owner only the weighing no argument settles. A merge is no action that
 cannot be undone, since a revert commit undoes it, and whether agents merge is left to each project,
 as the owner directed. A fact only the owner holds is among the kinds because the primer asks the
@@ -2293,8 +2319,8 @@ readings the source permits.
 
 It serves `goal@knowledge-architect@the-owner-decides`, under which a decision the owner made is
 recorded as the owner's and every other decision on its own ground. An answer recorded as a ruling
-weighs on every later session as the owner's intent: the owner observed that "questioning them is
-either discouraged, or gets put to me even when the answer is obvious". The nearest rival, leaving
+weighs on every later session as the owner's intent: the owner observed that such answers go
+unquestioned, or come back to the owner even when the answer is obvious. The nearest rival, leaving
 the recording rules as they are since fewer such questions reach the owner under
 `design@agent-skills@questions-go-to-their-authority`, loses because a question still reaches the
 owner by mistake: in thaum, one went to the owner through a definition the session had not looked
@@ -2341,11 +2367,11 @@ issue; any other is named, with why it is dropped. A turn that met anything ends
 listing every item and its outcome, and a subagent that edits nothing reports each item to the
 session that dispatched it, which routes it.
 
-A one-line mention inside a long report is easy to miss: the owner saw an agent "would find a
-fairly small issue, decide it was too small to create an open issue entry about it, but not fix it
-either, instead reporting it in conversation as a short oneliner", so every outcome leaves a record
-or a listed line. A fix under the second outcome needs no word of the owner's: "as long as it does
-passes the test you wrote, I have no problem with that level of autonomous fix". The directive sits
+A one-line mention inside a long report is easy to miss: the owner saw an agent find a small issue,
+judge it too small for an issue entry, not fix it, and report it in the conversation in one line,
+so every outcome leaves a record or a listed line. A fix under the second outcome needs no word of
+the owner's: the owner accepts such an autonomous fix as long as it passes the test the session
+wrote. The directive sits
 in the primer since every session meets something outside its task.
 
 ### A turn that decided what the owner could have decided ends with a Decided section `##decisions-reported-to-the-owner`
