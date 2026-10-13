@@ -156,7 +156,8 @@ where `<stem>` is the received file's stem. The directory's README says what it 
   judgement on a standing entry. A standing entry the file may meet gets a section of its own: a tripwire that may have
   fired, a deferred trigger, a design issue's re-entry. Whether it fired, and its response, are the
   owner's to rule; the analysis proposes the judgement and its evidence.
-- **A span the checker would refuse is quoted in words.** A finding about a refused form tempts a
+- **A span the checker would refuse is quoted in words**, and an entry an outcome removes is named
+  as `primer@where-knowledge-goes` says. A finding about a refused form tempts a
   quotation of that form, and the analysis then fails the check it reports on.
 - **Name nothing of the other project in detail**: none of its paths, none of its design heads,
   none of its internals, which tell a reader of this repository nothing. Say it in words where

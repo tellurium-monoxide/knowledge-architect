@@ -332,9 +332,9 @@ and a rewording is listed in the turn's "Decided" section, per `primer@decided-s
 A criterion first proposed after the premortem, at the assembly, by a review or at an audit, is
 written as an item of the acceptance criteria section marked as awaiting the owner, its label at the
 head of the item's text, and its label is listed under the defaults awaiting the owner. It is not
-judged before the ruling, and the work goes on without it: a landing reports it as not judged,
-awaiting the owner's word. One the owner declines, or that is still unruled when the document
-leaves, is deleted with the document. A criterion that gains its slug keeps its label beside it, in
+judged before the ruling, and the work goes on without it; the branch that carries it merges once
+the owner has ruled on it, per `primer@question-authority`. One the owner declines is deleted with
+the document. A criterion that gains its slug keeps its label beside it, in
 the item's text.
 
 A number in a criterion is a threshold the owner sets. Until the owner has, it is written as a

@@ -54,7 +54,7 @@ An audit runs in a branch of its own, unless the owner gives it to another work'
 
 An axis's section adjusts each point where its corpus needs.
 
-**Each axis runs each pass as one run of its saved workflow**, named in its section, with the
+Each axis runs each pass as **one run of its saved workflow**, named in its section, with the
 `args` its section lists, and one more run on the application where its section says so. The run dispatches every agent of the pass, verifies their drafts and
 delivers a report; the session reads nothing between its steps. The session then verifies the
 report as the axis's section says, and nothing an agent proposes is applied before a reading
@@ -194,11 +194,11 @@ record states the reading, the difference goes on the owner list.
 fold judged alone is the edit most often undone. The session commits its application, then runs the
 workflow again with `from` set to `application` and `applied` to that commit: an auditor per group
 judges every entry whose text the application changed, a retitle and a body edit included and a
-re-pointed reference alone left out, against
-every rule, the failure modes of an edit and the owner's rulings, with the tripwires and issues that
-cite it, since moving text unchanged does not make a head conform and the run's checks read only the
-drafts. The session repairs each failure the report names and folds the repairs into the pass's
-commit, with no uncommitted work in the tree.
+re-pointed reference alone left out, against every rule, the failure modes of an edit and the
+owner's rulings, with the tripwires and issues that cite it, since moving text unchanged does not
+make a head conform and the run's checks read only the drafts. The session repairs each failure of
+the report that a reading confirms and folds the repairs into the pass's commit, with no
+uncommitted work in the tree.
 
 **Old and new text**, for a re-check: the verifier classifies each finding.
 
