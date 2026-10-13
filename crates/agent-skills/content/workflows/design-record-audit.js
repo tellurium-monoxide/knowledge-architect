@@ -4,6 +4,7 @@ export const meta = {
   phases: [
     { title: 'preflight' }, { title: 'setup' }, { title: 'drafts' }, { title: 'calibration' },
     { title: 'verify' }, { title: 'check' }, { title: 'cross-check' }, { title: 'report' },
+    { title: 'judge' },
   ],
 }
 // args: {
@@ -16,16 +17,19 @@ export const meta = {
 //   sample      optional: the calibration sample, an array of entries, each { ref } for a design
 //               head or { name, file } for a rejected alternative; the preflight chooses one if absent
 //   counts      optional: { groupSize, checkersPerGroup }, each missing key taking its default
-//   from        optional: 'calibration' or 'verify', to restart from the files a run wrote
+//   from        optional: 'calibration' or 'verify', to restart from the files a run wrote; or
+//               'application', to judge the session's application of a pass instead of auditing
+//   applied     with from 'application': the commit that holds the application
 // }
 const counts = args.counts || {}
 const groupSize = counts.groupSize === undefined ? 60 : counts.groupSize
 const checkersPerGroup = counts.checkersPerGroup === undefined ? 1 : counts.checkersPerGroup
 if (!(groupSize >= 1)) throw new Error('groupSize: at least 1')
 if (!(checkersPerGroup >= 1)) throw new Error('checkersPerGroup: at least 1')
-if (args.from && args.from !== 'calibration' && args.from !== 'verify') {
-  throw new Error('from: calibration or verify')
+if (args.from && args.from !== 'calibration' && args.from !== 'verify' && args.from !== 'application') {
+  throw new Error('from: calibration, verify or application')
 }
+if (args.from === 'application' && !args.applied) throw new Error('applied: the commit of the application')
 const at = (...parts) => parts.join('/')
 const lines = (xs) => xs.filter(Boolean).join('\n')
 const AUDITOR = 'knowledge-architect-design-record-auditor'
@@ -141,6 +145,83 @@ const cut = (components) => {
     delete g.packed
   }
   return out
+}
+
+// The judgement of an application: every entry whose text the session's application of a pass
+// changed, judged after the owner's ruling, as a run of its own; it ends at its report.
+if (args.from === 'application') {
+  const dir = at(args.scratch, 'application')
+  const judging = at(args.worktrees, 'application')
+  phase('preflight')
+  const pre = await agent(lines([
+    'You set up the judgement of the application of one pass of the design-record axis of a ' +
+      'project audit. From the project root:',
+    '- run git worktree add --detach ' + judging + ' ' + args.applied + ', and work in that ' +
+      'worktree for every step below;',
+    '- list every design head and every rejected alternative whose text differs between ' +
+      args.commit + ' and ' + args.applied + ', a head the application created included and one it ' +
+      'removed left out, and an entry whose only change is the target of a reference left out too, ' +
+      'its words unchanged; read git diff ' + args.commit + ' ' + args.applied + ' over every ' +
+      'Component\'s design home and rejected-alternatives file whole. Order them as the section ' +
+      'take-your-group of the agent definition ' + AUDITOR + ' states, which you read whole, a head ' +
+      'as { ref, file, line }, its ref design@<component>@<slug>, a rejected alternative as { name, ' +
+      'file, line };',
+    '- write that list, as JSON, to ' + at(dir, 'entries.json') + ', creating the directory;',
+    '- run {{command}} issues and save its output to ' + at(dir, 'issues.txt') + ', and ' +
+      '{{command}} tripwires to ' + at(dir, 'tripwires.txt') + '.',
+    'Edit nothing else. Return the Components with their entries, and the sample as an empty array.',
+  ]), { schema: ENTRIES, phase: 'preflight', label: 'preflight' })
+  if (!pre) throw new Error('preflight returned nothing')
+  const jgroups = cut(pre.components)
+  if (!jgroups.length) {
+    log('the application changed no entry')
+    return { report: null, groups: [], failing: 0 }
+  }
+  phase('setup')
+  const setup = await agent(lines([
+    'You set up the groups of the judgement of an application. From the project root:',
+    '- write this JSON, exactly, to ' + at(dir, 'groups.json') + ':',
+    JSON.stringify({ groups: jgroups, sample: [] }),
+    '- for each of these paths, run git worktree add --detach <path> ' + args.applied + ': ' +
+      jgroups.map((g) => at(args.worktrees, 'application-' + g.label)).join(', ') + '.',
+    'Edit nothing else. Return done true only if every command succeeded.',
+  ]), { schema: DONE, phase: 'setup', label: 'setup' })
+  if (!setup || !setup.done) throw new Error('setup failed: ' + (setup ? setup.notes : 'no return'))
+  phase('judge')
+  const jfailures = []
+  const judged = await parallel(jgroups.map((g) => () => agent(lines([
+    'Application brief.',
+    'Commit audited: ' + args.commit,
+    'Commit of the application: ' + args.applied,
+    'Your worktree, detached at the application: ' + at(args.worktrees, 'application-' + g.label),
+    'Your entries, ' + g.entries.length + ', each changed by the application:',
+    g.entries.map((e, i) => (i + 1) + '. ' + show(e)).join('\n'),
+    'Issues listing: ' + at(dir, 'issues.txt'),
+    'Tripwires listing: ' + at(dir, 'tripwires.txt'),
+    'Your directory: ' + at(dir, g.label),
+    'In the return, name each entry by its reference, or a rejected alternative by its name as ' +
+      'listed here.',
+    FROM_DISK,
+  ]), { agentType: AUDITOR, schema: JUDGED, phase: 'judge', label: 'judge ' + g.label })
+    .then((r) => {
+      if (!r) jfailures.push('the judge of group ' + g.label + ' returned nothing')
+      return r
+    })))
+  const failing = judged.filter(Boolean).reduce((t, r) => t + r.judged.filter((j) => j.verdict === 'fails').length, 0)
+  log('judge: ' + jgroups.length + ' groups, ' + failing + ' entries failing')
+  phase('report')
+  const jreport = await agent(lines([
+    'You write the report of the judgement of an application of one pass of the design-record ' +
+      'axis, for the session that repairs it. Quote; do not summarise evidence. You edit nothing in ' +
+      'the project.',
+    'Read every file under ' + dir + ' that the judges wrote.',
+    'Write ' + at(dir, 'report.md') + ': per failing entry, the rule or the failure mode of an edit ' +
+      'it fails, the words quoted, the tripwire or issue it leaves false, and the repair the judge ' +
+      'proposes; then the counts of entries judged and failing, and every step that returned ' +
+      'nothing' + (jfailures.length ? ', among them: ' + jfailures.join('; ') : '') + '.',
+    'Return its path.',
+  ]), { schema: PATH, phase: 'report', label: 'report' })
+  return { report: jreport ? jreport.path : null, groups: jgroups.map((g) => g.label), failing }
 }
 
 let groups = []

@@ -110,6 +110,11 @@ subsection is omitted.
 - `agent-skills`, patch: a branch that builds a default put to the owner merges once the owner has
   ruled on it; the session puts every default still open to the owner by the merge at the latest,
   and the work goes on with the default meanwhile.
+- `agent-skills`, patch: the design-record axis of the project audit judges the session's
+  application of a pass in a second run of its saved workflow, `from` set to `application` and
+  `applied` to the application's commit: every head and rejected alternative the application
+  changed, with the tripwires and issues that cite it; and the run's check judges a proposed retitle
+  as it judges a created head.
 
 ## 0.6.0
 

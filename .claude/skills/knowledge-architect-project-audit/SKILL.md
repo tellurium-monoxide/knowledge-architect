@@ -32,7 +32,7 @@ project, not a verdict on one branch.
 | **draft** | one agent's file for one entry or for one finding, as the axis says: the verdict or the finding, the evidence, a proposed edit and a proposed outcome |
 | **the owner list** | every finding of one pass that needs the owner's word, in the pass's report file, and the one message that points the owner to it |
 | **the re-check** | fresh agents of the axis, dispatched as its first dispatch was, after the edits |
-| **pass** | one round of the method. One run of the axis's saved workflow, the session's verification of its report, the owner list and the application. The re-check starts the next pass |
+| **pass** | one round of the method. One run of the axis's saved workflow, the session's verification of its report, the owner list and the application, with the judgement of the application where the axis's section asks one. The re-check starts the next pass |
 | **run** | one invocation of an axis's saved workflow |
 | **audit** | the passes on one axis, from the first until the owner stops them |
 
@@ -55,7 +55,7 @@ An audit runs in a branch of its own, unless the owner gives it to another work'
 An axis's section adjusts each point where its corpus needs.
 
 **Each axis runs each pass as one run of its saved workflow**, named in its section, with the
-`args` its section lists. The run dispatches every agent of the pass, verifies their drafts and
+`args` its section lists, and one more run on the application where its section says so. The run dispatches every agent of the pass, verifies their drafts and
 delivers a report; the session reads nothing between its steps. The session then verifies the
 report as the axis's section says, and nothing an agent proposes is applied before a reading
 confirms it. Before a run, the session writes the kept list, for a re-check, and names the
@@ -159,7 +159,8 @@ smaller ones packed whole, and a setup agent creates their worktrees; one audito
 one verdict per entry, its brief listing its entries and a shared calibration sample; once every
 group has returned, one auditor compares the verdicts on the sample and proposes a reading where
 they differ; one verifier per group tries to refute its drafts, under that reading; a checker judges
-alone each head that a verified split, merge, rename or move creates; a cross-check maps the
+alone each head that a verified split, merge, rename or move creates, and each head a verified
+retitle gives a new title; a cross-check maps the
 findings that touch one paragraph or one slug, the tripwires and issues an edit would leave false,
 and proposes each finding's outcome; the report gathers all of it. Its `args`:
 
@@ -173,7 +174,8 @@ and proposes each finding's outcome; the report gathers all of it. Its `args`:
 | `kept` | for a re-check, the path of the file of entries and rules the owner ruled to keep |
 | `sample` | optional: the calibration sample, each entry a head's reference or a rejected alternative's name and file; the preflight chooses one when it is left out, and a re-check may keep the entries whose readings differed |
 | `counts` | optional: `groupSize` and `checkersPerGroup`; a key left out takes its default, written in the script |
-| `from` | optional: `calibration` or `verify`, to restart a run from the files it already wrote |
+| `from` | optional: `calibration` or `verify`, to restart a run from the files it already wrote; or `application`, to judge the session's application of the pass |
+| `applied` | with `from` set to `application`: the commit that holds the application |
 
 **The verification of a report.** The session reads the report whole; each reading the
 calibration proposes, against the sample's drafts; every item of the owner-list draft, and every
@@ -184,9 +186,14 @@ file, and the workflow runs again from `verify`. Where the rule's text admits bo
 record states the reading, the difference goes on the owner list.
 
 **Application.** A split, a merge or a move of a head is drafted first, like any other finding: a
-fold judged alone is the edit most often undone. Each head the session's application creates
-beyond what the run checked is judged against every rule as an entry of its own, before the
-commit: moving text unchanged does not make the new head conform.
+fold judged alone is the edit most often undone. The session commits its application, then runs the
+workflow again with `from` set to `application` and `applied` to that commit: an auditor per group
+judges every entry whose text the application changed, a retitle and a body edit included and a
+re-pointed reference alone left out, against
+every rule, the failure modes of an edit and the owner's rulings, with the tripwires and issues that
+cite it, since moving text unchanged does not make a head conform and the run's checks read only the
+drafts. The session repairs each failure the report names and folds the repairs into the pass's
+commit, with no uncommitted work in the tree.
 
 **Old and new text**, for a re-check: the verifier classifies each finding.
 

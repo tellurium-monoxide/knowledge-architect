@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design-record-auditor
-description: Drafts the verdicts of the design-record axis of a project audit for one group of entries, design heads and rejected alternatives, against the rules on design heads, on the Component a head belongs to and on rejected alternatives, one draft file per entry, and the same for a re-check after the audit's edits. Beside each head it reads the tripwires and the issues that cite the head, and the history of any ruling of the owner the head rests on. Briefed to calibrate, it compares the verdicts every group gave on the shared sample; briefed to verify, it tries to refute another auditor's drafts; briefed to check, it judges alone each head a proposed edit creates. The axis's saved workflow dispatches it, for its drafts, its calibration, its verify and its check steps, as `skill@knowledge-architect-project-audit@design-record-axis` says; a session without the workflow dispatches it as the workflow's steps do, a scratch directory and a worktree of its own for each, as `skill@knowledge-architect-review@review-invariants` says.
+description: Drafts the verdicts of the design-record axis of a project audit for one group of entries, design heads and rejected alternatives, against the rules on design heads, on the Component a head belongs to and on rejected alternatives, one draft file per entry, and the same for a re-check after the audit's edits. Beside each head it reads the tripwires and the issues that cite the head, and the history of any ruling of the owner the head rests on. Briefed to calibrate, it compares the verdicts every group gave on the shared sample; briefed to verify, it tries to refute another auditor's drafts; briefed to check, it judges alone each head a proposed edit creates; briefed on an application, it judges every entry the session's application of a pass changed. The axis's saved workflow dispatches it, for its drafts, its calibration, its verify and its check steps and the judgement of an application, as `skill@knowledge-architect-project-audit@design-record-axis` says; a session without the workflow dispatches it as the workflow's steps do, a scratch directory and a worktree of its own for each, as `skill@knowledge-architect-review@review-invariants` says.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -103,7 +103,7 @@ One file per entry in your scratch directory, named as your brief says, holding:
 - **the evidence**: the words of the entry and of the rule, quoted, and the commits you read where
   the verdict rests on a ruling;
 - **the proposed edit**: the text before and after, for each failure; a split, a merge, a rename
-  or a move names each head it creates, with its full text;
+  or a move names each head it creates, with its full text, and a retitle the head's new title;
 - **the proposed outcome**: one of those `skill@knowledge-architect-project-audit@outcomes` and
   `skill@knowledge-architect-project-audit@design-record-axis` give, with its reason.
 
@@ -168,15 +168,27 @@ it; verified, where a reading confirms its finding; plausible, where no reading 
 it. Write `verdicts.md` in your directory: one line per draft, its file, its verdict, its marks, old
 or new text on a re-check, and its reason; then the drafts you judged again and the conforming
 drafts you read. Return its path, the count of each verdict and mark, and the count of verified
-findings that propose a split, a merge, a rename or a move.
+findings that propose a split, a merge, a rename, a retitle or a move.
 
 ## Check the heads an edit creates {{slug:check-created-heads}}
 
 A check brief names one group's verdicts and drafts, and your directory. Read the rules as for
-drafting. For each verified finding that proposes a split, a merge, a rename or a move, judge each
-head it creates, as its draft gives its text, alone against every rule of `primer@design-heads`,
-and its proposed edit against the failure modes of an edit above. Moving text unchanged does not
-make a created head conform.
+drafting. For each verified finding that proposes a split, a merge, a rename, a retitle or a move,
+judge each head it creates, or the head under its new title, as its draft gives its text, alone
+against every rule of `primer@design-heads`, and its proposed edit against the failure modes of an
+edit above. Moving text unchanged does not make a created head conform.
 
 Write the check file your brief names in your directory: per created head, its verdict and each
 rule it fails, with the words quoted; or that it conforms. Return its path.
+
+## Judge an application {{slug:judge-an-application}}
+
+An application brief names the commit audited, the commit of the session's application of the
+pass, your entries, each changed by the application, and your directory. Read the rules as for
+drafting, and the pass's report file under docs/audit-reports/ in your worktree, which holds the
+owner's rulings. Judge each entry as the application leaves it: alone against every rule; its change,
+`git diff` between the two commits, against the failure modes of an edit above and the ruling it
+carries out; and, for a head, every tripwire and issue that cites it, read whole, clause by clause,
+against the head that now holds what each clause guards. Write one file per failing entry in your
+directory: the rule, the failure mode or the entry it leaves false, the words quoted, and the repair
+you propose. Return each entry with its verdict, `conforms` or `fails`.
