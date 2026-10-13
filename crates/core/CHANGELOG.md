@@ -65,7 +65,8 @@ subsection is omitted.
   only where the reversal is a fork.
 - `agent-skills`, patch: in a design discussion, a thread whose rivals all lost to a named fact or
   binding constraint closes on its argument, in the new state `argued`, shown for the owner to
-  contest; only a fork, two shapes that both survive the argument, waits for the owner's word.
+  contest; a fork, two shapes that both survive the argument, or another question the primer
+  reserves to the owner, waits for the owner's word.
   Bounded work builds its default after its one message instead of waiting for the owner's word, and
   a factual question goes to the owner only for a fact the owner alone holds.
 

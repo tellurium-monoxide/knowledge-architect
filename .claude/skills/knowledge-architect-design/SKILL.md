@@ -65,7 +65,7 @@ It ends the argument, but it does not end your duties around it:
   can be given before the implications, feasibility, and interactions
   of the chosen path were explored, especially one made to shorten a
   discussion. Verifying what the choice entails remains your job
-  after the decision is given: check it against the other approved
+  after the decision is given: check it against the other decided
   threads, the named criteria, and the system as you know it.
 - **Material findings come back exactly once.** Material is one
   test, and it is answered by naming rather than by judging: the
@@ -253,7 +253,7 @@ enter freely at any time.
 entry id, `[a-z0-9]+(-[a-z0-9]+)*`, since a decided thread whose
 decision earns a design entry gives that entry its slug, or a slug and a
 stated pair, per `primer@design-heads`. Name the thread by the decision it
-would record if approved, not by the change it proposes: #retention-window,
+would record if decided, not by the change it proposes: #retention-window,
 not #shorten-retention. A slug is never changed during the discussion, since
 every earlier delta carries it. Before using a slug, check that no entry of
 the Component that will own the decision already holds it, with

@@ -830,7 +830,7 @@ stands, joined to closure. The
 risk, a session judging a rival defeated on a weak argument, is what the checkpoint's contest and
 `tripwire@agent-skills@argued-closure-reopened` watch.
 
-### Bounded work, and a default the record answers, are built on their default without waiting for the owner's word `##derived-decision-proceeds-on-default`
+### Bounded work is built on its default without waiting for the owner's word `##derived-decision-proceeds-on-default`
 
 The bounded path's one message names its default, which the session builds: the owner's answer
 stops or redirects it, and a part that cannot be undone waits for the owner's word, per
@@ -840,8 +840,9 @@ stops or redirects it, and a part that cannot be undone waits for the owner's wo
 It serves `goal@knowledge-architect@the-owner-decides`, under which the record settles what such a
 default decides, a bounded proposal holding no fork, while the owner, told in the one message,
 overrules it at any time. The nearest rival, the wait for the owner's word, sends the owner defaults
-that, the owner believes, the recorded design heads should answer: the owner reported such defaults
-put to the owner before the heads were looked at, so that the owner pointed the agent to them. It is a delivery of
+that, the owner believes, the recorded design heads should answer: the owner reported that such
+defaults appear to be put to the owner before the heads are looked at, which the owner thinks is
+why the owner points the agent to them. It is a delivery of
 `design@agent-skills@questions-go-to-their-authority` for the bounded path, and a head of its own
 because its rival, the wait, is another than that head's.
 
