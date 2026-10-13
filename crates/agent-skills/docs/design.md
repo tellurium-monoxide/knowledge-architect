@@ -152,8 +152,8 @@ commit that implements it carries the proposal and the owner's answer, attribute
 `design@agent-skills@attribution-replaces-quotation`. The skill's
 description reaches a session before it starts a requested change whose design is not settled.
 
-The owner's argument: "there is no way to determine whether a task is "bounded work that does not
-change the project's design" without going through the grounding steps of the design skill." The
+The owner argued that whether a task is bounded work, which does not change the project's design,
+cannot be determined without going through the design skill's grounding steps. The
 grounding gives bounded work the search for standing entries that no step gave it, and applying the
 entry tests at classification keeps a head from being written for a decision that earns none. The nearest rival, a separate installed skill for
 bounded problems, would repeat the grounding to classify at all; it is in the rejected
@@ -662,8 +662,7 @@ not count, per `design@agent-skills@a-past-sentence-is-rewritten`.
 It serves `goal@knowledge-architect@the-owner-decides`, under which a decision the owner made is
 recorded as the owner's: the attribution carries that, and the record shows the owner's decisions.
 The owner judged verbatim quotations of little value most of the time, as long as the attribution is
-correct, and, as a hedged view, out of place in design heads; the owner approved this thread on that
-ground. A verbatim quotation also costs the checker's syntax: two sessions bent one to get it past
+correct, and, as a hedged view, out of place in design heads. A verbatim quotation also costs the checker's syntax: two sessions bent one to get it past
 the checker, one by writing spans of reference kinds still to come as placeholders, in the
 agent-configuration-entities milestone, and one by writing the owner's words naming a skill's
 reference form bare, in the session that wrote the path-quickfixes spec, which
@@ -957,7 +956,9 @@ step wrote, is rewritten to state the present, or removed, and its history stays
 messages. Retargeting it to the new name would make it false, and plain text would take it out of
 the check, per `design@agent-skills@plain-text-is-no-repair`. A verbatim quotation of the
 owner that names a renamed entry is left as it is, with a reference to the current entry beside
-it, since rewriting it would misstate the owner, against `goal@knowledge-architect@the-owner-decides`.
+it, since rewriting it at a rename, with no change to what it decides, risks misstating the owner,
+the risk `design@agent-skills@attribution-replaces-quotation` names, against
+`goal@knowledge-architect@the-owner-decides`.
 In a released section of CHANGELOG.md, a reference to a deleted skill or agent goes back to the
 bare name instead, per `design@agent-skills@plain-text-is-no-repair`.
 
@@ -1159,9 +1160,9 @@ its deletion for every requested change that is not bounded, including one the c
 builds in one pull request, which strains the "fewer review rounds" of
 `goal@knowledge-architect@agents-get-a-complete-workflow`. Widening the existing short path, rather
 than adding a path for one decision met during a task, is the owner's proposal, on the owner's
-argument that a discussion that starts with one decision is bounded in neither threads nor rounds,
-since its size depends on what grounding, investigation and experiment bring, which nobody knows in
-advance. The separate path bounded the discussion to one thread, against
+argument, given as the owner's opinion, that a discussion that starts with one decision should be
+bounded in neither threads nor rounds, since its size depends on what grounding, investigation and
+experiment bring, which nobody knows in advance. The separate path bounded the discussion to one thread, against
 `design@agent-skills@structure-the-flow`. The cost is a long commit message when a discussion
 inside a task grows to several threads; its length is not bounded, since a bound on it would bound
 the discussion.
@@ -2300,14 +2301,14 @@ the record leave open, and `goal@knowledge-architect@agents-work-without-drift`,
 owner not answer what the record already answers. A workflow whose only authority is the owner
 sends every question to the owner, and records every answer as a ruling. In thaum, which implements a published rules text, at least three of
 the eleven questions one session put to the owner were answered by the rules, and in this
-repository the owner reported defaults put to the owner first that the recorded design heads
-answer. The nearest rival, a sentence that gives an external specification alone a rank above
+repository the owner reported defaults put to the owner first that, the owner believes, the
+recorded design heads should answer. The nearest rival, a sentence that gives an external specification alone a rank above
 the owner's word, loses on that second instance: the mechanism runs in a project that implements
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
 choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
 back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
-owner judged that a list keeping only goals, contradictions and irreversible actions with the owner
-left too large a scope to agents. The fork is the fusion of that list with one that kept scope and weighing with the
+owner thought that a list keeping only goals, contradictions and irreversible actions with the
+owner left too large a scope to agents. The fork is the fusion of that list with one that kept scope and weighing with the
 owner too, and keeps with the owner only the weighing no argument settles. A merge is no action that
 cannot be undone, since a revert commit undoes it, and whether agents merge is left to each project,
 as the owner directed. A fact only the owner holds is among the kinds because the primer asks the

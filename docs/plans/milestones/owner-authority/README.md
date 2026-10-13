@@ -365,7 +365,8 @@ G3, the met-sentence as approved:
 
 ### Durable records attribute a decision to the owner instead of quoting the owner `##attribution-replaces-quotation`
 
-- **Proposed:** the agent, reply to R0. **States:** new; approved R1.
+- **Proposed:** the agent, reply to R0. **States:** new; approved R1; reopened at slice 2's review
+  by the material finding D20, its default built, awaiting the owner's word.
 - **Arguments:** a8, a16, a30, a76.
 - **Closed by:** R1: "attribution-replaces-quotation: yes, I'm for it."
 - **Shape:** "Decided design". **Harvest:** a head of its own, slug its thread's, slice 2, with
@@ -1100,6 +1101,15 @@ can contest.
   approval clause becomes "which the owner approves where the reversal is a fork", in that section
   and in `design@agent-skills@head-ground-is-the-argument`. Slice 2 builds it, since it rewrites
   both. It bears on #owner-rules-at-a-fork.
+
+- **D20.** A material finding of slice 2's review: the attributions the harvest first wrote dropped
+  the scope or the hedges of the owner's words in five heads, and the history holds a paraphrase of
+  the owner in `design@agent-skills@transcript-reviewer-agent` that a quotation had to replace. It
+  defeats a premise of #attribution-replaces-quotation, that an attribution states what the owner
+  decided as well as the words do. Default, built: each attribution keeps the scope and the hedges
+  of the words, `primer@design-heads` says so, and the head names the paraphrase as the risk T4
+  watches. Alternative: a head whose ground is the owner's words keeps them verbatim, and only
+  approvals and rulings are attributed. It bears on #attribution-replaces-quotation.
 
 **Answered by the record**, each a decision of this document the owner can contest:
 
