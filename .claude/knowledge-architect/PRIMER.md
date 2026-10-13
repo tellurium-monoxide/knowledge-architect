@@ -26,9 +26,10 @@ or a tool does is answered by a measurement. What follows from the goals and the
 is answered by the argument from them. A question one of these answers is answered by the session,
 with its source cited, and the owner is told, not asked.
 
-**The owner answers what none of them settles**: a goal to set or change; a contradiction between
-the owner's words, the goals and the record that no argument resolves; an action that cannot be
-undone; and a fork, where two or more shapes meet every binding constraint and no fact defeats
+**The owner answers what none of them settles**: a goal to set or change; a fact only the owner
+holds, such as an intent, a plan or a weighing the owner made; a contradiction between the owner's
+words, the goals and the record that no argument resolves; an action that cannot be undone; and a
+fork, where two or more shapes meet every binding constraint and no fact defeats
 either, so that choosing between them weighs a cost or a scope that no goal or decision ranks. A
 cost alone makes no fork: a shape that fails a goal, or loses to a fact, is out, whatever it would
 save. A question put to the owner names the authorities consulted and, for a fork, each surviving
@@ -112,7 +113,7 @@ Something met while doing other work takes the first of these that applies:
 
 | # | test | outcome |
 | --- | --- | --- |
-| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | route it as `primer@question-authority` says: what a source, a measurement or the record answers, the session decides and reports; a fork, or a goal to set or change, goes to the owner at the top of the turn, with a default the work proceeds on unless the owner answers otherwise; a contradiction, or an action that cannot be undone, holds the part of the work that rests on it until the owner's answer; a divergence between a design home and the code is routed as `primer@intent-and-claims` says |
+| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | route it as `primer@question-authority` says: what a source, a measurement or the record answers, the session decides and reports; a fork, a goal to set or change, or a fact only the owner holds, goes to the owner at the top of the turn, with a default the work proceeds on unless the owner answers otherwise; a contradiction, or an action that cannot be undone, holds the part of the work that rests on it until the owner's answer; a divergence between a design home and the code is routed as `primer@intent-and-claims` says |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
 | 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`skill@knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |

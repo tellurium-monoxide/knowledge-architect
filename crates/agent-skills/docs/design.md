@@ -2241,8 +2241,9 @@ per `goal@knowledge-architect@structure-and-workflow-work-together`.
 `primer@question-authority` routes each question to what answers it: what a specification the
 project implements says, to its text; what the code or a tool does, to a measurement; what follows
 from the goals and the recorded decisions, to the argument from them. The session answers those
-itself, cites the source and tells the owner. The owner answers a goal to set or change, a
-contradiction no argument resolves, an action that cannot be undone, and a fork: two or more shapes
+itself, cites the source and tells the owner. The owner answers a goal to set or change, a fact
+only the owner holds, such as an intent, a plan or a weighing the owner made, a contradiction no
+argument resolves, an action that cannot be undone, and a fork: two or more shapes
 that meet every binding constraint with no fact defeating either. A cost alone makes no fork, since
 a shape that fails a goal or loses to a fact is out whatever it would save. The section prevails
 over an installed instruction that sends to the owner a question it gives the session, as a goal
@@ -2263,7 +2264,10 @@ choice, since every choice has a cost. The rank sentence holds because an edit o
 back a routing to the owner, and with it no session meets two instructions it cannot both obey. The
 owner set the kinds the owner answers, in a design discussion recorded by
 `milestone@plans@owner-authority`, and that a merge is no action that cannot be undone and is the
-project's to reserve.
+project's to reserve. The fact only the owner holds joined the kinds on the owner's word, since the
+primer asks the owner such facts, as at the fourth entry test of
+`design@agent-skills@a-head-is-owed-by-an-entry-test`, and a ruling on intent is defined by these
+kinds.
 
 ### An answer of the owner on a reading or a fact is recorded with its source, never as the owner's ruling `##answer-keeps-its-authority`
 
@@ -2310,8 +2314,8 @@ owner did not make, against `goal@knowledge-architect@the-owner-decides`.
 
 `primer@met-outside-the-task` gives four outcomes, the first that applies. An item that bears on
 the work is routed by `primer@question-authority`: what a source, a measurement or the record
-answers, the session decides and reports; a fork or a goal goes to the owner with a default the
-work proceeds on; a contradiction, or an action that cannot be undone, holds the part of the work
+answers, the session decides and reports; a fork, a goal or a fact only the owner holds goes to the
+owner with a default the work proceeds on; a contradiction, or an action that cannot be undone, holds the part of the work
 that rests on it, as a contradiction does wherever it is met, per
 `goal@knowledge-architect@the-owner-s-word-is-verified`, and as `primer@owner-word-premise` and the
 design skill's material finding say. A fix checkable from the diff alone lands in a commit of its
