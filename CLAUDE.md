@@ -618,9 +618,7 @@ git checkout main && git pull --ff-only
 
 **The crates are published on crates.io, and at least one consumer is known.**
 
-- **The project stays at 0.x, and breaking changes stay allowed**, until the owner's word, given
-  only once the open issues of the design discussion that produced it are implemented, or at least
-  argued thoroughly, per
+- **The project stays at 0.x, and breaking changes stay allowed**, until the owner's word, per
   `design@knowledge-architect@stays-at-zero-x`. How each kind of change is versioned is
   `design@knowledge-architect@versioning-policy`.
 - **Do not argue a decision on the grounds that changing it later would be breaking.** An argument
