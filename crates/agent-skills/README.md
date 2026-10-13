@@ -8,7 +8,8 @@ that the installed files match it.
 A project depends on `knowledge-architect`, never on this crate directly: cargo fetches it.
 
 A bounded problem, a clear requirement whose main risk is over-building, has no skill of its own:
-the design skill grounds it, and then sends one proposal for the owner's word.
+the design skill grounds it, and then sends one proposal, which it builds on its default unless the
+owner answers otherwise.
 
 The sections below describe one skill of the set, the design skill,
 `skill@knowledge-architect-design`: it runs design discussions as open, argued
@@ -24,13 +25,15 @@ about an existing architecture — the assistant:
   options or a battery of clarifying questions;
 - tracks the discussion as named threads with explicit states, and the
   criteria they are judged against in a table of their own; your
-  explicit word closes threads (an interpreted word only marks
-  a presumption, except against a checkpoint table, where a positive
-  word closes what the table holds), with two declared exceptions the
-  assistant announces — withdrawing its own defeated proposals, and
-  parking either its own overruled dissent or an observation a bug
-  hunt raised for a later discussion; a summary table makes the
-  standing state contestable at a glance;
+  explicit word closes a fork, where two shapes both survive the
+  argument (an interpreted word only marks a presumption, except
+  against a checkpoint table, where a positive word closes what the
+  table holds), and the assistant announces the three cases it closes
+  itself — a thread whose rivals all lost to a named fact, closed
+  `argued`, withdrawing its own defeated proposals, and parking either
+  its own overruled dissent or an observation a bug hunt raised for a
+  later discussion; a summary table makes the standing state, and every
+  closure the assistant made, contestable at a glance;
 - pushes back and expects push-back — the exchange is symmetric until
   a decision: your proposal is a claim to test, held to the
   same slots (why it works, what it costs, what it rules out) as the
@@ -69,8 +72,9 @@ it grounds the request first, since only the grounding shows whether the
 work is bounded. If it reverses no recorded decision, earns no design
 head, and has no second defensible shape, it sends you one message: the
 proposal, its nearest rival and why it loses, the strongest open reading
-it set aside, the consequences, and its default. It waits for your word;
-an argument in your reply turns it into a discussion.
+it set aside, the consequences, and its default, which it then builds;
+your answer stops or redirects it, and an argument in your reply turns it
+into a discussion.
 
 It also carries a keep-or-change discipline for questioning incumbent
 designs: fresh-discussion trend framing (a new session when the
@@ -100,16 +104,17 @@ not a task order to execute unexamined.** The mode assumes
 the answer is not yet known by either party. Give it a decision you
 have already made and it will argue against it, because testing a
 proposal is what it is for. Give it bounded work and it sends one
-proposal; you rule on it, or answer with an argument, which turns the
-work into a discussion.
+proposal and builds its default; you stop or redirect it, or answer with
+an argument, which turns the work into a discussion.
 
-**You give the word that closes a thread.**
-The assistant can move threads between open states but cannot close
-one for you; that asymmetry is the design. Doing neither leaves
-threads open, and the discussion cannot converge. There is no way to
-hand a decision to the assistant: saying "your judgement" is an
-approval like any other, and every finding that follows it still
-returns to you.
+**You give the word that closes a fork.**
+The assistant closes a thread itself where one shape stands, each rival
+out by a named fact, and shows each such closure for you to contest; a
+fork, two shapes that both survive the argument, stays open until your
+word. Leaving a fork unruled leaves it open, and the discussion cannot
+converge. There is no way to hand a fork to the assistant: saying "your
+judgement" is an approval like any other, and a finding that defeats its
+premise still returns to you.
 
 **A closed thread is not frozen.** Your word reopens one at any time,
 and you need no new argument to use it — the assistant does. If a
@@ -140,8 +145,10 @@ argument immediately. Abandoning silently leaves the criteria and the
 losing arguments unrecorded, which is the state a later session is
 least able to recover from.
 
-**You are the person who can decide.** Every decision routes to you.
-If the real authority is someone not in the conversation, the
+**You are the person who can decide what is yours.** A fork, a goal, a
+contradiction no argument resolves, a fact only you hold and an action
+that cannot be undone route to you; the rest the assistant answers from
+the record, a measurement or a source, and tells you. If the real authority is someone not in the conversation, the
 discussion converges on a verdict nobody present can act on.
 
 **A discussion runs in one session, and memory does not outlive it.**
@@ -165,7 +172,7 @@ producing a wrong result.
 
 **You accept a methodology, not a script for every exchange.** The
 skill structures how a discussion is conducted: proposals argued,
-threads tracked, closure held to your word. It does not try to specify
+threads tracked, a fork held to your word. It does not try to specify
 every way a conversation can go, and it is not extended each time one
 goes a new way. Conduct outside what is described here is the
 assistant's judgement, not a gap to be filled.

@@ -1,6 +1,6 @@
 ---
 name: knowledge-architect-design
-description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, when a choice about how something is built, or an owner's word that settles one, is met during another task and the decision creates a design head, contradicts a statement of one, or adds a member its argument does not cover, before starting a requested change whose design is not settled, to ground it and to find out whether it is bounded work that needs only a proposal and the owner's word, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers bounded work, threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
+description: MUST use when a design discussion has an open solution space — requirements still being discovered, several defensible shapes, a technical choice with real trade-offs — when evaluating whether to keep or change an existing design or architecture, when a recurring bug trend suggests the design itself is the problem, when a choice about how something is built, or an owner's word that settles one, is met during another task and the decision creates a design head, contradicts a statement of one, or adds a member its argument does not cover, before starting a requested change whose design is not settled, to ground it and to find out whether it is bounded work that needs only one proposal, built on its default, or when a discussion is reverting to multiple-choice menus, minimal-solution defaults, or approval-seeking closers. Covers bounded work, threads and their states, criteria, decision authority and material findings, the loop from grounding to convergence and the premortem, the hand-off to planning, and keep-or-change verdicts. Requires a frontier-tier model (Opus-class or stronger).
 ---
 
 # Discussing design decisions
@@ -44,8 +44,8 @@ knows it yet. It is discovered by proposing, arguing, and following
 the open threads.
 
 **This skill ends at convergence**, and, where the premortem runs, the premortem and the owner's
-rulings on its tripwires and acceptance criteria. Bounded work ends sooner, at the owner's word on
-its one proposal (`skill@knowledge-architect-design@bounded-work`). On the full path,
+rulings on its tripwires and acceptance criteria. Bounded work ends sooner, at its one proposal,
+built on its default (`skill@knowledge-architect-design@bounded-work`). On the full path,
 `skill@knowledge-architect-planning` writes the plan documents, in the same session (step 8); on
 the in-change path, a commit message carries the deliberation
 (`skill@knowledge-architect-design@decision-authority`). Either way, the decisions are recorded at
@@ -53,9 +53,10 @@ the landing of the work that implements them.
 
 ## Decision authority `##decision-authority`
 
-The owner owns every decision. Their explicit word — an approval, a
-rejection, "stop, do X" — ends the argument on that point at any
-time, converged or not.
+The owner decides what `primer@question-authority` reserves to the
+owner, a fork among it, and can overrule any decision of the
+discussion. Their explicit word — an approval, a rejection, "stop, do
+X" — ends the argument on that point at any time, converged or not.
 It ends the argument, but it does not end your duties around it:
 
 - **Never assume the decision saw all its consequences.** A decision
@@ -102,7 +103,8 @@ It ends the argument, but it does not end your duties around it:
   `skill@knowledge-architect-planning@working-a-slice` says, whatever
   the other cases would hold or let proceed. Presenting the finding reopens
   the thread, with the finding noted on its ledger line; it closes again
-  on the owner's word, as any thread does, and until then the work goes
+  as any thread does, on its argument or, at a fork, on the owner's
+  word, and until then the work goes
   on under the default above. If no word has come by the
   next checkpoint — or the end of the current change, whichever comes
   first — the finding stays on the thread's ledger line, marked
@@ -115,8 +117,9 @@ It ends the argument, but it does not end your duties around it:
   approval-seeking: you are surfacing information
   that arrived after the closure. If the check surfaces nothing
   material, proceed — no confirmation round.
-- **The weighing is theirs.** How much a risk matters, which
-  trade-off wins, what is good enough — that belongs to the owner, and
+- **The weighing at a fork is theirs.** How much a risk matters, which
+  trade-off wins between shapes that both survive the argument, what is
+  good enough — that belongs to the owner, and
   re-arguing it after their informed ruling is not rigor. When you
   comply while still disagreeing, record the disagreement as a parked
   thread carrying both a tripwire and a re-entry point (a declared
@@ -189,8 +192,9 @@ work is **bounded** when all three hold:
   suppress.
 
 Then send **one message**: what the grounding found, the proposal, its nearest rival and the fact
-that defeats it, the consequences the owner must know, and the default, which is what you build once
-the owner agrees. Wait for the owner's word: nothing is built before it.
+that defeats it, the consequences the owner must know, and the default, which you then build: the
+work proceeds on it unless the owner answers otherwise, a part that cannot be undone waiting for the
+owner's word, per `primer@question-authority`.
 A reply that brings an argument, a new shape or a doubt returns the work to the loop, on the
 in-change path or the full path. The commit that implements bounded work carries the proposal and
 the owner's answer, attributed to the owner, as `primer@design-heads` says.
@@ -269,7 +273,8 @@ proposals and produced no delta is a tracking failure, not a quiet
 round.
 
 **States.** Open: `new`, `in-discussion`, `presumed-settled`. Closed:
-`approved`, `ruled-out`, `parked` (deferred, with a tripwire and a
+`approved`, `argued` (closed on its argument, one shape standing),
+`ruled-out`, `parked` (deferred, with a tripwire and a
 re-entry point), `superseded` (absorbed by a named other thread),
 `withdrawn` (retracted by its own proposer). The set is
 closed on purpose: convergence is computed from it.
@@ -332,12 +337,24 @@ argued-fork form.
 When no rival stands — the alternatives are recorded `ruled-out`, and
 raising one again would be a stall and inventing one would be padding
 — there is no fork to present, and the closing move is not a question
-at all. State the thread's position, name what you build absent a
-word, and stop. A default stated and left is not approval-seeking; a
-question inviting assent to the only option on the table is.
+at all: the thread closes `argued`, below. A question inviting assent to
+the only option on the table is approval-seeking. **Only a fork goes to
+the owner**: two or more shapes that meet every binding constraint,
+with no fact defeating either, so that choosing between them weighs a
+cost or a scope no goal or decision ranks. A cost alone makes no fork,
+per `primer@question-authority`. Put a fork as the argued fork: each
+surviving shape, the binding constraints it meets, and what it trades.
 
-Closure by you, not the owner, exists in exactly two declared cases,
+Closure by you, not the owner, exists in exactly three declared cases,
 each announced in the delta:
+
+- `argued` — a thread with one shape standing, each rival out by a
+  named fact or binding constraint. You close it on its argument, and a
+  rival defeated so you close `ruled-out`, naming the fact. Both show in
+  the next delta and in the checkpoint, where the owner contests or
+  overrules them, and the turn lists them under "Decided", per
+  `primer@decided-section`. A rival nothing defeats makes a fork, and
+  the thread stays open.
 
 - `withdrawn` — a proposal of your own, when your own argument or
   evidence defeats it and the owner has not adopted or built on it.
@@ -357,7 +374,7 @@ each announced in the delta:
   is named on the ledger, put to the owner under a label, `T<n>`, in the
   premortem's sequence, and written as
   `skill@knowledge-architect-decision-recording@ruled-tripwires` says.
-  `superseded` is not a third case, though it is easily read as one:
+  `superseded` is not a fourth case, though it is easily read as one:
   threads absorbed by a proposal close on the owner's word approving that
   proposal by name, and until it comes the absorbed threads keep their
   state. A displayed checkpoint showing the absorbing thread and the
@@ -407,7 +424,8 @@ produced one — rather than silently carried.
 of the novelty test. The owner reopens a closed thread by their word
 alone. You reopen one with a new argument or new evidence named, as a
 material finding — the material-findings protocol (`skill@knowledge-architect-design@decision-authority`)
-owns the mechanics — and it closes again on the owner's word.
+owns the mechanics — and it closes again on its argument or, at a
+fork, on the owner's word.
 The record arbitrates novelty: an alternative counts as
 argued-and-lost only when a recorded reason covers it: a `ruled-out`
 thread, or a `withdrawn` thread recorded with a defeating reason, of
@@ -510,8 +528,11 @@ choices whose option space genuinely is closed and consequence-free.
    name its nearest rival and the discriminating fact that defeats
    that rival — "no rival worth naming" is itself a claim, tested
    like any other; never pad with alternatives to reach a count.
-   Factual questions (which database, which browsers, what scale) are
-   grounding — ask them freely and early. Preference questions need
+   Factual questions are grounding: answer from the source, a
+   measurement or the record what they answer, per
+   `primer@question-authority`, and ask the owner, freely and early,
+   the facts only the owner holds (their users, their plans, the scale
+   they expect). Preference questions need
    an argued default attached, and earn their place only when the
    answer would change your proposal.
 

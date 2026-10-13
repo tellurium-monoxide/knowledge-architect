@@ -142,14 +142,15 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
 - **The owner brings a design question, or a requested change for the skill to ground, not a task
   order to execute unexamined.** The mode assumes the answer is not yet
   known by either party. Given a decision already made, it argues against it, because testing a
-  proposal is what it is for. Given bounded work, it sends one proposal, and the owner rules on it
-  or answers with an argument, which returns the work to the loop. An owner who neither rules nor
-  argues leaves the work waiting.
-- **The owner gives the word that closes a thread.** The agent can move threads between open states
-  but cannot close one for the owner, except in the two cases the skill declares; that asymmetry is
-  the design. Doing neither leaves threads open, and the
-  discussion cannot converge. There is no way to hand a decision to the agent: "your judgement" is
-  an approval like any other, and every finding that follows it still returns to the owner.
+  proposal is what it is for. Given bounded work, it sends one proposal and builds its default; the
+  owner's answer stops or redirects it, and an argument returns the work to the loop. An owner who
+  neither answers nor argues leaves the default built.
+- **The owner gives the word that closes a fork.** The agent closes a thread on its argument where
+  one shape stands, and in the other cases the skill declares, and shows each closure for the owner
+  to contest; a thread at a fork stays open until the owner's word. An owner who neither rules on a
+  fork nor contests leaves the fork open, and the discussion cannot converge. There is no way to hand
+  a fork to the agent: "your judgement" is an approval like any other, and a finding that defeats
+  its premise still returns to the owner.
 - **A closed thread is not frozen.** The owner's word reopens one at any time, and needs no new
   argument; the agent does. Nothing about having been recorded makes a decision final.
 - **The owner says why when rejecting something.** A ruled-out thread carries its reason into the
@@ -163,8 +164,9 @@ defect of the skill (`skill@knowledge-architect-retrospective@what-it-examines`)
   reading hardens into the record as though the owner had ruled.
 - **The owner ends a discussion rather than dropping it.** "Stop, build X" and "park this" both end
   the argument at once. Abandoning silently leaves the criteria and the losing arguments unrecorded.
-- **The owner is the person who can decide.** Every decision routes to the owner. If the real
-  authority is not in the conversation, the discussion converges on a verdict nobody present can
+- **The owner is the person who can decide what is the owner's.** A fork, a goal, a contradiction
+  no argument resolves, a fact only the owner holds and an action that cannot be undone route to the
+  owner, per `primer@question-authority`. If the real authority is not in the conversation, the discussion converges on a verdict nobody present can
   act on.
 - **A discussion runs in one session, and its memory does not outlive it.** The ledger lives in the
   conversation and in the harness's transcript of it, and what survives is what

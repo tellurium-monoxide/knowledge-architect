@@ -17,9 +17,12 @@ a better wording found while doing the work is no finding, and neither is detail
 inside the scope of a ruling. You report what has no durable outcome, and what misstates the owner.
 You rewrite nothing.
 
-**Only the owner's word decides.** A proposal of the agent is a decision only where the owner's
-words closed it, as they close a thread in `skill@knowledge-architect-design@threads-and-states`,
-read from "Who moves what" to the end of its `superseded` case.
+**A ruling is the owner's only where the owner's words gave it**, as they close a thread in
+`skill@knowledge-architect-design@threads-and-states`, read from "Who moves what" to the end of its
+`superseded` case. A thread the session closed `argued`, a default the record answered and a source
+applied over an answer of the owner are the session's decisions, which the turn lists under
+"Decided", per `primer@decided-section`: the record shows each as the session's, never as the
+owner's.
 
 **Reproduce anything you assert.** Every finding quotes the transcript verbatim, and names where you
 looked for the outcome, with the command you ran. Drop what you cannot quote.
