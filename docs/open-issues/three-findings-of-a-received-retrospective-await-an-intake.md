@@ -49,3 +49,9 @@ records them.
 An intake of W3, W4 and W5 of that file under `skill@klarch-retrospective-intake`, with its
 analysis file in `path@knowledge-architect@docs/retrospective-reports/` and the owner's ruling on
 each finding.
+
+### What bears on it
+
+W5's proposal, an instruction several agent texts carry, is judged against the need test of
+`design@agent-skills@need-test` as well as the entry tests, since the intake shapes a fix by
+`skill@knowledge-architect-agent-configuration@admission-standard`.

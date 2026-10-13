@@ -505,3 +505,42 @@ rival was not defeated.
 rival its head names that sends to the owner every choice weighing a cost among the candidates.
 **Re-entry:** the retrospective of that session, with the limit
 `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see` names.
+
+## Guarding `design@agent-skills@admission-rules-home`: an unneeded addition is made in a session that did not load the agent-configuration skill `##agent-text-written-without-the-standard`
+
+T1 of the premortem of the discussion that made the decision. The decision rests on the premise
+that a session writing agent-facing text loads the agent-configuration skill, whose trigger
+delivers the standard at that moment, so that a home outside the primer reaches every writer.
+
+**Fires when:** a review or a retrospective finds an addition to agent-facing text that fails the
+need test of `design@agent-skills@need-test` or the real-use rule of
+`design@agent-skills@behaviour-additions-need-real-use`, made in a session that did not load the
+agent-configuration skill.
+**Response:** reopen `design@agent-skills@admission-rules-home` on its rival the primer, a
+one-sentence pointer in the primer to the standard.
+**Re-entry:** the retrospective of that session, and the outcome of the review's finding.
+
+## Guarding `design@agent-skills@additions-review-agent`: most findings of the agent-facing-text axis need nothing `##agent-text-findings-need-nothing`
+
+T2 of the premortem of the discussion that made the decision. The decision rests on the premise
+that the agent reports statements that fail the need test, and not its hard cases, so that a
+session spends its verification on findings that hold.
+
+**Fires when:** in one review where the axis on agent-facing text reports at least four findings,
+the session or the owner judges more than half of them to need nothing.
+**Response:** reopen the need test's readings in
+`skill@knowledge-architect-agent-configuration@admission-standard`, which the agent and the
+need-test lens both apply, and `design@agent-skills@need-test` with them.
+**Re-entry:** the outcome step of each review, `skill@knowledge-architect-review@what-review-leaves`.
+
+## Guarding `design@agent-skills@behaviour-additions-need-real-use`: a refusal of an addition to a project's own text is overruled `##real-use-refusal-overruled`
+
+T3 of the premortem of the discussion that widened the rule to a project's own agent-facing text.
+The widening rests on the premise that a project's owner wants the same evidence for an addition to
+the project's own text as for the installed text.
+
+**Fires when:** the owner overrules a refusal, made under the real-use rule, of an addition to a
+project's own agent-facing text.
+**Response:** reopen the rule's scope over a project's own text, in
+`design@agent-skills@behaviour-additions-need-real-use`.
+**Re-entry:** the retrospective of that session.

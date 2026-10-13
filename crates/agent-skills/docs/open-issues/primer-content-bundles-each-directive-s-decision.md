@@ -52,3 +52,8 @@ head for each directive whose decision has a rival of its own, the references to
 `design@agent-skills@primer-content` in the root CLAUDE.md, the issue entries and the rejected
 alternatives re-pointed; or the owner's ruling that the head stays as it is,
 recorded in this entry's closing commit.
+
+### What bears on it
+
+The primer's statements also pass the need test of `design@agent-skills@need-test`, which the
+discussion reads beside `design@agent-skills@primer-limit`.

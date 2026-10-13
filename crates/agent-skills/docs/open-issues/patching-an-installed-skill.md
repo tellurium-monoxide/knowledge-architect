@@ -54,3 +54,9 @@ owner's leads, and its work landed: the agent-configuration skill and
 `design@agent-skills@overlay-by-separate-skills` say how a project supersedes installed text and
 where it documents each supersession, and this repository's root CLAUDE.md documents its three in
 that shape.
+
+### What bears on it
+
+A superseding instruction is agent-facing text, so the shape decided writes it under
+`skill@knowledge-architect-agent-configuration@admission-standard`, per
+`design@agent-skills@admission-rules-home`.

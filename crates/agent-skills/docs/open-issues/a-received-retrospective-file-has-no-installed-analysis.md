@@ -46,7 +46,7 @@ finding to an entry with no analysis between.
 A design discussion under `skill@knowledge-architect-design` on the installed shape: a section of
 the retrospective skill, or an installed skill of its own for the session that receives the files;
 where a consuming project keeps the analysis, given that the primer's knowledge table has no row for
-it; whether the analysis home and its lifecycle ship or stay each project's own; and whether an
-installed analysis names `skill@knowledge-architect-agent-configuration@admission-standard`, whose scope
-sentence names the texts that deliver it. Then the change, or the owner's ruling that the method
-stays local.
+it; and whether the analysis home and its lifecycle ship or stay each project's own. An installed
+analysis shapes a fix by `skill@knowledge-architect-agent-configuration@admission-standard`, per
+`design@agent-skills@admission-rules-home`, so that much is decided. Then the change, or the owner's
+ruling that the method stays local.
