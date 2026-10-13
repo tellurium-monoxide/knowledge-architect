@@ -184,7 +184,7 @@ question is whether **a shape lost to an argument**.
 4. there is still some doubt that the winning alternative will achieve every goal of the project or
    of its Component.
 
-Proposing something again costs one discussion round, and that is
+Test 3 is the load-bearing one. Proposing something again costs one discussion round, and that is
 healthy. What decides an entry is whether the refutation can be derived again inside that round.
 Reasoning derives again for free, so an alternative that lost to an argument any competent reader
 reconstructs needs no entry. Evidence does not, so an alternative refuted by measurement does.

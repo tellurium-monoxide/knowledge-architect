@@ -403,8 +403,8 @@ part of its argument, that a predicted behaviour is unreliable evidence and that
 interaction, depends on who ships the text, and a project's own text exempt would let its writer
 admit what the audit refuses. The rule is stated in
 `skill@knowledge-architect-agent-configuration@admission-standard`, per
-`design@agent-skills@admission-rules-home`. The evidence behind it comes from one skill, so a text
-that needs a different standard argues its exception. One exception is argued in its own head,
+`design@agent-skills@admission-rules-home`. The evidence behind it comes from one skill, and the skills and agents forked from thaum have not
+been edited under it, so a text that needs a different standard argues its exception. One exception is argued in its own head,
 `design@agent-skills@staged-check-before-each-commit`, and one beside its instruction, the reread
 of the primer on the in-change path of `skill@knowledge-architect-design@decision-authority`.
 
@@ -515,7 +515,7 @@ second reason that names no other mechanism, a duplicate inside one text, a lead
 remark about the text fail, since a loaded text is read whole and they add no act. A statement
 about state outside the project is suspect, and is written only where an act needs it.
 
-The test is the owner's proposal, made on a statement an agent had written into a project's root
+The question the test asks is the owner's proposal, made on a statement an agent had written into a project's root
 `CLAUDE.md` about another project's issue, which the owner judged useless to an agent and liable to
 go stale with no work in the project. Whose act counts is the owner's ruling: an agent that
 maintains the text counts, a statement for the maintainer alone is at most one sentence, and in
@@ -524,24 +524,26 @@ no installing project maintains the installed text. The test's reach, stripping 
 necessary at the price of some variation between its readers, is the owner's weighing: a statement
 one reader passes is met by a later pass.
 
-The nearest rival, a content rule naming each kind of unneeded statement, such as "no state of
-another project" beside "current reality only", grows one clause per case observed, the mechanism
-`design@agent-skills@capabilities-not-structure` records, and would refuse a statement an act
-needs, such as a tool's behaviour a command relies on. A duplicate fails only while its twin stays,
-and its finding names the copy that stays, the one in the section whose subject it is: in the census
-of this repository's text, the two readers of one part failed opposite copies of one rule twice,
-so two passes deleting the copy each flagged would delete both.
+The nearest rival, a narrower test under which a second reason, a duplicate inside one text, a
+lead and an emphasis pass, loses on that weighing: it leaves whole classes of statements no act
+needs in place. A content rule naming each kind of unneeded statement, such as "no state of another
+project" beside "current reality only", grows one clause per case observed, the mechanism
+`design@agent-skills@capabilities-not-structure` records, and would refuse a statement an act needs,
+such as a tool's behaviour a command relies on. A duplicate fails only while its twin stays, and its
+finding names the copy that stays, the one in the section whose subject it is: two passes that each
+delete the copy they flagged would otherwise delete both.
 
 ### Every rule on what enters agent-facing text and how a change to it is shaped lives in one section of the agent-configuration skill `##admission-rules-home`
 
 `skill@knowledge-architect-agent-configuration@admission-standard` holds the need test of
 `design@agent-skills@need-test`, the evidence an addition needs, the lapse rule, the kind of a gap,
 the shape of a repair with its instruction count and net growth, the record check, and the outcomes
-of a need-test failure. Every actor that writes or judges agent-facing text reads it whole at the
-moment it judges: a session writing such text, a skill that moves text into it, the review axis on
-agent-facing text, the agentic-workflow axis's auditors and repair steps, a retrospective's
-proposals, and an analysis of received findings. Each of their texts points to the section, and none restates more than one sentence of
-it, per `design@agent-skills@restatement-size-test`.
+of a need-test failure. Every actor that writes or judges agent-facing text reads it whole at the moment it judges: a
+session writing such text, a skill that moves text into it, the review axis on agent-facing text,
+the agentic-workflow axis's auditors and repair steps, a retrospective's proposals, and an analysis
+of received findings. A session writing the text, a skill's move included, reaches it through the
+agent-configuration skill's trigger; each judging actor's text points to it. None restates more
+than one sentence of it, per `design@agent-skills@restatement-size-test`.
 
 The centralization is the owner's proposal, made so that the audit, the reviewers, an intake of
 received findings and the installed skills cannot produce an addition that another of them would
@@ -554,11 +556,7 @@ pointer asks for it read whole at that actor's own moment.
 
 The nearest rival, the standard kept in the audit skill with the agent-configuration skill pointing
 to it, loses on that row; under it, the writer of a project's configuration, the most frequent producer,
-reads another subset of the rules than the audit applies. The primer as the home
-loses on `design@agent-skills@primer-limit`: writing agent-facing text is not every session's work,
-and the skill's trigger delivers the section when it is; the session that wrote the statement the
-owner judged useless had loaded the skill, so its failure was the missing test, not a missed
-delivery. An installed agent holding the standard loses on rule 4 of
+reads another subset of the rules than the audit applies. An installed agent holding the standard loses on rule 4 of
 `skill@knowledge-architect-agent-configuration@where-text-goes`: a session writing configuration
 reads the standard in the main session, which loads a skill and reads an agent's definition only by
 opening its file.
@@ -1661,11 +1659,11 @@ activity produced the diff. It judges each added or changed statement against
 `skill@knowledge-architect-agent-configuration@admission-standard`, the standard every writer and
 judge of that text applies, per `design@agent-skills@admission-rules-home`. No other axis judges
 whether a statement is needed: the routing axis judges where it goes, and the reviewer agents leave
-style aside. In the session that wrote the statement the owner judged useless, five review axes
-passed over it. The owner holds the review of a diff the cheaper place to catch such a statement,
+style aside. In the thaum session that wrote the statement the owner judged useless, five review axes passed
+over it, by the message of thaum's commit that added it. The owner holds the review of a diff the cheaper place to catch such a statement,
 against the cost of an audit.
 
-The row sits in the review skill's table, on the owner's ruling, rather than among the axes the
+The row sits in the review skill's table rather than among the axes the
 agent-configuration skill adds to the reviews of its own activity: agent-facing text is also
 edited inside other activities, such as an issue's closure or a plan's harvest, whose reviews an
 axis of that skill would not reach. Text no branch touches is read by the need-test lens of the
@@ -1676,9 +1674,7 @@ agentic-workflow axis, per `design@agent-skills@workflow-axis-lenses`.
 `agent@knowledge-architect-agent-text-reviewer` holds the axis's procedure, naming the act of each
 statement and then judging its evidence and its kind, and its report. For the standard itself it
 reads `skill@knowledge-architect-agent-configuration@admission-standard` whole from the installed
-skill's file, and holds no copy of it, per `design@agent-skills@admission-rules-home`. The idea of
-an agent is the owner's, who weighed an agent as the holder of the standard while leaning to the
-skill. The nearest rival, a general-purpose subagent briefed with the axis's question, has each
+skill's file, and holds no copy of it, per `design@agent-skills@admission-rules-home`. The nearest rival, a general-purpose subagent briefed with the axis's question, has each
 dispatching session write the procedure into its brief anew, and a procedure rewritten per brief
 drifts; every other review axis with a fixed standard has an agent of its own.
 
@@ -2049,8 +2045,7 @@ its reference rather than reported again. An auditor may run read-only commands 
 corpus claims about the checker or the harness.
 
 The corpus is the owner's: the root `CLAUDE.md` and the content of the agent configuration
-directory. So is the exclusion of the scoped `CLAUDE.md` files next to the code, which the owner
-judged developer documentation rather than instructions to follow. `issue@core@a-home-for-developer-contracts-outside-agent-configuration`
+directory. So is the exclusion of the scoped `CLAUDE.md` files next to the code, which the owner judged more like developer documentation than instructions to follow. `issue@core@a-home-for-developer-contracts-outside-agent-configuration`
 points the same way. The cost is that no audit reads a scoped `CLAUDE.md`: the need test of
 `design@agent-skills@need-test` reaches one through its writer and the review axis on agent-facing
 text only. Every auditor
@@ -2101,8 +2096,8 @@ no text mentions is invisible from there. A rule whose message names its repair 
 one repair when it is broken, while a rule that shapes writing from the start, such as the
 reference grammar, must be known before writing. L8 reads each pair of a review standard and an
 audit standard that judge one subject, side by side, for a text of the project that one reports as
-a finding and the other must not, the class of divergent verdicts. The owner proposed it, holding
-that the reviews and the audit axis must agree on what they count as findings. Two standards that no single session obeys together are no contradiction, so no other
+a finding and the other must not, the class of divergent verdicts. The owner proposed it, holding it quite important that the reviews and the audit axis agree on what they count as
+findings. Two standards that no single session obeys together are no contradiction, so no other
 lens drafts such a pair, and none of the drafts of the axis's first four passes compared what two
 standards count as a finding. The rival,
 the class with no lens of its own, loses on that.
@@ -2139,8 +2134,8 @@ the axis: the retrospective judges it against an expectation set.
 The standard derives from `design@agent-skills@behaviour-additions-need-real-use`: a defect provable by
 reading is repaired on reading, and an instruction about how an agent behaves is added only on
 evidence from real use. A divergent verdict needs a text of the project, since a written example is
-a synthetic scenario. The owner set the axis's aim: finding what cannot be followed and the gaps where judgement is not
-enough, on the principle that some things are left to the agent's judgement, since no text covers
+a synthetic scenario. The owner set the axis's aim: most of its work is finding what cannot be followed and the gaps
+where judgement is not enough, on the principle that some things are left to the agent's judgement, since no text covers
 every case, and that instructions are best kept to what the workflow needs to function as intended.
 The class of an unneeded statement serves that last clause, on the owner's ruling that all work that
 judges or edits agent-facing text follows one standard, per `design@agent-skills@admission-rules-home`.
@@ -2257,11 +2252,10 @@ edits interact only where they touch one paragraph or one slug, which its cross-
 `design@agent-skills@one-run-pass`. The rival, the cluster and repair steps of the
 agentic-workflow axis, would group by cause findings the owner list already groups by kind.
 
-The direction is the owner's. The owner judged that instructions added for corner cases are more
-likely to interact incompatibly by their number alone, as `design@agent-skills@capabilities-not-structure`
+The direction is the owner's. The owner judged that instructions added for corner cases are always more likely to interact
+incompatibly by their number alone, as `design@agent-skills@capabilities-not-structure`
 records, that repairing contradictions one at a time at each site is not viable, and that a more
-thorough method of repair might be needed. One home per moment is the owner's too: the owner asked
-that the instructions about one moment or one kind of act be centralized, as the rules on design
+thorough method of repair might be needed. One home per moment is the owner's too: the owner asked to try to centralize the instructions about one moment or one kind of act, as the rules on design
 heads were. So is the second phase: the owner asked that the axis dispatch a second set of agents to
 classify the findings and propose their repairs. `design@agent-skills@capabilities-not-structure`
 states the principle the repair applies: a conflict a structure causes is answered by removing

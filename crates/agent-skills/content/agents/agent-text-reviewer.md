@@ -47,7 +47,7 @@ you lean to.
 ## Reporting {{slug:how-to-report}}
 
 Return each failing statement with its file, its line, the statement quoted, the act you tried or
-the evidence missing, and the outcome the standard's table gives it; for a duplicate, the copy that
+the evidence missing, and the outcome the standard gives it; for a duplicate, the copy that
 stays. Then each hard case. Then a count of the statements judged, passed and failed. **If the axis
 is clean, say so plainly**: a report padded to look productive costs the dispatcher a verification
 pass per invented finding. A statement's wording and style are not this axis's.

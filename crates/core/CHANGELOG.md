@@ -88,8 +88,12 @@ subsection is omitted.
   table fits, and asks the owner only about the others.
 - `agent-skills`, patch: a session that writes or judges agent-facing text, a review, an audit, a
   retrospective's proposal or a skill moving text included, applies one standard: it names, for
-  each statement, the act an agent would do differently without it, and deletes a statement for
-  which none exists, such as a narration of where an instruction came from.
+  each statement, the act an agent would do differently without it, and a statement for which none exists leaves as the standard's outcome table gives: deleted
+  when it carries no instruction, such as a narration of where an instruction came from, and put to
+  the owner when it is an instruction.
+- `agent-skills`, patch: an instruction about how an agent behaves is added to a project's own
+  agent-facing text only on evidence from real use, as for the installed text; a predicted gap
+  becomes an issue entry instead.
 - `agent-skills`, patch: a review whose diff adds to or changes agent-facing text dispatches a new
   installed agent, `agent@knowledge-architect-agent-text-reviewer`, which judges each statement
   against that standard.

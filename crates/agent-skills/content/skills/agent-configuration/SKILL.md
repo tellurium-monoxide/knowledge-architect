@@ -55,11 +55,14 @@ unit is a sentence, or a clause when only part of a sentence fails.
   a tool's version, a person's plan) is suspect: it is written only when an act needs it. "This
   issue was reported upstream" fails, since no act differs.
 
-Current reality only: no history, no dates, no commit hashes, no session records.
+Wording, style and placement across files are judged by other rules.
+
+Current reality only: no history, no dates, no commit hashes, no session records. Examples are kept
+minimal.
 
 ### Evidence and kind
 
-**A defect provable by reading is repaired on reading**: a contradiction, a broken trigger, a
+**A defect provable by reading needs no other evidence**: a contradiction, a broken trigger, a
 factual error, an instruction whose words allow two acts, a provable gap, divergent verdicts that a
 review standard and an audit standard give over one text, a statement that fails the need test.
 
@@ -84,13 +87,12 @@ or mapping between a unit of the work and a unit of its record, only where the w
 contradiction a structure causes is answered by removing structure. For an installed skill, a
 finding about the owner's behaviour outside the skill's expectation set,
 `skill@knowledge-architect-retrospective@expectation-sets`, is no gap; a finding that two installed
-instructions leave no move satisfying both is always in scope. An installed agent has no
-expectation set.
+instructions leave no move satisfying both is always in scope. An installed agent has no expectation set, since it never works with the owner.
 
 ### The shape of a repair
 
 **A finding is repaired at the cause that produced it, not at its site**: a repair written for one
-finding adds a rule, and added rules interact. A cause is one of four kinds:
+finding adds a rule, and added rules interact at the next pass. A cause is one of four kinds:
 
 - **two homes for one moment**: instructions about one moment or one kind of act stated in more
   than one text;
@@ -133,7 +135,9 @@ resolve. Run it after editing one.
 | --- | --- |
 | it carries no instruction: narration, a remark about the text, outside state no act uses, a duplicate whose twin stays, a lead or an emphasis whose statements carry every act | deleted in the branch: by the session, which applies an audit's outcomes, or as a review's repair |
 | it is maintainer-only, in installed text | moved to a comment of the workflow's source |
+| it is maintainer-only, in a project's own text, and longer than one sentence | cut to one sentence |
 | it is an instruction whose act no agent performs | put to the owner, since deleting it changes what agents are told: on an audit's owner list, as a default awaiting the owner in a plan document, or as a question in the turn elsewhere |
+| a suspect statement that passes | no finding; a suspect statement found false is a factual error |
 
 In a project that installs the workflow, a finding on installed text, of any row, is sent upstream,
 as every finding on installed text of an audit is.

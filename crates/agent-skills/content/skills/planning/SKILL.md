@@ -517,7 +517,9 @@ default that `primer@question-authority` gives the owner, a fork among them, is 
 defaults awaiting the owner, with the thread it bears on and a label, `D<n>`, numbered as
 `primer@labelled-items` says. A ruled default stays in that list,
 marked as ruled, with its label, since the sections it was written into cite it by its label. A
-finding that is a gap with one answer is applied in place. A finding that is wrong is dropped, with
+finding that is a gap with one answer is applied in place, except that **a gap whose one answer widens
+or narrows a ruling of the owner, or adds an obligation to one, is a scope change**, as at the
+design audit. A finding that is wrong is dropped, with
 the reproduction that showed it wrong kept in the commit message. A scope change, a clause that
 widens or narrows a ruling or adds an obligation to it, is put to the owner, listed under the
 defaults awaiting the owner. Detail the author added

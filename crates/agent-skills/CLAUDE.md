@@ -53,7 +53,7 @@ The text under `path@agent-skills@content/` is the source the install copies, no
 file, and it is edited here by hand. It is written under
 `skill@knowledge-architect-agent-configuration`, read whole, as a project's own skill or agent is.
 Three parts of that skill concern a project's own names and the installed copies, and do not apply
-to this source: its scope sentence, the prefix rule of
+to this source: the first sentence of its scope, the prefix rule of
 `skill@knowledge-architect-agent-configuration@shaping-a-skill`, since a shipped skill or agent is
 named with the installer's prefix, and
 `skill@knowledge-architect-agent-configuration@installed-files-never-edited`.

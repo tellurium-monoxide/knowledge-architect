@@ -87,7 +87,8 @@ to judge is never room to act against an instruction.
   argument defeated, the head's
   reversal goes to `skill@knowledge-architect-design`, and to the owner where reversing it is a
   fork or the head's ground is the owner's; the part of the task that rests on the point in
-  divergence waits for that answer, and the rest of the task goes on. The divergence closes when
+  divergence waits for that answer, and the rest of the task goes on. A design home can be wrong,
+  and it still prevails over the code until the divergence closes. It closes when
   the code changes to meet the head, or when the head is reversed under
   `skill@knowledge-architect-decision-recording`; it never closes by following the code. Work on
   that point that goes on meanwhile builds on the head.
