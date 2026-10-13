@@ -520,9 +520,9 @@ The question the test asks is the owner's proposal, made on a statement an agent
 go stale with no work in the project. Whose act counts is the owner's ruling: an agent that
 maintains the text counts, a statement for the maintainer alone is at most one sentence, and in
 the installed text it is a `%%` line, per `design@agent-skills@shipped-text-line-comments`, since
-no installing project maintains the installed text. That a text imported into another, as the
-primer into the root `CLAUDE.md`, is one text with it, and that the primer's copy is the one that
-stays, is the owner's ruling, since the two are loaded together. The test's reach, stripping what
+no installing project maintains the installed text. That the primer and the root `CLAUDE.md` that
+imports it are one text, since the two are loaded together, is the owner's reading, given as such;
+that the primer's copy is the one that stays is the owner's ruling. The test's reach, stripping what
 is not fully necessary at the price of some variation between its readers, is the owner's
 weighing: a statement one reader passes is met by a later pass.
 
@@ -532,8 +532,9 @@ needs in place. A content rule naming each kind of unneeded statement, such as "
 project" beside "current reality only", grows one clause per case observed, the mechanism
 `design@agent-skills@capabilities-not-structure` records, and would refuse a statement an act needs,
 such as a tool's behaviour a command relies on. A duplicate fails only while its twin stays, and its
-finding names the copy that stays, the one in the section whose subject it is: two passes that each
-delete the copy they flagged would otherwise delete both.
+finding names the copy that stays, the one in the section whose subject it is, or the primer's
+across the primer and the root `CLAUDE.md`: two passes that each delete the copy they flagged would
+otherwise delete both.
 
 ### Every rule on what enters agent-facing text and how a change to it is shaped lives in one section of the agent-configuration skill `##admission-rules-home`
 
