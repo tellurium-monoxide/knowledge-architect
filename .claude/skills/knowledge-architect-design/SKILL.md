@@ -141,7 +141,8 @@ evidence bring, which nobody knows in advance.
   that earns none, of the commit that implements it, or, where neither
   exists, where `skill@knowledge-architect-review@what-review-leaves`
   puts a record carried by a message: every thread with its final state, the
-  owner's words verbatim for each closure, the rivals that lost with
+  owner's ruling on each closure, attributed to the owner with what it
+  reaches, as `primer@design-heads` says, the rivals that lost with
   their reasons, and the owner's rulings on tripwires and acceptance criteria. The decision is
   recorded at that landing like any other, under
   `skill@knowledge-architect-decision-recording`:

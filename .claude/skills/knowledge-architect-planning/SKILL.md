@@ -235,7 +235,8 @@ that creates the file converts it to `path@<anchor>@<path>` in the same change.
 
 **Assembly from the transcript.** A plan document records the whole discussion: every thread with
 its proposer, its final state, the arguments on each side, the owner's rulings verbatim with their
-round, and its relations. It is assembled from the transcript, not from memory. Dispatch a
+round, and its relations. An answer of the owner on a reading or a fact is recorded with its source,
+as `primer@labelled-items` says. It is assembled from the transcript, not from memory. Dispatch a
 subagent that reads every transcript file the discussion spans, a resumed session included, and
 extracts the delta tables, the owner's messages verbatim and the arguments; the design skill's
 per-round delta is the draft it reads. Its brief names

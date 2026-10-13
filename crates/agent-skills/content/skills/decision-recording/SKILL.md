@@ -169,8 +169,8 @@ question is whether **a shape lost to an argument**.
 
 | the thread | what happens to it |
 | --- | --- |
-| ruled out | judged by the tests below |
-| withdrawn with a defeating reason | the same as ruled out: its own proposer gave it up on an argument |
+| ruled-out | judged by the tests below |
+| withdrawn with a defeating reason | the same as a `ruled-out` thread: its own proposer gave it up on an argument |
 | withdrawn with no defeating reason | the deliberation only. It carries no argument a later reader could test. |
 | superseded, when the absorbing thread carries its shape whole | the deliberation only |
 | superseded, when a distinct shape lost | judged by the tests below, as a ruled-out thread |

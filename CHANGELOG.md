@@ -10,6 +10,13 @@ subsection is omitted.
 
 ### Migration
 
+- `agent-skills`, patch: a design head, a commit message, a tripwire and an issue entry attribute a
+  decision to the owner instead of quoting the owner's words verbatim, which stay in plan documents
+  and in committed files that leave; entry test 4 and a head whose ground is the owner's attribute
+  that ground. A head already holding a quotation is converted when a change touches it; the
+  design-record axis of the project audit,
+  `skill@knowledge-architect-project-audit@design-record-axis`, brings a project's heads to the rule.
+
 - `checks`, minor: a `path` reference whose target is a register's home is reported: a heading
   register's file, its directory or that directory's `README.md`, a file register's directory, and
   the plans directory's `specs/` and `milestones/`. A project writes it as
@@ -52,6 +59,10 @@ subsection is omitted.
   found defeated, while the head's reversal is decided, by the owner where it is a fork or the head
   rests on the owner's words. A turn that decided
   something the owner could have decided ends with a "Decided" section.
+- `agent-skills`, patch: the transcript reviewer checks the scope of a ruling of the owner only for a
+  question the owner answers, and reports an answer on a reading or a fact that a record calls the
+  owner's ruling. A design head that stands on its argument is reversed with the owner's approval
+  only where the reversal is a fork.
 
 ## 0.6.0
 
