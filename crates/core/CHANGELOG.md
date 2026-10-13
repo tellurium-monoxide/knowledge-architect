@@ -10,13 +10,6 @@ subsection is omitted.
 
 ### Migration
 
-- `agent-skills`, patch: a design head, a commit message, a tripwire and an issue entry attribute a
-  decision to the owner instead of quoting the owner's words verbatim, which stay in plan documents
-  and in committed files that leave; entry test 4 and a head whose ground is the owner's attribute
-  that ground. A head already holding a quotation is converted when a change touches it; the
-  design-record axis of the project audit,
-  `skill@knowledge-architect-project-audit@design-record-axis`, brings a project's heads to the rule.
-
 - `checks`, minor: a `path` reference whose target is a register's home is reported: a heading
   register's file, its directory or that directory's `README.md`, a file register's directory, and
   the plans directory's `specs/` and `milestones/`. A project writes it as
@@ -32,10 +25,19 @@ subsection is omitted.
 
 - `manifest`, major: a register named `register`, and a Component, a location or a plan named
   `register`, are refused. A project renames it.
+
+- `agent-skills`, patch: a design head, a commit message, a tripwire and an issue entry attribute a
+  decision to the owner instead of quoting the owner's words verbatim, which stay in plan documents
+  and in committed files that leave; entry test 4 and a head whose ground is the owner's attribute
+  that ground. A head already holding a quotation is converted when a change touches it; the
+  design-record axis of the project audit,
+  `skill@knowledge-architect-project-audit@design-record-axis`, brings a project's heads to the rule.
+
 - `agent-skills`, patch: the sections `repair-standard` of the project-audit skill and
   `content-and-style` of the agent-configuration skill are replaced by one section,
   `skill@knowledge-architect-agent-configuration@admission-standard`; a project's own text that
   cites either section cites it instead.
+
 - `agent-skills`, patch: every statement of a project's own agent-facing text, its `CLAUDE.md`
   files, skills and agents included, meets the need test of
   `skill@knowledge-architect-agent-configuration@admission-standard`, and an instruction about how
