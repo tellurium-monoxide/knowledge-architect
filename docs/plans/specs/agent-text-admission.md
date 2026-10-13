@@ -118,9 +118,12 @@ The work of a spec, as `skill@knowledge-architect-planning@working-a-slice` says
   `design@agent-skills@instruction-record-is-minimal`, `design@agent-skills@restatement-size-test`,
   `design@agent-skills@primer-limit`, `design@agent-skills@workflow-auditor-agent`;
 - `design@agent-skills@synthetic-evidence-not-built`: no run is built to observe how an agent
-  follows the workflow's instructions, to choose between shapes among other purposes. The census's
-  agreement counts are such a run's output: no shape of this spec rests on them, and the need test
-  closed on its arguments and the owner's word;
+  follows the workflow's instructions, to choose between shapes among other purposes. Whether the
+  census was such a run is open: the design-conformance review read it so, and the owner reads it as
+  real use, a run over a real project with an instruction the project plans to add, while holding
+  that the census's way of counting agreement shows why such evidence misleads. No shape of this
+  spec rests on the census's counts either way, and the need test closed on its arguments and the
+  owner's word;
 - `design@agent-skills@shipped-text-line-comments`, the home of a `%%` line;
 - `goal@agent-skills@one-skill-per-activity`, `goal@agent-skills@installed-text-leaves-room-to-judge`,
   `goal@agent-skills@installed-text-works-anywhere`, `goal@knowledge-architect@the-workflow-improves-through-real-use`.
@@ -662,7 +665,7 @@ A row of the table of `skill@knowledge-architect-review@review-axes`: the axis "
 the new agent, applicable when the diff adds or changes agent-facing text, installed or the
 project's own. `skill@knowledge-architect-agent-configuration@reviewing-a-change` points to it in
 place of "adds no axis of its own". This places the row in the review table rather than in the
-agent-configuration skill's own list of added axes: that is default D1, awaiting the owner.
+agent-configuration skill's own list of added axes, as the owner ruled on D1.
 
 The new agent is thin. It holds the axis's procedure and its report: for each statement the diff
 adds or changes, name the act, then judge evidence, kind and content; for each failure, the outcome
@@ -684,7 +687,7 @@ stays. A row in the saved workflow's `LENSES` table, `{ id: 'L9', name: 'need te
 and `counts` accepts the key `L9`. Two auditors by default, on the premise
 `design@agent-skills@workflow-axis-lenses` records from real passes, that a second agent on one
 lens finds what the others of that lens missed, which `tripwire@agent-skills@duplicate-auditors-add-nothing`
-watches. The census's counts are not its ground, per `design@agent-skills@synthetic-evidence-not-built`. L8's list of pairs gains the new agent and L9, which judge one subject. The lens list
+watches. The census's counts are not its ground. L8's list of pairs gains the new agent and L9, which judge one subject. The lens list
 of `skill@knowledge-architect-project-audit@agentic-workflow-axis` names L9, and the hand-written
 lists the mapping table names gain it: the ranges "L1 to L8", the classes of the axis's "The
 rules", whose opening "a session can follow every instruction" gains "and needs every statement",
@@ -890,7 +893,8 @@ text the step did not list, add it to the mapping table and report it in the lan
   reviews of its own activity, as Round 1 worded it. The reason: agent-facing text is also edited
   inside other activities, a closing issue's moved instruction or a plan's harvest, whose reviews an
   axis added by the agent-configuration skill would not reach. It widens where the axis applies.
-  Built as written until the owner rules.
+  **Ruled**: the owner approved it, "D1: yes, it should apply to any diff with agent text changes,
+  from the review skill."
 
 ## Harvest
 
