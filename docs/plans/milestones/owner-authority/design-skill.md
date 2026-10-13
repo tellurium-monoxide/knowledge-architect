@@ -16,7 +16,7 @@ In `path@agent-skills@content/skills/design/SKILL.md`, per "The fork and the sta
 - `skill@knowledge-architect-design@bounded-work`, and its two other sites: the skill's
   description, "bounded work that needs only a proposal and the owner's word", and the overview,
   "Bounded work ends sooner, at the owner's word on its one proposal". The one message proceeds on
-  its default; its commit attributes the owner's answer.
+  its default; its commit already attributes the owner's answer, since slice 2's review repair.
 - The design skill's expectation set in `skill@knowledge-architect-retrospective@expectation-sets`,
   and its restatements in `path@agent-skills@README.md`: "two declared exceptions", "Every decision
   routes to you" and the other lines that hold closure to the owner's word.
