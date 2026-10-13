@@ -107,6 +107,9 @@ subsection is omitted.
   commit message, names an entry its tree does not hold, removed or renamed by the work or still to
   be created by it, by its bare slug in backticks, instead of a description in words; the audit's
   report file does so for the entries its pass removes, renames or creates.
+- `agent-skills`, patch: a branch that builds a default put to the owner merges once the owner has
+  ruled on it; the session puts every default still open to the owner by the merge at the latest,
+  and the work goes on with the default meanwhile.
 
 ## 0.6.0
 

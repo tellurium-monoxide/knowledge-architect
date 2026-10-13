@@ -32,8 +32,10 @@ fork, where two or more shapes meet every binding constraint and no fact defeats
 either, so that choosing between them weighs a cost or a scope that no goal or decision ranks. A
 cost alone makes no fork: a shape that fails a goal, or loses to a fact, is out, whatever it would
 save. A question put to the owner names the authorities consulted and, for a fork, each surviving
-shape and what it trades. Which further actions a project reserves to its owner, such as a merge,
-is the project's to state. **Where an installed instruction sends to the owner a question this
+shape and what it trades. **A default put to the owner is built, and the branch that builds it
+merges once the owner has ruled on it**: the work goes on with no wait, and the owner rules before
+the default reaches the main branch, at its merge at the latest. Which further actions a project
+reserves to its owner, such as a merge, is the project's to state. **Where an installed instruction sends to the owner a question this
 section gives the session, this section prevails**.
 
 ## The owner's word and its premise `##owner-word-premise`

@@ -921,6 +921,25 @@ is a delivery of
 `design@agent-skills@questions-go-to-their-authority` where a skill writes a default, and a head
 of its own because its rival, the wait, is another than that head's.
 
+### A default put to the owner is built, and the branch that builds it merges once the owner has ruled on it `##default-ruled-before-merge`
+
+`primer@question-authority` states it. A question the primer gives the owner, put with a default
+the session judges sensible, lets the work go on with that default, as row 1 of
+`primer@met-outside-the-task` and `skill@knowledge-architect-planning@working-a-slice` build it.
+The owner's ruling is needed before the branch that builds the default merges, so the session
+puts every default still open to the owner by the merge at the latest. A question with no default
+the work can build on, a contradiction or an action that cannot be undone, holds its part instead,
+per `design@agent-skills@owner-word-holds-as-far-as-its-premise` and
+`goal@knowledge-architect@the-owner-s-word-is-verified`.
+
+The timing is the owner's: the work goes on with no interruption, and the owner's approval is asked
+at the merge at the latest. Two rivals lost. The work waiting for each answer of the owner
+interrupts the work, which the owner does not want, and makes a default no default. A branch
+merging with a default unruled puts on the main branch a choice the owner has not made, against
+`goal@knowledge-architect@the-owner-decides`; the check of a plan document's deletion in
+`skill@knowledge-architect-planning@plan-document-leaves` catches it only when the document
+leaves, which for a milestone is its last slice.
+
 ### A design thread's slug becomes its entry's slug `##thread-slug-is-entry-id`
 
 A thread of a design discussion is named by a slug minted in the entry-id grammar and checked for

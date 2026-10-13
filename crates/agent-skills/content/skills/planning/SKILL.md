@@ -360,7 +360,8 @@ default marked as the owner's to reset.
 The work of a spec follows this procedure too, as its last paragraph says.
 
 **Where the owner's word is awaited.** A default the plan documents list as awaiting the owner is
-built as they write it until the owner rules on it. A scope change listed there does not start
+built as they write it until the owner rules on it, and its branch merges once the owner has, per
+`primer@question-authority`. A scope change listed there does not start
 before its ruling. A load-bearing gap of point 2 is not such a default, even where the message
 that puts it to the owner names one: it stops the slice, the whole of which rests on the decided
 design the gap defeats.
