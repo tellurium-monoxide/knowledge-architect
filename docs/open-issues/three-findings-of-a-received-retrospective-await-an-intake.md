@@ -15,9 +15,8 @@ analysis and no ruling. This entry keeps them until an intake takes them up.
 
 ### What
 
-The owner's words, at the start of that discussion: "We won't be using the intake skill for this
-one, but instead the design skill, focusing on a single issue of the retrospective". So no analysis
-file was written for this received file, though
+At the start of that discussion, the owner directed that this file be handled by the design skill
+rather than an intake, on one of its findings. So no analysis file was written for this received file, though
 `design@knowledge-architect@committed-findings-analysis` asks one for every received file. The
 three findings left, as the file states them:
 

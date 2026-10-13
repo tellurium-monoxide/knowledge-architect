@@ -260,7 +260,8 @@ records dozens per unit of work stops being readable and stops being ranked.
    numbered as `primer@labelled-items` says, several in one message, each quoting the owner's words
    the decision rests on: do they record the owner's intent, or were they an answer to the agent's
    proposal, or a hedged statement ("I think", "maybe"), which is a position to argue under
-   `skill@knowledge-architect-design`? The head quotes the owner's words and the owner's answer.
+   `skill@knowledge-architect-design`? The head attributes the decision to the owner, with the
+   owner's answer, as the next section says.
    With no answer, the decision earns no head by this test.
 
 Test 3 matters most in a project that implements a specification or leans on a tool's behaviour. A
@@ -281,7 +282,7 @@ choice. The design skill's in-change path keeps the deliberation in the commit m
 needs no plan document and no new session. An addition that answers another question than the
 head's takes a head of its own, by the test of one decision per head below. A member the head's
 argument covers is recorded directly, routed as the next paragraph says; where the owner approved
-it, the approval is quoted in the commit, not in the head. A change that relocates or rewords
+it, the approval is recorded in the commit, attributed to the owner, not in the head. A change that relocates or rewords
 recorded decisions, a split of a head included, and adds or removes none, is not a decision: it
 needs no design skill, and the routing and fidelity-of-relocation review axes judge that it adds or
 removes none.
@@ -290,7 +291,7 @@ removes none.
 and its body does not yet name. Where the part of the head that admits it stands on its argument,
 and the argument covers the member, it is recorded directly. Where that part's ground is the
 owner's words and they state the rule, the member is within the ruling and is recorded directly,
-the words quoted as before. Where the owner's words name the members, it goes to the owner as one
+the ground attributed to the owner as before. Where the owner's words name the members, it goes to the owner as one
 proposal: one message stating the rule, the member and a default, and nothing of it is written
 before the owner's word; it is no change of the decision, so it owes no reversal. A member the rule
 does not admit, or that the argument does not cover, is a change of the decision, and goes to the
@@ -309,14 +310,22 @@ decisions are proposed, argued over their costs and rivals, and approved by the 
 records such a decision on that argument, with its costs and rivals in its body or in the rejected
 alternatives. An approval is not a ground, whatever its words ("approved", "agreed", "all defaults
 approved", "accepted the cost"). It stays in the deliberation: the plan document or the commit
-message. The owner's words are a ground, quoted, only where the decision came from the owner: the
-owner proposed it, the owner chose where the argued rivals did not settle it, or it rests on a
-premise only the owner can state, such as an intent, a plan or a weighing the owner made. Test 4 is
-such a case. In a head that holds a part of each, the part that came from the owner says so, and
+message. The owner's words are a ground, attributed to the owner, only where the decision came from
+the owner: the owner proposed it, the owner chose where the argued rivals did not settle it, or it
+rests on a premise only the owner can state, such as an intent, a plan or a weighing the owner
+made. Test 4 is such a case. In a head that holds a part of each, the part that came from the owner says so, and
 the rest stands on its argument.
 
+**A durable record attributes a decision to the owner; it does not quote the owner.** A head, a
+commit message, a tripwire and an issue entry state what the owner decided and how far the
+decision reaches, as "the owner chose X over Y" or "on the owner's word", never the owner's words
+verbatim. The verbatim words stay where the deliberation is kept: a plan document's items, and a
+committed file that leaves once its outcomes are carried out. An attribution is checked, like a
+quotation, against the question it answered.
+
 **What the ground means to a later session.** A head that stands on its argument is reversed by a
-better argument, which the owner then approves. A head whose ground is the owner's words is
+better argument, which the owner approves where the reversal is a fork, per
+`primer@question-authority`. A head whose ground is the owner's words is
 reversed by the owner, or by a defeated premise of those words. An argument against it goes to the
 owner as a question about their intent.
 

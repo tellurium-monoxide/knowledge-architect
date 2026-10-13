@@ -168,7 +168,7 @@ files it added. Read the corpus as for drafting. Try to refute each
 draft, against its class and its lens as this definition gives them:
 
 - check every quotation against your worktree;
-- check a quotation of the owner against the question it answered, in its source;
+- check a quotation or an attribution of the owner against the question it answered, in its source;
 - check that the moment the draft describes exists;
 - mark known a draft whose finding an issue entry records, naming the entry, and kept a draft on
   the kept list;

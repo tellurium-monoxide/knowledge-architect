@@ -57,8 +57,8 @@ Before your first entry, read whole:
 - add a member the argument does not cover;
 - create a head whose deliberation no commit message or plan document records;
 - create a head, by a split, a rename or a merge, that fails a rule read alone;
-- quote the owner's words as the ground of a decision they did not answer: read the question each
-  quotation answered in its source.
+- attribute to the owner, or quote, a ground the owner's words did not answer: read the question
+  each attribution or quotation answered in its source.
 
 ## Take your group `##take-your-group`
 
@@ -150,7 +150,7 @@ messages and the report files it added. Read the rules as for drafting. Of a sam
 draft of record is that of the group whose listed entries hold it; judge only those.
 
 - Try to refute each draft that proposes a change: check every quotation against your worktree, and
-  a quotation of the owner against the question it answered, in its source.
+  a quotation or an attribution of the owner against the question it answered, in its source.
 - Mark known a draft whose finding an issue entry records, naming the entry, and kept a draft on
   the kept list.
 - Mark `bears-on-ruling` a draft whose finding is that a ruling's premise has proved false, and

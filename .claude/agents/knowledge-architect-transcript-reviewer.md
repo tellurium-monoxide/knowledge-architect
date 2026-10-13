@@ -98,14 +98,22 @@ the owner never saw, has no durable outcome.
 
 ## Check each recorded ruling against the owner's words `##check-recorded-rulings`
 
-For each decision of the owner that the tree or the history records:
+A ruling of the owner is a word on a question `primer@question-authority` reserves to the owner.
+An answer of the owner on a reading or a fact, a question a source, a measurement or the record
+answers, is no ruling: check it against its source instead. Report a reading the record calls the
+owner's ruling, as `primer@labelled-items` says it must not, and report a source the record misreads
+as a reading, for the review of that source, not as a misstated ruling.
+
+For each ruling of the owner that the tree or the history records:
 
 - **its state** is the one the owner's words gave. A proposal the owner did not rule on is not
   recorded as approved;
 - **its scope** is what the owner ruled: not wider, not narrower, and with no obligation added that
   the owner did not rule. A clause that only details, clarifies or rewords the ruling is inside its
   scope;
-- **an argument attributed to the owner** is the owner's.
+- **an argument attributed to the owner** is the owner's;
+- **its attribution**, where a durable record attributes it rather than quotes it, as
+  `primer@design-heads` asks, states what the owner's words decided and how far they reach.
 
 ## Report `##how-to-report`
 
