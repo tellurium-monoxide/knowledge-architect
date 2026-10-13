@@ -97,11 +97,8 @@ Each item below is answered with its evidence. The order is a suggestion; the co
 - **d. Its kind.**
   - **a defect of the text**: unclear, missing or wrong, as
     `skill@knowledge-architect-retrospective@what-it-examines` defines the three, read whole;
-  - **a lapse of the session**: the instruction exists, is clear, and was not followed. Adding
-    text does not repair a lapse, per `design@agent-skills@capabilities-not-structure`. The
-    exception is a lapse that recurs at one point of delivery: the instruction is read at one
-    moment and needed at another. Then the fix moves where it is delivered, and the recurrence is
-    its evidence;
+  - **a lapse of the session**: the instruction exists, is clear, and was not followed. What
+    repairs it is the lapse rule of `skill@knowledge-architect-agent-configuration@admission-standard`;
   - **about the owner's behaviour**: judged against the expectation set of the skill concerned, in
     `skill@knowledge-architect-retrospective@expectation-sets`. Behaviour the set says the skill assumes otherwise is
     outside that skill's scope, per `design@agent-skills@expectation-set-bounds-scope`. A skill
@@ -123,11 +120,9 @@ Each item below is answered with its evidence. The order is a suggestion; the co
   - no change.
 
   The fix is shaped, and read against the record, as
-  `skill@knowledge-architect-project-audit@repair-standard` says, read whole: it is the audit's
-  standard for the same text, per `design@knowledge-architect@intake-shares-the-repair-standard`. A
-  fix to an
-  installed skill passes the four tests of the agent-skills `CLAUDE.md`, "Editing an
-  installed skill or agent", read whole: scope, necessity, kind, built intent.
+  `skill@knowledge-architect-agent-configuration@admission-standard` says, read whole: it is the
+  standard of every text that writes or judges agent-facing text, per
+  `design@knowledge-architect@intake-shares-the-repair-standard`.
 - **g. Its route.** What handling it needs, which says what "now" would mean:
   - a text edit whose design is settled: under `skill@knowledge-architect-agent-configuration` for
     this repository's own configuration, and for the installed text, at its source under

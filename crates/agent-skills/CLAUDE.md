@@ -59,25 +59,6 @@ to this source: its scope sentence, the prefix rule of
 named with the installer's prefix, and
 `skill@knowledge-architect-agent-configuration@installed-files-never-edited`.
 
-An edit of an installed skill under `path@agent-skills@content/` passes the four tests below, in
-order; an edit of an installed agent passes the last three, since an agent never works with the
-owner and has no expectation set. This is a restatement; its homes are the entries and the skill named.
-
-1. **Scope.** A finding about the owner's behaviour outside the skill's expectation set is not a
-   gap, and no instruction is written for it. The sets are in
-   `skill@knowledge-architect-retrospective@expectation-sets`; a skill not listed there has none yet.
-   A finding that two installed instructions leave no move satisfying both is always in scope
-   (`design@agent-skills@expectation-set-bounds-scope`).
-2. **Necessity.** A defect provable by reading is repaired on reading, and an instruction about how
-   an agent behaves is added only on evidence from real use: read
-   `design@agent-skills@behaviour-additions-need-real-use` whole.
-3. **Kind.** A missing capability is worth text; a conformance rule only where the default is
-   systematically wrong; a structure imposed on the work, such as a fixed mapping between a unit of
-   the work and a unit of its record, only where the work needs it
-   (`design@agent-skills@capabilities-not-structure`).
-4. **Built intent.** An edit is checked against the design homes and the goals as
-   `skill@knowledge-architect-agent-configuration@content-and-style` says, read whole.
-
 For the design skill, a finding about an intermediate table rather than the outcome is
 not worth text (`design@agent-skills@outcome-over-display`). A rewording needs no design entry
 (`design@agent-skills@instruction-record-is-minimal`).

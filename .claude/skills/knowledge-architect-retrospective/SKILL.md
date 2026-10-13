@@ -86,7 +86,8 @@ reported as outside that skill's scope, with the assumption quoted, rather than 
 A finding that two installed instructions leave no move satisfying both is always in scope,
 whatever the owner did.
 
-End with **proposals**: for each finding that has one, what to change, and where.
+End with **proposals**: for each finding that has one, what to change, and where, shaped as
+`skill@knowledge-architect-agent-configuration@admission-standard` says, read whole.
 
 ## Two files, sorted by whose text must change `##two-files`
 

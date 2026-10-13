@@ -121,8 +121,9 @@ it is the failure: the issue closes in the commit that adds the plan document, p
 it whole: it holds the test and the only two repairs of a trigger that fails it.
 
 **If a closed entry still held something live**, such as an instruction about working in that area
-or an uncertainty that survived the fix, that content is not an open issue and belongs in the owning
-document head or the nearest scoped `CLAUDE.md`, moved there **before** the entry was deleted, per
+or an uncertainty that survived the fix, that content is not an open issue and belongs in the home
+the knowledge table of `primer@where-knowledge-goes` gives it, moved there **before** the entry was
+deleted, per
 `skill@knowledge-architect-issue-tracking@movement-instruction`.
 
 ## Reporting `##how-to-report`

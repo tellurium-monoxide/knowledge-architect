@@ -431,7 +431,7 @@ drops a commit that changes no file, per
 ### The intake of received findings judges a repair of agent-facing text by the installed audit's repair standard `##intake-shares-the-repair-standard`
 
 `skill@klarch-retrospective-intake` judges a finding's fix by
-`skill@knowledge-architect-project-audit@repair-standard`: the repair by cause, the count of
+`skill@knowledge-architect-agent-configuration@admission-standard`: the repair by cause, the count of
 instructions and the net growth, and the record check. It names the section at the step that shapes
 a finding's fix and reads it against the record, beside its own four tests and its rivals. The
 intake keeps its own evidence, a real session behind each finding, its kind for a lapse of the
@@ -445,5 +445,5 @@ one. The worth of a repair and its shape do not differ, since both decide edits 
 the same cost. The standard has one home, the audit's section, per
 `design@agent-skills@root-cause-repair`, and the intake reads it where the worth is judged: at its
 step that shapes a fix, before any edit is written. The nearest rival, the shared standard in
-`skill@knowledge-architect-agent-configuration@content-and-style`, is read when an edit is written,
+`skill@knowledge-architect-agent-configuration@admission-standard`, is read when an edit is written,
 after that judgement is made.

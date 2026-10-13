@@ -1,12 +1,15 @@
 ---
 name: knowledge-architect-agent-configuration
-description: MUST use before adding or editing the project's root CLAUDE.md, a scoped CLAUDE.md next to code, a project skill, or a project subagent definition, and after an install that changes the installed files. Covers choosing between root, a skill, a scoped file and an agent; how a skill's scope and description are shaped; the content instructions; the project's rows of the knowledge table; and why an installed file is never edited.
+description: MUST use before adding or editing the project's root CLAUDE.md, a scoped CLAUDE.md next to code, a project skill, or a project subagent definition, and after an install that changes the installed files. Covers choosing between root, a skill, a scoped file and an agent; how a skill's scope and description are shaped; the standard for what enters agent-facing text and how a change to it is shaped; the project's rows of the knowledge table; and why an installed file is never edited.
 ---
 
 # Maintaining the agent configuration
 
 Scope: the project's own agent configuration, the text an agent reads to work in this project.
 Its root `CLAUDE.md`, its scoped `CLAUDE.md` files, its own skills and its own subagent definitions.
+Its standard for what enters agent-facing text,
+`skill@knowledge-architect-agent-configuration@admission-standard`, also governs the installed text
+wherever a session judges it or proposes a change to it.
 
 Not covered here: **the installed files**, every file that `cargo klarch install-agent-skills`
 writes. They are never edited by hand (`skill@knowledge-architect-agent-configuration@installed-files-never-edited`). **Where the argument
@@ -14,26 +17,126 @@ for a decision about the configuration lands**: `skill@knowledge-architect-decis
 skill owns how to write the configuration, that one owns where the argument goes. **Setting the
 configuration up the first time**: `skill@knowledge-architect-setup`.
 
-## Content and style of agent-facing files `##content-and-style`
+## What enters agent-facing text, and how a change to it is shaped `##admission-standard`
 
-Everything written in a `SKILL.md`, a subagent definition or a `CLAUDE.md` follows these:
+This standard binds every statement of agent-facing text, the primer, a `CLAUDE.md`, a skill, a
+subagent definition and a saved workflow's prompts included, and every actor that writes or judges
+one: a session writing it, a review, an audit and its repairs, a retrospective's proposals, an
+analysis of received findings, and a skill that moves text into agent-facing text.
 
-- **Current reality only**: no history, no dates, no commit hashes, no session records. Examples
-  kept minimal. What "once was" never goes into an agent-facing file.
-- **No cautionary narratives.** They cost context, divert the attention, and buy less instruction
-  strength than they cost.
-- **References are checked like anywhere else.** A project's skills and agents are walked by
-  `cargo klarch check`, and a live reference in them must resolve. Run it after editing one.
-- **An edit that changes what an agent is told to do is a decision.** Before writing it, search
-  the design homes and the goals for the behaviour the edited text describes, as
-  `skill@knowledge-architect-decision-recording@reversal-check` searches for a recorded statement a decision would
-  reverse. An edit that writes into a design home, or edits a text whose behaviour a head
-  describes, loads `skill@knowledge-architect-decision-recording` before it is written; that skill,
-  with `primer@design-heads`, judges whether it contradicts a head, adds a member its argument does
-  not cover, or earns text at all. One that strains a
-  goal goes to the owner, as a decision that conflicts with a goal does, under
-  `skill@knowledge-architect-goal-setting`. A rewording that changes no instruction is not a
-  decision.
+### The need test
+
+Every statement in agent-facing text passes one test: **name the act of an agent following the
+workflow that would differ without it**: what the agent does, when, where, or a fact it must use.
+A statement for which no such act can be named is not written, and an existing one is deleted. The
+unit is a sentence, or a clause when only part of a sentence fails.
+
+- **Whose act.** Any agent that reads the text in its work counts, an agent that maintains the text
+  or writes a brief from it included. A statement whose only reader is the text's maintainer is at
+  most one sentence; in installed text it is a comment of the workflow's source, removed by the
+  build, since no installing project maintains the installed text.
+- **A reason** passes when it states the mechanism an instruction relies on or the failure it
+  prevents, even when the instruction has no exception. A second reason for the same instruction
+  passes only when it names another mechanism or failure. A sentence that narrates where an
+  instruction came from or how it turned out fails: "learned by getting them wrong", "and it
+  worked".
+- **A duplicate inside one text fails while its twin stays.** A text is read whole once it is
+  loaded, so a second statement of the same act adds none. The finding names the copy that stays:
+  the one in the section whose subject it is. Across texts, `primer@where-knowledge-goes` decides.
+- **A lead, a transition or an emphasis** fails when the statements it introduces or stresses
+  already carry every act. A heading is structure, not a statement.
+- **A remark about the text itself** fails unless it tells a reader where to look or what to edit:
+  what the text is classified as, or that something is not restated here.
+- **A definition** passes when an instruction anywhere in the workflow uses the term. **An example**
+  passes when it shows how a definition or an instruction applies.
+- **A pointer is needed** when its target is needed to act, or when it names the home of a
+  restatement.
+- **A statement that can turn false with no change to the project** (the state of another project,
+  a tool's version, a person's plan) is suspect: it is written only when an act needs it. "This
+  issue was reported upstream" fails, since no act differs.
+
+Current reality only: no history, no dates, no commit hashes, no session records.
+
+### Evidence and kind
+
+**A defect provable by reading is repaired on reading**: a contradiction, a broken trigger, a
+factual error, an instruction whose words allow two acts, a provable gap, divergent verdicts that a
+review standard and an audit standard give over one text, a statement that fails the need test.
+
+**An instruction about how an agent behaves is added only on evidence from real use**, in the
+installed text and in a project's own text alike: a behaviour seen in a real session, produced
+unprompted or asked for by the owner, with the owner naming what the session would have lacked
+without it, and one sentence stating the mechanism that produced the need. A gap that only
+predicts what an agent would do is no edit: it is an issue entry stating what a real session would
+have to show. A provable gap is an input an act needs that no text supplies and judgement cannot
+derive, a fact fixed elsewhere such as a format the checker enforces, a name or a path; its fill
+adds an instruction, so it goes to the owner.
+
+**A lapse is not repaired by adding text.** An instruction that exists, is clear, and was not
+followed stays as it is. Where the lapse recurs at one point of delivery, because the instruction
+is read at one moment and needed at another, the fix moves where it is delivered, and the
+recurrence is its evidence.
+
+**The kind of a gap weighs it.** A missing capability, a move the agent does not have, is worth
+text. A conformance rule, for a move the agent has and might not make, is worth text only where the
+default behaviour is systematically wrong. A structure imposed on the work, a fixed sequence, count
+or mapping between a unit of the work and a unit of its record, only where the work needs it; a
+contradiction a structure causes is answered by removing structure. For an installed skill, a
+finding about the owner's behaviour outside the skill's expectation set,
+`skill@knowledge-architect-retrospective@expectation-sets`, is no gap; a finding that two installed
+instructions leave no move satisfying both is always in scope. An installed agent has no
+expectation set.
+
+### The shape of a repair
+
+**A finding is repaired at the cause that produced it, not at its site**: a repair written for one
+finding adds a rule, and added rules interact. A cause is one of four kinds:
+
+- **two homes for one moment**: instructions about one moment or one kind of act stated in more
+  than one text;
+- **a structure the work did not need**: a fixed sequence, count or mapping that another
+  instruction needs to vary;
+- **a restatement that drifted from its home**;
+- **a rule written for one interaction**: a narrow rule where judgement already decides.
+
+A finding that fits none is a cause of its own, with no kind. A repair is the homes merged into one
+and the others pointing to it, the structure removed, the restatement brought back to a pointer, or
+the narrow rule deleted and the case left to judgement. It adds an instruction only where none of
+these closes the cause. **An instruction** is a sentence that tells an agent to do, or not to do,
+an act at a moment; a rewording that makes an existing instruction's intent clearer adds none,
+whatever its length. Each repair counts the instructions it adds and removes, and names the nearest
+rival to itself and the fact that decides between them. **When the repairs applied together add
+more instructions than they remove, the owner is told so first, with the net figure**, and rules on
+that growth before any of them is applied.
+
+### The record check
+
+**An edit that changes what an agent is told to do is a decision.** Before it is written, and before
+the owner rules on a proposed repair, it is read against the record: every goals home; the design
+heads that `cargo klarch show` and a search of the design homes return for the behaviour the edited
+text describes; the rejected alternatives of each Component that owns an edited text; and the
+scoped `CLAUDE.md` files and code comments that `skill@knowledge-architect-decision-recording@reversal-check`
+searches. The check names each head the edit would reverse, each rejected alternative it brings
+back and each goal it strains, with its quotation. An edit that writes into a design home, or edits
+a text whose behaviour a head describes, loads `skill@knowledge-architect-decision-recording` before
+it is written; that skill, with `primer@design-heads`, judges whether it contradicts a head, adds a
+member its argument does not cover, or earns text at all. One that strains a goal goes to the
+owner, under `skill@knowledge-architect-goal-setting`. A rewording that changes no instruction is
+not a decision.
+
+**References are checked like anywhere else.** A project's skills and agents are walked by
+`cargo klarch check`, and a live reference in them must resolve. Run it after editing one.
+
+### The outcomes of a need-test failure
+
+| the failing statement | outcome |
+| --- | --- |
+| it carries no instruction: narration, a remark about the text, outside state no act uses, a duplicate whose twin stays, a lead or an emphasis whose statements carry every act | deleted in the branch: by the session, which applies an audit's outcomes, or as a review's repair |
+| it is maintainer-only, in installed text | moved to a comment of the workflow's source |
+| it is an instruction whose act no agent performs | put to the owner, since deleting it changes what agents are told: on an audit's owner list, as a default awaiting the owner in a plan document, or as a question in the turn elsewhere |
+
+In a project that installs the workflow, a finding on installed text, of any row, is sent upstream,
+as every finding on installed text of an audit is.
 
 ## Where a piece of agent-facing text goes `##where-text-goes`
 

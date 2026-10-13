@@ -192,7 +192,7 @@ corpus. Read the corpus as for drafting, then read the proposal's text after its
 
 - through L1 and L3, as `agent@knowledge-architect-workflow-auditor@the-lenses` gives them, for a
   contradiction or two readings that the new text creates with the rest of the corpus;
-- against the record, as `skill@knowledge-architect-project-audit@repair-standard` says: for this
+- against the record, as `skill@knowledge-architect-agent-configuration@admission-standard` says: for this
   you read the design homes, the goals homes and the rejected alternatives beside the corpus, which
   hold no instruction and stay outside it, and run `cargo klarch show`.
 
