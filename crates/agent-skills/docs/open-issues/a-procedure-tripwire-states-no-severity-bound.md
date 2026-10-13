@@ -36,8 +36,18 @@ Instances seen:
   `tripwire@agent-skills@rule-title-wider-than-its-argument`;
   `tripwire@agent-skills@pointer-not-followed`; and
   `tripwire@agent-skills@attribution-loses-the-scope`, which watches a misstated ruling as
-  `ruling-lost-in-change` does. None of the five has been misread yet: their exposure is a reading
-  of their text, not an observed firing.
+  `ruling-lost-in-change` does.
+- Two of the five have since been met by their letter, on slips repaired before their merge, and
+  ruled not fired on that ground. `tripwire@agent-skills@attribution-loses-the-scope`: in the
+  branch that set what enters agent-facing text, the transcript review found two attributions wider
+  than the owner's words, one from a quotation converted at the harvest that dropped a quantifier
+  and detached a clause, as the commit "[review] Repairs of the transcript review: two attributions
+  narrowed to the owner's words, an open question recorded" says.
+  `tripwire@agent-skills@rule-title-wider-than-its-argument`: in the owner-authority milestone, the
+  transcript review of its third slice found a head's title wider than its body, as the commit
+  "[review] Repairs from the transcript review of slice 3: the last "approved" site, the bounded
+  head's title and hedge, the reviewer's rivals, and the changelog's fork" says. Both were judged
+  by the intake of the session's retrospective files.
 - The shape is the issue-tracking skill's section on a tripwire entry, "**the firing evidence**,
   meeting the falsifiability bar: an event, or a count crossing a bound, specific enough that both
   parties would agree it fired", restated by the design skill's premortem. The standing-state

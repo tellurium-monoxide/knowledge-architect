@@ -1,6 +1,6 @@
 **Generated — do not edit.** `cargo klarch index`
 
-38 entries
+39 entries
 
 | kind | title |
 | --- | --- |
@@ -11,9 +11,10 @@
 | design | [A tripwire on a procedure of the workflow states no bound on how much the failure must matter](a-procedure-tripwire-states-no-severity-bound.md) |
 | design | [A tripwire on agent behaviour under the workflow fires in sessions this project does not see](a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see.md) |
 | design | [The head on the primer's content restates the primer's limit and bundles the decision behind each directive](primer-content-bundles-each-directive-s-decision.md) |
+| design | [The design-record cross-check misses a tripwire that a split or a retitle leaves false while it still resolves](the-design-record-cross-check-misses-a-tripwire-a-split-or-retitle-leaves-false.md) |
 | design | [The workflow assumes one owner, unnamed, which a project with several contributors does not have](the-workflow-assumes-one-unnamed-owner.md) |
 | observation | [A reviewer subagent refused a write to the scratch file its brief named, and returned its findings as text](a-reviewer-cannot-write-the-file-its-brief-names.md) |
-| question | [A design issue's re-entry point is read by no review](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
+| question | [An issue's re-entry point is read by no review, for a design issue or any kind that carries one](a-design-issue-s-re-entry-point-is-read-by-no-review.md) |
 | question | [A head in the wrong Component goes to the owner, though the record settles the Component](a-head-in-the-wrong-component-goes-to-the-owner-though-the-record-settles-the-component.md) |
 | question | [A pending audit report file is outstanding work that no installed search of what is already known reads](a-pending-audit-report-is-reached-by-no-installed-search.md) |
 | question | [A project that receives a retrospective's findings has no installed procedure to analyse them](a-received-retrospective-file-has-no-installed-analysis.md) |

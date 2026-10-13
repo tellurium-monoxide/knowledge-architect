@@ -33,6 +33,16 @@ The three supersessions this repository holds today, each ruled by the owner:
 - the agentic-workflow axis's findings on the installed text edited at their source, with no
   upstream file, in `instructions@repository-skills`.
 
+The need is met in an adopting project too. thaum, on knowledge-architect 0.6.0, set two installed
+instructions aside on its owner's rulings, each stated in its root agent instructions: the premise
+procedure of `primer@owner-word-premise` for a reading its specification's text answers, and entry
+test 2 of `primer@design-heads` for decisions about the content of its agent workflow. It first
+wrote the first as an addition to the primer, as the agent-configuration skill allows; two of its
+reviewers showed the addition still contradicted the primer, and its owner then ruled the installed
+text wrong for the project on that point. The first override answers a gap the primer has since
+closed, under `design@agent-skills@questions-go-to-their-authority`; the second stands as that
+project's own scope.
+
 An earlier lead, kept: a patch stored as a diff in the project, applied by the install and checked
 by the check, so that an upgrade either applies it again or reports that it no longer applies.
 

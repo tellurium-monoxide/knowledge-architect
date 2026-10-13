@@ -32,6 +32,16 @@ task much easier. Left for later design." Nothing about the command's shape is d
 command, a `--citing <ref>` filter repeated on `issues` and `tripwires`, or several references
 accepted by `--guarding`.
 
+A second work list asks for the same command over a wider set. The closing steps of
+`skill@knowledge-architect-decision-recording@before-you-finish` run `show` on each head a change
+edits and read every text that cites it, since "an edit that keeps the slug dangles no reference,
+so no check reports a citing text it made false". In the owner-authority milestone, two routing
+reviews found a citing sentence made false that way, the reference still resolving. That list is
+every text citing any entry whose head changed in a range of commits, not only the issue and
+tripwire entries, and its set of references comes from the range. The retrospective proposed a
+`--changed` option of `show` taking a range. The design of this entry's command decides whether
+one command serves both lists.
+
 ### Why it matters
 
 `goal@knowledge-architect@structure-and-workflow-work-together` states that "the tool computes the
