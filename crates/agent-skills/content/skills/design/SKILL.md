@@ -634,8 +634,8 @@ choices whose option space genuinely is closed and consequence-free.
    acceptance criterion's observable. Its firing evidence, its
    response and its re-entry point may be reworded when it is written,
    or on a review finding, on your judgement, and each change is listed
-   to the owner at the end of the turn, as an item met outside the task
-   is. A tripwire that watches another cause is a new one, and needs the
+   in the turn's "Decided" section, per `primer@decided-section`. A
+   tripwire that watches another cause is a new one, and needs the
    owner's word.
 
 8. **On the full path, hand off to `skill@knowledge-architect-planning`, in this

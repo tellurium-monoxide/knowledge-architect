@@ -19,14 +19,41 @@ procedure (`skill@knowledge-architect-decision-recording`). **When a decision co
 the likely cause is that the owner missed the conflict: the goal prevails, and the conflict goes to
 the owner.** It is not resolved by following the decision.
 
+## A question goes to the authority that answers it {{slug:question-authority}}
+
+What an external specification the project implements says is answered by its text. What the code
+or a tool does is answered by a measurement. What follows from the goals and the recorded decisions
+is answered by the argument from them. A question one of these answers is answered by the session,
+with its source cited, and the owner is told, not asked.
+
+**The owner answers what none of them settles**: a goal to set or change; a contradiction between
+the owner's words, the goals and the record that no argument resolves; an action that cannot be
+undone; and a fork, where two or more shapes meet every binding constraint and no fact defeats
+either, so that choosing between them weighs a cost or a scope that no goal or decision ranks. A
+cost alone makes no fork: a shape that fails a goal, or loses to a fact, is out, whatever it would
+save. A question put to the owner names the authorities consulted and, for a fork, each surviving
+shape and what it trades. Which further actions a project reserves to its owner, such as a merge,
+is the project's to state. **Where an installed instruction sends to the owner a question this
+section gives the session, this section prevails**, as a goal prevails over a decision.
+
 ## The owner's word and its premise {{slug:owner-word-premise}}
 
 **A word of the owner holds only as far as its premise.** A ruling given on a premise, stated by
-the owner or supplied by the session, does not rule on the case where that premise is false. When a
-premise proves false, put the corrected premise to the owner at the top of the turn, quoting the
-word it defeats, with a default chosen in view of the corrected premise, and proceed on the default
-unless the owner answers otherwise; a part of the work that cannot be undone waits for the answer.
-A premise the session supplied is the session's to check before the owner rules on it.
+the owner or supplied by the session, does not rule on the case where that premise is false. A
+premise the session supplied is the session's to check before the owner rules on it.
+
+**An answer of the owner on a reading or a fact gives way to its source.** Where the owner answered
+what a specification's text says, or what the code or a tool does, and the text or a measurement
+says otherwise, the source applies at once: the work and the records follow it, and the owner is
+told at the top of the turn, with the source cited. A part of the work that cannot be undone still
+waits for the owner's answer. Whether the project follows a specification, and how closely, is the
+project's own goal or decision; an answer of the owner departs from the specification only where
+the owner said so.
+
+**A ruling on intent whose premise proves false is a contradiction.** A ruling on intent is a word
+of the owner on a question `primer@question-authority` reserves to the owner. Put the corrected
+premise to the owner at the top of the turn, quoting the word it defeats; the part of the work that
+rests on it waits for the answer, and the rest goes on.
 
 ## Items put to the owner under a label {{slug:labelled-items}}
 
@@ -39,6 +66,11 @@ record, as a tripwire's into a tripwires home, keeps its number, and that record
 A label that reaches none is numbered within the message that puts it to the owner, wherever the
 item's ruling is kept.
 
+**A label numbers what was put to the owner; it never names what decided.** An answer on a question
+another authority answers, per `primer@question-authority`, is recorded as a reading or a fact with
+its source, never as the owner's ruling. Where the source leaves the point open and the owner chose,
+the record says that the owner chose among the readings the source permits.
+
 ## Room to judge {{slug:room-to-judge}}
 
 **Where the installed text is silent, judge.** It leaves that room on purpose: it states the
@@ -50,12 +82,13 @@ to judge is never room to act against an instruction.
 - **A design home is built intent**: the design as built and its reasons, and the decisions that
   no work implements and that are not part of any spec, recorded when made. Design that is decided and not built is in a plan
   document until it lands. Check the code against a design home, never the other way. A divergence
-  is a defect in one of them: say which, open an issue, and hold the part of the task that rests on
-  the point in divergence until the owner's word; the rest of the task goes on. A design home can
-  be wrong, and it still prevails over the code until the issue closes. It closes when the code
-  changes to meet the head, or when the head is reversed under
-  `skill@knowledge-architect-decision-recording`; it never closes by following the code. Work on
-  that point that goes on meanwhile, on the owner's word, builds on the head.
+  is a defect in one of them: say which, and open an issue. Where the head stands on its argument,
+  the code is the defect. Where reversing the head is a fork, or the head's ground is the owner's,
+  it goes to the owner, and the part of the task that rests on the point in divergence waits for the
+  answer; the rest of the task goes on. A design home can be wrong, and it still prevails over the
+  code until the issue closes. It closes when the code changes to meet the head, or when the head is
+  reversed under `skill@knowledge-architect-decision-recording`; it never closes by following the
+  code. Work on that point that goes on meanwhile builds on the head.
 - **A reason recorded at the code** (an inline comment saying why the code is shaped so, or the
   message of the commit that argued it) is intent at the scale of that code. It binds as a
   presumption, below the design home: a change that defeats it argues against that reason in its
@@ -77,7 +110,7 @@ Something met while doing other work takes the first of these that applies:
 
 | # | test | outcome |
 | --- | --- | --- |
-| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | present it to the owner at the top of the turn, with a default, and proceed on the default unless the owner answers otherwise; a divergence between a design home and the code holds its part of the task instead, as `primer@intent-and-claims` says |
+| 1 | it bears on the current work: the work's result, or a decision it rests on, is wrong or incomplete without it | route it as `primer@question-authority` says: what a source, a measurement or the record answers, the session decides and reports; a fork goes to the owner at the top of the turn, with a default the work proceeds on unless the owner answers otherwise; a contradiction, or an action that cannot be undone, holds the part of the work that rests on it until the owner's answer; a divergence between a design home and the code is routed as `primer@intent-and-claims` says |
 | 2 | its fix is checkable from the diff alone: it changes no behaviour, no decision and no test outcome (a typo, a stale pointer, wording that is now false, a broken link) | fix it, in a commit of its own |
 | 3 | its `Why it matters` and its `What would close it` can be written | open an issue entry (`skill@knowledge-architect-issue-tracking`) |
 | 4 | none of the above | name it, with why it is dropped |
@@ -87,6 +120,17 @@ listing every item with its outcome: fixed (with the commit), issue opened (with
 for the owner's ruling, or dropped (with the reason). A mention inside other prose does not count.
 A subagent that edits nothing reports each item at the end of its report, under a heading "Met
 outside the task", and the session that dispatched it routes each item by this table.
+
+## Decisions reported at the end of a turn {{slug:decided-section}}
+
+**A turn in which the session decided something the owner could have decided ends with a section
+titled "Decided"**, before "Met outside the task" where both are owed: one line per decision, each
+with its ground, a reference or a source. A design thread closed on its argument, a default the
+record answered, a source applied over an answer of the owner, and a rewording of a tripwire's
+clauses are such decisions; an implementation choice that a commit message records is not. A
+subagent reports its decisions at the end of its report, under the same title, and the session that
+dispatched it carries them into its own section. The owner reads the section to learn what was
+decided, and can overrule any of it.
 
 ## Where knowledge goes {{slug:where-knowledge-goes}}
 
