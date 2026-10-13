@@ -48,7 +48,7 @@ audit and at each landing.
 | **audit** | the reading of a slice's entry, or of a spec, against the tree and the design homes before its work is implemented |
 | **harvest** | the recording of what a landing established into the project's durable homes |
 
-**The owner** is the person whose word closes a fork, and every question `primer@question-authority` reserves to the owner. Every ruling in this activity is theirs.
+**The owner** is the person whose word closes a fork, and every question `primer@question-authority` reserves to the owner.
 The word "plan" alone never names a document: say spec, milestone document, or plan document.
 
 ## When this skill starts `##when-planning-starts`
@@ -534,7 +534,7 @@ This list is their one home; the reviewer reads it here.
 
 ## When a plan document leaves `##plan-document-leaves`
 
-**A spec is deleted in the commit that completes its last harvest, and that commit's message cites
+**A plan document is deleted in the commit that completes its last harvest, and that commit's message cites
 it by its kind**, `spec@plans@<id>`, `milestone@plans@<id>` or `spec@<milestone>@<slice>`, which
 resolves against the commit's parent. A milestone's slice spec leaves when its slice lands; the
 milestone document leaves with the last slice. Before deleting:
