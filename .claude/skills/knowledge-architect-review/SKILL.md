@@ -152,8 +152,10 @@ or an argument, a mention or a reference added inside an existing head included,
 brought to what its head's body already argues, is reviewed by no axis again; one made before the
 last transcript review is still read by it.
 
-**An item whose outcome turns on a ruling the owner has not given is put to the owner** before its
-outcome is recorded, and its outcome is then one of the three above. Several such items go in one
+**An item whose outcome `primer@question-authority` gives the owner is put to the owner** before its
+outcome is recorded; an item whose outcome the record, a measurement or a source settles takes it
+from the session, and the record of the review and the turn's "Decided" section report it. Either
+way, its outcome is then one of the three above. Several such items go in one
 message, each under a label, `Q<n>`, so the owner rules on each by its label; the record of the
 review names each item by its content, not by the label. Where the dispatching skill gives such an
 item a label of its own, as the planning skill gives a plan document's defaults `D<n>`, that label
@@ -169,7 +171,8 @@ dispatcher without waiting for the owner: it is recorded in its home, repaired, 
 or judged to need nothing, with the reason. The exception is a decision that creates a design head,
 contradicts a statement of one, or adds a member its argument does not cover, and was not argued:
 it goes to `skill@knowledge-architect-design` first, per the backstop of `primer@design-heads`. Each
-outcome is reported to the owner, in the record of the review and at the end of the turn. A ruling
+outcome is reported to the owner, in the record of the review and in the turn's "Decided" section,
+per `primer@decided-section`. A ruling
 the reviewer finds misstated is the owner's, and is put to the owner.
 
 **Where the branch's commits reach the main branch as they are** (a fast-forward, or a rebase merge,

@@ -27,8 +27,9 @@ opens "Drop T5, keep the other tripwires." This document was assembled from that
 Rounds are numbered by the owner's messages, R0 the opening one to R5 the last of the discussion;
 R6 is the owner's message after the reviews of this document, "D12, D17, D13, D15 approved."; R7
 the owner's ruling on D18, during slice 1; R8 the owner's ruling on D1 to D4, D14, D16 and D19, at
-slice 1's review before its merge, "All defaults shown here are approved, proceed."; and R9 the
-owner's ruling on D20, after slice 2's merge, "Agreed on D20, proceed". The log holds R5 twice: the first copy lacks its last
+slice 1's review before its merge, "All defaults shown here are approved, proceed."; R9 the
+owner's ruling on D20, after slice 2's merge, "Agreed on D20, proceed"; and R10 the owner's ruling
+on D21, after slice 3's merge, "Agreed on D21, proceed". The log holds R5 twice: the first copy lacks its last
 paragraph, and no reply lies between the two. The complete copy, the second, is R5.
 
 ## How the work is done
@@ -1112,7 +1113,7 @@ can contest.
   watches. Alternative: a head whose ground is the owner's words keeps them verbatim, and only
   approvals and rulings are attributed. It bears on #attribution-replaces-quotation.
 
-- **D21.** The design skill's expectation set, in `skill@knowledge-architect-retrospective@expectation-sets`
+- **D21, ruled R10: approved.** The design skill's expectation set, in `skill@knowledge-architect-retrospective@expectation-sets`
   and restated in `path@agent-skills@README.md`, states assumptions about the owner, which are the
   owner's to state, item by item, per `issue@agent-skills@expectation-sets-for-the-installed-skills`.
   Slice 3 rewords three of its items to follow #owner-rules-at-a-fork and #derived-decision-proceeds-on-default:
@@ -1122,6 +1123,14 @@ can contest.
   decide what is the owner's", a fork, a goal, a contradiction no argument resolves, a fact only the
   owner holds and an action that cannot be undone. Default, built: the three as worded. It bears on
   #owner-rules-at-a-fork.
+
+- **D22.** The setup skill's expectation set, in `skill@knowledge-architect-retrospective@expectation-sets`
+  and restated in `path@agent-skills@README.md`, holds an item the owner stated: the owner rules on
+  "the place of each existing document". D5, decided on the record, gives the session a destination
+  a row of the knowledge table fits. The two conflict, and the set is the owner's to state. Default,
+  built: the item reads "the place of each existing document that no row of the knowledge table
+  settles". Alternative: the item stands, and D5 is withdrawn, the owner ruling on every document.
+  It bears on #derived-decision-proceeds-on-default.
 
 **Answered by the record**, each a decision of this document the owner can contest:
 
