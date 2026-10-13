@@ -364,8 +364,8 @@ of a spec follows it too, as its last paragraph says.
 **Where the owner's word is awaited.** A default the plan documents list as awaiting the owner is
 built as they write it until the owner rules on it. A scope change listed there does not start
 before its ruling. A load-bearing gap of point 2 is not such a default, even where the message
-that puts it to the owner names one: it stops the slice, and where the gap defeats a premise of a
-ruling, the part that rests on that premise waits for the owner's answer, as `primer@owner-word-premise` says of a ruling on intent whose premise proves false.
+that puts it to the owner names one: it stops the slice, the whole of which rests on the decided
+design the gap defeats.
 
 1. **Ground**: the Component's `CLAUDE.md`, its design home, its rejected alternatives; then the
    milestone document entire, then the slice's spec. The issues and the tripwires, of every anchor,

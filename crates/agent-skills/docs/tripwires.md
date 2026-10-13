@@ -448,8 +448,7 @@ ruling on its owner list.
 
 ## Guarding `design@agent-skills@questions-go-to-their-authority`: questions the record answers still reach the owner `##record-answered-questions-reach-the-owner`
 
-T2 of the premortem of the discussion that made the decision, recorded in
-`milestone@plans@owner-authority`. The decision rests on the premise that routing a question by its
+T2 of the premortem of the discussion that made the decision. The decision rests on the premise that routing a question by its
 authority, stated in the primer every session reads, overcomes the weight agents give to the
 owner's word, which `design@agent-skills@misstated-ruling-rated-by-what-it-changes` records the
 owner judging that no further instruction would reduce.
@@ -463,8 +462,7 @@ delivered, for example at the points where a skill writes a default for the owne
 
 ## Guarding `design@agent-skills@owner-word-holds-as-far-as-its-premise`: a deliberate departure from a specification is overridden as a reading `##departure-overridden-as-a-reading`
 
-T3 of the premortem of the discussion that made the decision, recorded in
-`milestone@plans@owner-authority`. The decision rests on the premise that a project states its
+T3 of the premortem of the discussion that made the decision. The decision rests on the premise that a project states its
 departures from a specification it follows, so that a session can tell an owner's answer on a
 reading from a scope decision.
 
