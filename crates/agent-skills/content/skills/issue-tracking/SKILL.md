@@ -288,9 +288,8 @@ The two kinds are coupled by movement, and that is what keeps both honest.
   index in the same change.
 
 If a closed entry still holds something live, such as an instruction about how to work in that
-area or an uncertainty that survived the fix, that content is not an open issue. Move it to the
-owning document head, a design or a goal, or to the scoped `CLAUDE.md` nearest the code it is about,
-**then** delete the file.
+area or an uncertainty that survived the fix, that content is not an open issue. Move it to the home
+the knowledge table of `primer@where-knowledge-goes` gives it, **then** delete the file.
 
 Deleting or renaming an entry means fixing what points at it. Every `issue@<anchor>@<id>` and
 `tripwire@<anchor>@<slug>` reference to a deleted entry becomes a dangling-reference finding of

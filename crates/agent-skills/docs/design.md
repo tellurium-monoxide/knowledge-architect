@@ -321,7 +321,7 @@ activity. A session editing agent-facing text, a skill, an agent or a `CLAUDE.md
 before an edit of a text whose behaviour a head describes. The skill, with `primer@design-heads`,
 then judges whether the edit contradicts a head, adds a member its argument does not cover, or
 records a decision at all. The skill's description
-states the first trigger, and reaches every session. `skill@knowledge-architect-agent-configuration@content-and-style` and test 4
+states the first trigger, and reaches every session. `skill@knowledge-architect-agent-configuration@admission-standard` and test 4
 of this crate's `path@agent-skills@CLAUDE.md` state both, and reach a session editing agent-facing
 text, which is the one activity that asks for a search of the design homes before an edit.
 
@@ -2132,7 +2132,7 @@ outcome of its cause's repair. Outside the project that publishes the workflow, 
 findings are on both sides, the installed text and the project's own, is repaired in two parts: its
 findings on the installed text are sent upstream, per `design@agent-skills@audit-outcomes`, and
 those on the project's own text take the outcome of its repair's edits on that text.
-`skill@knowledge-architect-project-audit@repair-standard` is the one home of the standard, which the
+`skill@knowledge-architect-agent-configuration@admission-standard` is the one home of the standard, which the
 audit reads, and each skill that names it. It is installed text, since installed text points to no
 home of one project.
 
@@ -2175,7 +2175,7 @@ An instruction is a sentence that tells an agent to do, or not to do, an act at 
 rewording that makes an existing instruction's intent clearer adds none, whatever its length. Each
 repair proposal counts the instructions it adds and removes. When the repairs to be applied together
 add more than they remove, the owner is told so first, with the net figure, and rules on that growth
-before any of them is applied, as `skill@knowledge-architect-project-audit@repair-standard` says.
+before any of them is applied, as `skill@knowledge-architect-agent-configuration@admission-standard` says.
 Each pass of the agentic-workflow axis also gives the corpus's word count before and after in its
 commit message, for monitoring.
 
@@ -2215,7 +2215,7 @@ the design homes return for the behaviour the edited text describes, and the rej
 of each Component that owns an edited text. It names each head the repair would reverse, each rejected
 alternative it brings back and each goal it strains, with its quotation. A repair that reverses a
 head is a decision, recorded under `skill@knowledge-architect-decision-recording`.
-`skill@knowledge-architect-project-audit@repair-standard` states it, for the audit and for each
+`skill@knowledge-architect-agent-configuration@admission-standard` states it, for the audit and for each
 skill that names that section. In the agentic-workflow axis's run the check of
 `design@agent-skills@repair-proposals-audited` makes it, reading those homes beside the corpus,
 which they stay outside, and every repair prompt names the nearest rival to its repair and the fact
@@ -2226,7 +2226,7 @@ goal or a rejected alternative, and a repair can bring back an alternative that 
 repository's intake of received findings read the same record for its fixes, and the owner asked
 the audit to learn from it: "Is there anything the intake skill did more thoroughly than our audit
 method and we could take a lesson from ?" The nearest rival, the check left to the session at the
-application, where `skill@knowledge-architect-agent-configuration@content-and-style` asks for it,
+application, where `skill@knowledge-architect-agent-configuration@admission-standard` asks for it,
 comes after the owner's ruling, so the owner would rule on a repair without knowing that it reverses
 a head, against `goal@knowledge-architect@the-owner-decides`. The search by behaviour is a
 judgement, and a head it misses is found at the review of the audit's branch, which reads each

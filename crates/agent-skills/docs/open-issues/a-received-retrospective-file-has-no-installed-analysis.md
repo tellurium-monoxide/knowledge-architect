@@ -47,6 +47,6 @@ A design discussion under `skill@knowledge-architect-design` on the installed sh
 the retrospective skill, or an installed skill of its own for the session that receives the files;
 where a consuming project keeps the analysis, given that the primer's knowledge table has no row for
 it; whether the analysis home and its lifecycle ship or stay each project's own; and whether an
-installed analysis names `skill@knowledge-architect-project-audit@repair-standard`, whose scope
+installed analysis names `skill@knowledge-architect-agent-configuration@admission-standard`, whose scope
 sentence names the texts that deliver it. Then the change, or the owner's ruling that the method
 stays local.

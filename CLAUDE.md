@@ -476,8 +476,8 @@ unshipped, per `design@core@owned-namespace-check`, and the install deletes it.
 **The findings of both files of `skill@knowledge-architect-retrospective`, and those of the
 agentic-workflow axis of `skill@knowledge-architect-project-audit` on the installed text, are handled
 here as `design@knowledge-architect@workflow-findings-stay-here` says, read whole.** Each repair of
-an audit's finding on the installed text, its proposal and its check included, passes the tests of
-`path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", read whole, per that head. The
+an audit's finding on the installed text, its proposal and its check included, passes the standard as
+`path@agent-skills@CLAUDE.md`, "Editing an installed skill or agent", says, read whole, per that head. The
 audit's checker-rules auditors, L7, also read the checker's design home, `register@core@design`,
 beside its README: the installed lens names the README alone, since an adopting project holds no
 design home of the checker, and here the checker's rules are decided in that home.

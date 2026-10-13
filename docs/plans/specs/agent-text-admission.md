@@ -9,7 +9,7 @@ does five things:
 
 - it writes one section of `skill@knowledge-architect-agent-configuration`, `admission-standard`,
   holding the need test, the evidence an addition needs, its kind, its content, the shape of a
-  repair and the record check; the audit's section `skill@knowledge-architect-project-audit@repair-standard`
+  repair and the record check; the audit skill's section `repair-standard`
   moves into it, and every other text points to it;
 - it adds a review axis for a diff that adds or changes agent-facing text, carried by a new
   installed agent;
@@ -59,7 +59,7 @@ The work of a spec, as `skill@knowledge-architect-planning@working-a-slice` says
 
 **What exists today, at each site the work touches:**
 
-- **The agent-configuration skill**, section `skill@knowledge-architect-agent-configuration@content-and-style`:
+- **The agent-configuration skill**, section `content-and-style`:
   four bullets, "Current reality only", "No cautionary narratives", "References are checked like
   anywhere else", and "An edit that changes what an agent is told to do is a decision", whose
   search names "the design homes and the goals". Its section
@@ -69,7 +69,7 @@ The work of a spec, as `skill@knowledge-architect-planning@working-a-slice` says
   `skill@knowledge-architect-agent-configuration@shaping-a-skill` holds a test of whether a pointer
   may stand in place of the text it points to. Its scope sentence covers "the project's own agent
   configuration", and names the installed files as not covered.
-- **The audit's section** `skill@knowledge-architect-project-audit@repair-standard`: the repair by
+- **The audit's section** `repair-standard`: the repair by
   cause and its four kinds, the instruction count and the net growth put to the owner, and the
   record check, which also reads the rejected alternatives. It is pointed to by the audit's own
   axis section (twice), by `agent@knowledge-architect-workflow-auditor@check-a-proposal`, by the
@@ -138,7 +138,7 @@ spec was written; step 5 takes them again.
   the lapse rule moves into the standard and the intake points to it.
   Referenced at: `skill@klarch-retrospective-intake` (item f). Step 1 re-points the
   intake; step 5 rewrites the head.
-- `design@agent-skills@root-cause-repair`: its sentence "`skill@knowledge-architect-project-audit@repair-standard`
+- `design@agent-skills@root-cause-repair`: its sentence "`…@repair-standard`
   is the one home of the standard" is rewritten. Referenced at: `register@agent-skills@design`
   (two heads), `path@agent-skills@docs/rejected-alternatives.md` (two entries),
   `register@agent-skills@tripwire` (four sites), `register@knowledge-architect@design`
@@ -164,14 +164,14 @@ spec was written; step 5 takes them again.
   Referenced at: `register@agent-skills@design` (four sites), two issues of
   `register@agent-skills@issue`, `register@knowledge-architect@design`. Step 3; step 5.
 - `design@agent-skills@audit-net-growth`: its sentence "as
-  `skill@knowledge-architect-project-audit@repair-standard` says" names the section that leaves.
+  `…@repair-standard` says" names the section that leaves.
   Referenced at: the rejected alternatives (one entry). Step 1 re-points; step 5 rewrites.
 - `design@agent-skills@audit-is-an-activity`: it says the audit skill "holds the method, the
   outcomes, the standard a repair of agent-facing text is judged by, and one section per axis"; the
   standard leaves that skill. Referenced at: `issue@agent-skills@audit-axes-beyond-the-design-record`.
   Step 5 rewrites it.
 - `design@agent-skills@design-home-write-loads-recording`: it names
-  `skill@knowledge-architect-agent-configuration@content-and-style` and "test 4" of
+  `content-and-style` and "test 4" of
   `path@agent-skills@CLAUDE.md` as the texts that state its rule; both leave. Referenced at:
   `register@agent-skills@design` (two sites), the tripwires (one site). Step 1 re-points; step 5
   rewrites.
@@ -626,7 +626,7 @@ on what enters agent-facing text and how a change to it is shaped. Its parts, in
    which the need test's reason and remark bullets now carry for narratives.
 6. **The shape of a repair**: the repair by cause, its four kinds, one repair per cause, the
    instruction count and the net growth put to the owner first. Moved whole from
-   `skill@knowledge-architect-project-audit@repair-standard`.
+   the audit skill's section `repair-standard`.
 7. **The record check**: every goals home, the design heads that `{{command}} show` and a search of
    the design homes return, the rejected alternatives of each Component that owns an edited text,
    and the scoped `CLAUDE.md` files and code comments the reversal check greps. It replaces both the
@@ -754,7 +754,7 @@ The pointers step 1 re-points, each old site to its new form:
 
 | site | today | after step 1 |
 | --- | --- | --- |
-| the intake, item f | "as `skill@knowledge-architect-project-audit@repair-standard` says, read whole" | the standard, read whole |
+| the intake, item f | "as `…@repair-standard` says, read whole" | the standard, read whole |
 | the intake, item d, "a lapse of the session" | states the lapse rule | points to the standard's evidence part |
 | `agent@knowledge-architect-workflow-auditor@check-a-proposal` | "against the record, as … `@repair-standard` says" | as the standard says |
 | `skill@knowledge-architect-project-audit@agentic-workflow-axis`, "The repair by cause" | `@repair-standard` | the standard |

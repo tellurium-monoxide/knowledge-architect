@@ -32,6 +32,16 @@ subsection is omitted.
 
 - `manifest`, major: a register named `register`, and a Component, a location or a plan named
   `register`, are refused. A project renames it.
+- `agent-skills`, patch: the sections `repair-standard` of the project-audit skill and
+  `content-and-style` of the agent-configuration skill are replaced by one section,
+  `skill@knowledge-architect-agent-configuration@admission-standard`; a project's own text that
+  cites either section cites it instead.
+- `agent-skills`, patch: every statement of a project's own agent-facing text, its `CLAUDE.md`
+  files, skills and agents included, meets the need test of
+  `skill@knowledge-architect-agent-configuration@admission-standard`, and an instruction about how
+  an agent behaves is added to it only on evidence from real use. The agentic-workflow axis of the
+  project audit, `skill@knowledge-architect-project-audit@agentic-workflow-axis`, brings a
+  project's text to it.
 
 ### New features
 
@@ -76,6 +86,10 @@ subsection is omitted.
   awaiting the owner; an audit puts a rule read two ways on its owner list only where no record
   states the reading; the setup of an existing project places a document a row of the knowledge
   table fits, and asks the owner only about the others.
+- `agent-skills`, patch: a session that writes or judges agent-facing text, a review, an audit, a
+  retrospective's proposal or a skill moving text included, applies one standard: it names, for
+  each statement, the act an agent would do differently without it, and deletes a statement for
+  which none exists, such as a narration of where an instruction came from.
 
 ## 0.6.0
 

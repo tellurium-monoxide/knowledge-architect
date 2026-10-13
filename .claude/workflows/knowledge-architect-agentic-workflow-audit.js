@@ -85,10 +85,10 @@ const CORPUS = 'The corpus is the one the section the-corpus of the agent defini
   ', detached at commit ' + args.commit + ', every file whole. You edit nothing in the project, ' +
   'run no command of the checker, and write only in the directory your brief names.'
 const SECTION = 'the section agentic-workflow-axis of the skill knowledge-architect-project-audit'
-// The cause, its kinds and the repair are stated in the skill's repair section, their one home.
+// The cause, its kinds and the repair are stated in the standard of the agent-configuration skill, their one home.
 const KINDS = 'What a cause is, its four kinds, what becomes of a finding that fits none, and ' +
-  'how a repair is shaped are stated in the section repair-standard of the skill ' +
-  'knowledge-architect-project-audit; how the repair of a cause is proposed in this run is in ' +
+  'how a repair is shaped are stated in the section admission-standard of the skill ' +
+  'knowledge-architect-agent-configuration; how the repair of a cause is proposed in this run is in ' +
   SECTION + '.'
 // The home of this line is the bullet of review-invariants, in the skill knowledge-architect-review,
 // that names the files a subagent's copy may predate: the definition, the root CLAUDE.md and the
@@ -243,7 +243,7 @@ const repairPrompt = (j) => lines([
   'Read the cause ' + j.id + ' in the causes file ' + causesFile + ', every draft its findings ' +
     'name, and the corpus. ' + KINDS,
   'Propose the repair of the cause as those sections say. Where you add an instruction, say why ' +
-    'none of the forms of repair the repair section names closes the cause. Name the nearest rival to ' +
+    'none of the forms of repair that standard names closes the cause. Name the nearest rival to ' +
     'your repair and the fact that decides between them.',
   'Write proposal.md in ' + j.dir + ': each edit as its file, the text before and the text after; ' +
     'the findings each edit closes; every instruction added and removed, quoted, and their two ' +

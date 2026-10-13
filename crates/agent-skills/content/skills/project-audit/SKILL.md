@@ -143,39 +143,6 @@ text that went on the owner list, so that the passes show whether the audit conv
 too how many of the owner's rulings on the owner list went against the default, which a tripwire
 on the audit's method may read.
 
-## Repairs to agent-facing text {{slug:repair-standard}}
-
-What a repair of an instruction is judged by, in an audit, and at each step of a skill that names
-this section, whether a reading or a real session found its defect.
-
-**The repair by cause.** A finding is repaired at the cause that produced it, not at its site: a
-repair written for one finding adds a rule, and added rules interact at the next pass. A cause is
-one of four kinds:
-
-- **two homes for one moment**: instructions about one moment or one kind of act stated in more
-  than one text;
-- **a structure the work did not need**: a fixed sequence, count or mapping that another
-  instruction needs to vary;
-- **a restatement that drifted from its home**;
-- **a rule written for one interaction**: a narrow rule where judgement already decides.
-
-A finding that fits none is a cause of its own, with no kind. A repair is the homes merged into one
-and the others pointing to it, the structure removed, the restatement brought back to a pointer, or
-the narrow rule deleted and the case left to judgement. It adds an instruction only where none of
-these closes the cause. **An instruction** is a sentence that tells an agent to do, or not to do,
-an act at a moment; a rewording that makes an existing instruction's intent clearer adds none,
-whatever its length. Each repair counts the instructions it adds and removes, and names the nearest
-rival to itself and the fact that decides between them. **When the repairs applied together add
-more instructions than they remove, the owner is told so first, with the net figure**, and rules on
-that growth before any of them is applied.
-
-**The record check.** Each repair is read against the record of what it edits before the owner
-rules on it: every goals home, the design heads that `{{command}} show` and a search of the design
-homes return for the behaviour the edited text describes, and the rejected alternatives of each
-Component that owns an edited text. The check names each head the repair would reverse, each rejected
-alternative it brings back and each goal it strains, with its quotation. A repair that reverses a head is a
-decision, recorded as `skill@knowledge-architect-decision-recording` says.
-
 ## The design-record axis {{slug:design-record-axis}}
 
 **The corpus**: every design head of every Component, and every entry of its rejected
@@ -292,12 +259,12 @@ walked in the group of the activity it serves.
 full, every finding the report marks as bearing on a ruling of the owner, on a tripwire or as
 plausible, against its draft, and a sample of the refuted drafts it chooses.
 
-**The repair by cause**, as `skill@knowledge-architect-project-audit@repair-standard` says. The
+**The repair by cause**, as `skill@knowledge-architect-agent-configuration@admission-standard` says, read whole. The
 repair step proposes one repair per cause, never one per finding, and a draft's proposed repair is
 one of its inputs; where `counts` gives a cause several repair agents, their proposals are
 alternatives for that one repair. **The check**: one workflow auditor per proposal, under its check
 brief, `agent@knowledge-architect-workflow-auditor@check-a-proposal`, reads the proposal's new text
-in the corpus through L1 and L3, makes the record check of that section, and writes its check
+in the corpus through L1 and L3, makes the record check of `skill@knowledge-architect-agent-configuration@admission-standard`, and writes its check
 beside the proposal. The session's verification reads each proposal with its check against its
 cause and the corpus, and corrects it or sends it back to a repair agent of its cause, briefed with
 the script's repair prompt and with the check.
@@ -323,7 +290,7 @@ finding marked known or kept, and a predicted gap, take instead the outcome
 cross-check proposes each cause's outcome, and the session decides it. An item of the owner list is
 one cause, with the ids of its findings, the repair, its count and a default. The owner list states
 the net growth of the pass's repairs in the project first, where they add more instructions than
-they remove, as `skill@knowledge-architect-project-audit@repair-standard` says. Each pass's commit
+they remove, as `skill@knowledge-architect-agent-configuration@admission-standard` says. Each pass's commit
 message also gives the corpus's word count before and after the pass, `wc -w` over the corpus's
 files.
 
@@ -331,7 +298,7 @@ files.
 
 | outcome | the findings |
 | --- | --- |
-| applied in the branch | a contradiction that a design head, a goal or a source settles, repaired to the side it settles; a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a drifted restatement brought back to its home, which converts it to a pointer when it is longer than one |
+| applied in the branch | a contradiction that a design head, a goal or a source settles, repaired to the side it settles; a rewording that changes no instruction, a two-reading instruction among them where a design head or another instruction states the reading meant; a broken trigger whose target exists under another name; a pointer added to a restatement without one, or to a project text that repeats an installed one; a factual error; a restatement whose content drifted from its home, brought back to it, becoming a pointer when it is longer than one sentence, since the repair edits what it says |
 | put to the owner, on the owner list | which side of a contradiction wins where no design head, goal or source settles it, a loop with no exit among them; which standard wins, for divergent verdicts; a broken trigger or a two-reading instruction whose repair changes what agents are told, which a two-reading instruction is when nothing recorded states the reading meant; a provable gap, since filling it adds an instruction |
 | an issue entry | a predicted gap; a finding the owner defers |
 
