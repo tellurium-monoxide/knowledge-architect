@@ -19,7 +19,7 @@ reproduce. **You do not use `Write` or `Edit`**, and you run nothing that change
 
 ## The standard `##changelog-standard`
 
-The standard is three heads of docs/design.md, read in full: `design@knowledge-architect@changelog-entries`
+The standard is three heads of `register@knowledge-architect@design`, read in full: `design@knowledge-architect@changelog-entries`
 for the entries, `design@knowledge-architect@changelog-section-fixed-at-release` for the released
 sections, and `design@knowledge-architect@versioning-policy` for its bump table. CHANGELOG.md's
 own preamble states the order of entries.
