@@ -169,13 +169,18 @@ record; this is behaviour in sessions, with the limit
 
 **Fires when:** a review finds a diff that turns a checked reference or a backticked path into
 plain text naming the same target, with no reference beside it to an issue entry that records a
-missing form, other than a deleted skill's or agent's name in a released changelog section, which
-the decision admits; or a retrospective's answer to its question on references written without backticks reports a pointer
+missing form, other than a deleted skill's or agent's name in a released changelog section, or
+the bare slug of an entry absent from the tree of a record of a deliberation, which the decision
+admits; or a retrospective's answer to its question on references written without backticks reports a pointer
 written as bare plain text to clear a finding.
 **Response:** open a `defect` for the instance. At the second instance, reopen
 `design@agent-skills@plain-text-is-no-repair`, with a mechanical check for plain-text
 pointers among the candidates.
-**First instance:** `issue@agent-skills@an-audit-report-cites-the-heads-its-own-pass-removes`.
+**First instance:** the first pass of the design-record axis on this repository, whose report file
+had its references to the heads the pass removed turned into plain text in the checker's syntax, in
+the commit "[audit] Pass 1 of the design-record axis applied: its edits in the branch, F1 to F18 and
+F21 carried out, two issues opened". The form the decision admits for such a file is the bare slug
+in backticks.
 **Re-entry:** the standing-state review, which reads every tripwire before a merge, and the
 retrospective's question on references written without backticks, which reads the session.
 
@@ -276,19 +281,6 @@ cite. It watches agent behaviour in a consumer project, which this project canno
 **Fires when:** a retrospective finds a pin moved across such a version with the axis not run.
 **Response:** reopen `design@agent-skills@audit-triggers`.
 **Re-entry:** the retrospective of a session that moved a pin.
-
-## Guarding `design@agent-skills@design-record-axis`: an audit's edit leaves a tripwire or an issue on the edited head false `##audit-edit-leaves-an-entry-stale`
-
-T8 of the premortem of the discussion that made the decision. The decision rests on the premise
-that reading each head's tripwires and issues before judging it keeps them true of the head the
-audit edits.
-
-**Fires when:** a review of an audit's branch finds a tripwire guarding, or an issue naming, a head
-an edit of the design-record axis changed, left false. An edit of another axis that leaves one false
-is a miss of the step of `skill@knowledge-architect-decision-recording@before-you-finish` that
-reads every text citing each head a change edits.
-**Response:** reopen `design@agent-skills@design-record-axis`.
-**Re-entry:** the standing-state review of every audit's branch.
 
 ## Guarding `design@agent-skills@workflow-axis-lenses`: in a pass, one agent of each duplicated lens alone reports every confirmed finding of that lens `##duplicate-auditors-add-nothing`
 

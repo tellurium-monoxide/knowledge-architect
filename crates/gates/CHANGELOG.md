@@ -103,6 +103,10 @@ subsection is omitted.
 - `agent-skills`, patch: the agentic-workflow axis of the project audit gains a lens, L9, which
   reports statements that fail the need test; its findings are deleted, moved to a comment of the
   source, or put to the owner, as the standard's table gives.
+- `agent-skills`, patch: a record of a deliberation, a plan document, an audit's report file or a
+  commit message, names an entry its tree does not hold, removed or renamed by the work or still to
+  be created by it, by its bare slug in backticks, instead of a description in words; the audit's
+  report file does so for the entries its pass removes, renames or creates.
 
 ## 0.6.0
 

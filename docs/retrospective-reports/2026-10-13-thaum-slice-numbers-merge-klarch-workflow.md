@@ -6,10 +6,10 @@
 - **Analysed against**: main at `v0.6.0-75-g5fca230`.
 - **How this file reached the intake.** On the owner's direction, W1 and W2 were handled by the
   design discussion that produced the owner-authority milestone, with no analysis, and W3 to W5
-  waited in `issue@knowledge-architect@three-findings-of-a-received-retrospective-await-an-intake`.
+  waited in `three-findings-of-a-received-retrospective-await-an-intake`.
   This analysis covers the whole file.
 - **Standing entries that bear on it**: from the one search over the 83 issues and 58 tripwires:
-  - `issue@knowledge-architect@three-findings-of-a-received-retrospective-await-an-intake`, which
+  - `three-findings-of-a-received-retrospective-await-an-intake`, which
     this analysis closes, in its own section;
   - `tripwire@agent-skills@a-head-verdict-is-overruled`, whose firing clause W5 meets, judged with
     W5;
@@ -177,7 +177,7 @@
 - **Default**: the issue gains the instances.
 - **Outcome**: approved.
 
-## `issue@knowledge-architect@three-findings-of-a-received-retrospective-await-an-intake` closes
+## `three-findings-of-a-received-retrospective-await-an-intake` closes
 
 - **What it asks.** "An intake of W3, W4 and W5 of that file under
   `skill@klarch-retrospective-intake`, with its analysis file in

@@ -203,8 +203,12 @@ message and tree through `cargo klarch commits`. A reference anywhere else is fo
 
 **A finding is repaired in a form the checker judges, never by moving the pointer into plain
 text**: the right anchor, `path@elsewhere@<path>` for a path the tree does not hold, a placeholder,
-or a rewritten sentence. A reference or a path that no checked form expresses is written without
-backticks only beside a reference to an issue entry of this project that records the missing form.
+or a rewritten sentence. A record of a deliberation, a plan document, a committed file that leaves
+once its outcomes are carried out, or a commit message, names an entry its tree does not hold,
+removed or still to be created, by its bare slug in backticks: a name, not a reference, since there
+is nothing for the checker to judge. A reference or a path that no checked form expresses is
+written without backticks only beside a reference to an issue entry of this project that records
+the missing form.
 A gap of the checker itself gets that entry in this project's own register, since a reference
 cannot reach another project. Text that is not in the checker's syntax, such as a commit named by
 its subject, a commit of another project or a description in words, is outside this rule.

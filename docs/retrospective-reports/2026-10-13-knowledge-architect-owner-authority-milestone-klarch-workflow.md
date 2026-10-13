@@ -15,7 +15,7 @@
   - `issue@agent-skills@the-retrospective-counts-no-review-cost`, the measurement W7 asks for;
   - `issue@agent-skills@a-plan-document-deleted-at-its-harvest-is-unseen-by-the-acts-that-need-it`,
     whose structure W5 meets and whose trigger the file does not meet;
-  - `issue@knowledge-architect@three-findings-of-a-received-retrospective-await-an-intake`, the
+  - `three-findings-of-a-received-retrospective-await-an-intake`, the
     outcome of W8's case;
   - `issue@core@no-command-lists-the-standing-entries-citing-a-set-of-entries`, near C2;
   - `issue@agent-skills@the-material-finding-duty-has-no-head` and
@@ -287,7 +287,7 @@ This section also holds P3 of 2026-10-13-knowledge-architect-owner-authority-mil
   design discussion", which is a finding that already has an analysis; neither covers a hand-off made
   before any intake.
 - **c. Whether it is already recorded.** The case's own outcome is
-  `issue@knowledge-architect@three-findings-of-a-received-retrospective-await-an-intake`, which this
+  `three-findings-of-a-received-retrospective-await-an-intake`, which this
   intake closes, in 2026-10-13-thaum-slice-numbers-merge-klarch-workflow.
   `issue@agent-skills@a-received-retrospective-file-has-no-installed-analysis` is the installed-side
   question, and does not cover a partial hand-off.
