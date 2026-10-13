@@ -445,14 +445,16 @@ and this repository installs its own skills, so its own sessions use each change
 reaches a consumer. The cost accepted is that a defect in a new text is found at its first real use,
 not before its merge. The cost is small: the defect a run would catch first is a text's mechanics,
 such as a new agent's tools or report format, and this repository's own next review is that text's
-first real dispatch, where such a failure shows at once and costs one re-dispatch. The owner added
-that "Most things we do here are already well proven to work." Two instances in this repository
-grounded the rule. A spec's acceptance criterion, a replay of a search agent over another project's
-history, was ruled out at the step that ran it: "From experience, they are not very reliable, and
-drive the workflow toward wrong directions more often than good ones." A slice's criterion, a
-subagent classifying decisions written for the check, was dropped at the slice's design audit. The
-boundary is a property of the verdict, not a list of subjects: the owner asked for "a wider category
-that matches my intent", since "narrow wordings … reduce the underlying intent to something lesser".
+first real dispatch, where such a failure shows at once and costs one re-dispatch. The owner judged
+that loss small, if it is the only one the session could name, since most of what this repository
+does is already well proven to work. Two instances in this repository grounded the rule. A spec's
+acceptance criterion, a replay of a search agent over another project's history, was ruled out by
+the owner at the step that ran it, on the owner's experience that such testing methods are not very reliable, and drive the
+workflow toward wrong directions more often than toward good ones. A slice's criterion, a subagent
+classifying decisions written for the check, was dropped at the slice's design audit. The boundary
+is a property of the verdict, not a list of subjects: the owner preferred that the head name a wider
+category matching the owner's intent, since a narrow wording reduces the intent behind it to
+something lesser.
 The nearest rival, a list of exempt subjects naming harness mechanics, leaves out the installer and
 the checker.
 
