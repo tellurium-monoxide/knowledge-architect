@@ -320,13 +320,14 @@ the rest stands on its argument.
 commit message, a tripwire and an issue entry state what the owner decided and how far the
 decision reaches, as "the owner chose X over Y" or "on the owner's word", never the owner's words
 verbatim. The verbatim words stay where the deliberation is kept: a plan document's items, and a
-committed file that leaves once its outcomes are carried out. An attribution is checked, like a
-quotation, against the question it answered.
+committed file that leaves once its outcomes are carried out. An attribution keeps the scope and the
+hedges of the owner's words, and is checked, like a quotation, against the question it answered.
 
 **What the ground means to a later session.** A head that stands on its argument is reversed by a
 better argument, which the owner approves where the reversal is a fork, per
 `primer@question-authority`. A head whose ground is the owner's words is
-reversed by the owner, or by a defeated premise of those words. An argument against it goes to the
+reversed by the owner; a defeated premise of those words goes to the owner, as
+`primer@owner-word-premise` says. An argument against it goes to the
 owner as a question about their intent.
 
 **The deliberation is not copied into the head.** Where it is kept, and how a reader finds it,

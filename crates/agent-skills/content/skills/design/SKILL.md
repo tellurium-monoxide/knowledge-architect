@@ -206,7 +206,7 @@ that defeats it, the consequences the owner must know, and the default, which is
 the owner agrees. Wait for the owner's word: nothing is built before it.
 A reply that brings an argument, a new shape or a doubt returns the work to the loop, on the
 in-change path or the full path. The commit that implements bounded work carries the proposal and
-the owner's words verbatim.
+the owner's answer, attributed to the owner, as `primer@design-heads` says.
 
 Misclassifying costs in both directions: a bounded problem does not need a discussion, and an open
 one needs argument. Territory that looks technical is often not bounded (error handling can turn out

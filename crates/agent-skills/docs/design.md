@@ -148,7 +148,8 @@ decision it makes fails the entry tests, per `design@agent-skills@a-head-is-owed
 and no second defensible shape survives the nearest-rival test. The skill then sends one message,
 the proposal with its nearest rival, the strongest open reading set aside, the consequences and the
 default, and waits for the owner's word; an argument in the reply returns the work to the loop. The
-commit that implements it carries the proposal and the owner's words verbatim. The skill's
+commit that implements it carries the proposal and the owner's answer, attributed, per
+`design@agent-skills@attribution-replaces-quotation`. The skill's
 description reaches a session before it starts a requested change whose design is not settled.
 
 The owner's argument: "there is no way to determine whether a task is "bounded work that does not
@@ -635,10 +636,8 @@ or by a defeated premise of those words.
 The rule is the owner's proposal: a head is recorded on the arguments discussed, with its costs and
 rivals in its body or in the rejected alternatives, not on the ground that the owner ruled, in
 particular where the decision was the agent's position or default and the owner only approved it.
-The owner judged this provenance to matter for agents that weigh any change or addition to the
-design. The owner approved, in the discussion recorded by the owner-authority milestone, that a
-reversal of an argued head needs the owner only at a fork, since the record settles the rest. It
-serves `goal@knowledge-architect@the-owner-decides`,
+The owner judged this provenance to matter a lot for agents that weigh any change or addition to
+the design. It serves `goal@knowledge-architect@the-owner-decides`,
 which asks that the record show the owner's decisions. The nearest rival, citing every ruling in its
 head, makes an approved default read as the owner's intent: an audit of the heads added or
 rewritten in the week entry test 4 was added, up to commit c282b00, finds about two in five of their
@@ -647,7 +646,7 @@ defaults approved", and the citation, deleted, takes no argument with it. The fi
 a fresh read-only audit of those heads at that commit, against the commits and plan documents that
 wrote each citation.
 
-### A durable record attributes a decision to the owner, and the owner's words verbatim stay in the deliberation `##attribution-replaces-quotation`
+### A durable record attributes a decision to the owner, and the owner's words verbatim stay in a plan document or a file that leaves `##attribution-replaces-quotation`
 
 `primer@design-heads` states it: a design head, a commit message, a tripwire and an issue entry
 state what the owner decided and how far the decision reaches, never the owner's words verbatim.
@@ -655,20 +654,27 @@ The verbatim words stay where the deliberation is kept: a plan document's items,
 `design@agent-skills@plan-records-the-exchange`, and a committed file that leaves once its outcomes
 are carried out, per `design@agent-skills@committed-audit-report`. An attribution is checked against
 the question it answered, as a quotation is, by the transcript reviewer, the decision-record
-reviewer and the auditors' verifiers. A quotation already in a head is converted when a change
-touches the head, per `design@agent-skills@existing-heads-on-touch`.
+reviewer and the auditors' verifiers, and it keeps the scope and the hedges of the words. A
+quotation already in a head is converted when a change touches the head, per
+`design@agent-skills@existing-heads-on-touch`; the reference a rename sets beside a quotation does
+not count, per `design@agent-skills@a-past-sentence-is-rewritten`.
 
 It serves `goal@knowledge-architect@the-owner-decides`, under which a decision the owner made is
 recorded as the owner's: the attribution carries that, and the record shows the owner's decisions.
-The owner judged verbatim quotations of little value as long as the attribution is correct, and
-found them out of place in design heads. A verbatim quotation also costs the checker's syntax: two
-sessions bent one to get it past the checker, one by writing spans of reference kinds still to come
-as placeholders, in the agent-configuration-entities milestone, and one by writing the owner's words
-naming a skill's reference form bare, in the session that wrote `spec@plans@path-quickfixes`, which
+The owner judged verbatim quotations of little value most of the time, as long as the attribution is
+correct, and, as a hedged view, out of place in design heads; the owner approved this thread on that
+ground. A verbatim quotation also costs the checker's syntax: two sessions bent one to get it past
+the checker, one by writing spans of reference kinds still to come as placeholders, in the
+agent-configuration-entities milestone, and one by writing the owner's words naming a skill's
+reference form bare, in the session that wrote the path-quickfixes spec, which
 `design@agent-skills@plain-text-is-no-repair` does not admit. The nearest rival, keeping the
 quotation in a head whose ground is the owner's words, keeps that cost where the ground is most
-read. The risk is that an attribution loses a scope the words showed; the transcript reviewer reads
-the words against the record, and `tripwire@agent-skills@attribution-loses-the-scope` watches.
+read. The risk is that an attribution loses a scope or a hedge the words showed: in this
+repository, a paraphrase of the owner in `design@agent-skills@transcript-reviewer-agent` once
+misstated the owner's request, and a quotation replaced it, in the commit "[review] The last
+transcript review of the small-fixes branch: no ruling misstated, three items given a durable
+outcome, one paraphrase replaced by the owner's words". The transcript reviewer reads the words
+against the record, and `tripwire@agent-skills@attribution-loses-the-scope` watches.
 
 ### A decision approved with no argument is argued before it is recorded `##unargued-approval-is-argued`
 
@@ -1323,8 +1329,8 @@ each thing met outside the task has a durable outcome: recorded in its home, act
 an issue, or judged to need nothing with the reason written where the owner reads it. What lives
 only in a conversation is lost when the session ends or is compacted. Second, that no ruling of the
 owner is recorded in a state or a scope the owner did not give. Detail added inside a ruling, and a
-wording better than the one the owner was shown, are not findings. The owner judged that a reviewer flagging every small addition as a finding, even a clearly sane
-deviation, missed the point, and asked it to look the other way: whether something from the
+wording better than the one the owner was shown, are not findings. The owner was bothered that the reviewer flagged every small addition as a finding, even a clearly
+sane deviation, and asked it to focus more in the other direction: whether something from the
 transcript was forgotten or not handled durably. A ruling is a word of the owner on a question
 `primer@question-authority` reserves to the owner; an answer on a reading or a fact is checked
 against its source, per `design@agent-skills@answer-keeps-its-authority`. The reviewer assumes no shape of
@@ -2294,8 +2300,8 @@ the record leave open, and `goal@knowledge-architect@agents-work-without-drift`,
 owner not answer what the record already answers. A workflow whose only authority is the owner
 sends every question to the owner, and records every answer as a ruling. In thaum, which implements a published rules text, at least three of
 the eleven questions one session put to the owner were answered by the rules, and in this
-repository the owner reported defaults "answerable by reading the recorded design heads" put to the
-owner first. The nearest rival, a sentence that gives an external specification alone a rank above
+repository the owner reported defaults put to the owner first that the recorded design heads
+answer. The nearest rival, a sentence that gives an external specification alone a rank above
 the owner's word, loses on that second instance: the mechanism runs in a project that implements
 no specification. A second rival, sending to the owner every choice that weighs a cost, sends every
 choice, since every choice has a cost. The rank sentence holds because an edit of a skill can bring
@@ -2319,8 +2325,9 @@ readings the source permits.
 
 It serves `goal@knowledge-architect@the-owner-decides`, under which a decision the owner made is
 recorded as the owner's and every other decision on its own ground. An answer recorded as a ruling
-weighs on every later session as the owner's intent: the owner observed that such answers go
-unquestioned, or come back to the owner even when the answer is obvious. The nearest rival, leaving
+weighs on every later session as the owner's intent: the owner observed that questioning such
+answers is discouraged, or that they come back to the owner even when the answer is obvious and the
+owner may not hold it. The nearest rival, leaving
 the recording rules as they are since fewer such questions reach the owner under
 `design@agent-skills@questions-go-to-their-authority`, loses because a question still reaches the
 owner by mistake: in thaum, one went to the owner through a definition the session had not looked

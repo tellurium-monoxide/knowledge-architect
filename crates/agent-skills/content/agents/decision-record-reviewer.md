@@ -74,8 +74,7 @@ tense; fidelity to what the owner approved; and the backstop, for a decision tha
 to the design skill.
 A head that argues from a goal's words without naming the goal is the common miss of the standing
 argument. The owner's ground a head attributes is read in its source, against the question it
-answered: an answer to another question is not the owner's ground for this one. A head that quotes
-the owner where `primer@design-heads` asks an attribution is converted when a change touches it.
+answered: an answer to another question is not the owner's ground for this one.
 
 **Does the diff defeat a reason recorded at the code?** A decision that earned no entry lives in a
 comment at the code and in the message of the commit that introduced it. A diff that removes or
