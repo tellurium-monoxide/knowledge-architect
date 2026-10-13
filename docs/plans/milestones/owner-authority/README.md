@@ -35,8 +35,9 @@ slice. This milestone adds:
 
 - **All four slices are implemented, reviewed and merged in the session that converged**, on the
   owner's word in R5: "We'll be implemeting, reviewing and merging all of it together in this
-  session (over multiple PRs), though." Each slice is one branch and one pull request, merged
-  before the next begins.
+  session (over multiple PRs), though."
+- **Each slice is one branch and one pull request, merged before the next begins**, as
+  `skill@knowledge-architect-planning@cutting-steps-and-slices` requires of every milestone.
 - **Each slice grounds two Components**: the root, `knowledge-architect`, which holds the goals,
   and `agent-skills`, which holds the installed text and its heads.
 - **Every edit under `path@agent-skills@content/`** passes the tests of "Editing an installed skill
@@ -46,11 +47,9 @@ slice. This milestone adds:
   `cargo x changelog`, per `design@knowledge-architect@the-branch-writes-its-changelog-entries`.
   A Workflow entry is owed for each question put to the owner that a slice adds or removes, per
   `design@knowledge-architect@changelog-entries`.
-- **No version is published between slice 1 and slice 4**: a release in that interval would ship
-  installed texts that slice 1 has made disagree, until slices 3 and 4 align them. Publishing is
-  on the owner's word, per `design@knowledge-architect@publish-after-merge`; the session that asks
-  for that word before slice 4 lands says so. D13 says how a session meanwhile tells which text
-  applies.
+- **Between slice 1 and slice 4**, installed texts that slice 1 has made disagree stay on main
+  until slices 3 and 4 align them. D13 says how a session meanwhile tells which text applies, and
+  whether a version may be published in that interval.
 - **A new head is written attributed from slice 2 on.** Slice 1's harvest runs under the
   quotation rule in force; slice 2 converts the heads and the tripwires slice 1 wrote, since it
   touches them.
@@ -131,8 +130,11 @@ slices are listed under "Implementation sequence".
 
 **Outside the work:**
 
-- W3, W4 and W5, on the owner's word in R0: "focusing on a single issue of the retrospective". Where
-  they go is D15.
+- The intake of the retrospective file, on the owner's word in R0: "We won't be using the intake
+  skill for this one, but instead the design skill, focusing on a single issue of the
+  retrospective". So no analysis file under `skill@klarch-retrospective-intake` is written for it,
+  though `design@knowledge-architect@committed-findings-analysis` asks one for every received file:
+  W1 and W2 are carried by this milestone, and W3, W4 and W5 go where D15 says.
 - `issue@agent-skills@the-workflow-assumes-one-unnamed-owner`: who rules is a separate question
   from what is the owner's to rule. The work names "the owner" as today, and blocks nothing that
   issue would change.
@@ -1043,12 +1045,17 @@ can contest.
   today's "proceed on the default" of `primer@owner-word-premise` for that case. Proposed
   rewording of G2's second sentence: "A contradiction it finds that no source or argument resolves
   goes to the owner, and the part of the work that rests on it waits for the owner's answer; the
-  rest goes on." It bears on #owner-word-is-verified.
+  rest goes on." The rewording changes a goal, so it is not written before the owner's word, per
+  `skill@knowledge-architect-goal-setting`: until then, slice 1 writes G2 as approved, and only the
+  reading above applies. It bears on #owner-word-is-verified.
 - **D13.** The authority section's own text says that it prevails over any installed instruction
   that sends to the owner a question it gives the session, the same rank `primer@goals-bind` gives
   a goal over a decision. The sentence holds between slice 1 and slice 4, and stays after slice 4,
   since a later edit of a skill can bring the same conflict back. With it, no session meets two
-  instructions it cannot both obey: one ranks the other. It bears on criterion #no-contradiction.
+  instructions it cannot both obey: one ranks the other. And no version is published between slice
+  1 and slice 4, since a release would ship the texts that disagree; publishing is on the owner's
+  word anyway, per `design@knowledge-architect@publish-after-merge`. It bears on criterion
+  #no-contradiction.
 - **D14.** The intake of a received workflow file, here, and an agentic-workflow audit's findings on
   the installed text, stay with the owner:
   `goal@knowledge-architect@the-workflow-improves-through-real-use` says "the owner decides what
@@ -1059,7 +1066,8 @@ can contest.
 - **D15.** W3, W4 and W5 get a durable outcome in slice 1: one `todo` issue in the root's register,
   which names the retrospective file and its three findings, and closes by an intake of them under
   `skill@klarch-retrospective-intake`. Without it, nothing in the tree records them once this
-  document leaves. It bears on D14.
+  document leaves. No analysis file is written now, on the owner's direction in R0 quoted under
+  "Outside the work". It bears on D14.
 - **D16.** The slices run in the order of "Implementation sequence": attribution second, where the
   reply to R4 (a80) had it last, and the "Decided" section in slice 1, as a primer directive. The
   reason is in "Order rationale". The owner agreed "on the milestone path" in R5 with the earlier
