@@ -71,8 +71,8 @@ not homes: open every tripwires home as well, since an empty one does not appear
 each entry carries to a decision, a goal or a declared register's entry.
 
 **Read every entry in every one of those homes, not the subset whose subject the diff touches.**
-They name this axis as their standing re-entry point without qualification, so a tripwire you do not
-open is one nothing opens before merge. For each: has it fired?
+`skill@knowledge-architect-issue-tracking@tripwire-entry` names this axis as the standing re-entry
+point of every tripwire, so a tripwire you do not open is one nothing opens before merge. For each: has it fired?
 
 A diff that cannot have fired a tripwire is a normal outcome and is reported as one. What is not
 available is deciding in advance which entries were worth reading.
