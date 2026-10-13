@@ -6,7 +6,8 @@ file when it fires. What is outstanding is `register@agent-skills@issue`.
 ## Guarding `design@agent-skills@ledger-from-transcript`: a ruling lost or misstated at assembly `##ruling-lost-in-assembly`
 
 The decision rests on the premise that assembly from the transcript, checked by the transcript
-reviewer, records the owner's rulings as the owner made them.
+reviewer, records the owner's rulings as the owner made them, and an answer of the owner on a
+reading or a fact with its source, per `design@agent-skills@answer-keeps-its-authority`.
 
 **Fires when:** a ruling of the owner is found missing from, or misstated in, a committed plan
 document, after the plan document's own reviews, where the misstatement is critical under
@@ -44,7 +45,7 @@ its argument does not cover.
 
 **Fires when:** a commit creates a design head, contradicts a statement of one, or adds to it a
 member its argument does not cover, and neither its message nor a plan document carries the
-deliberation: no thread, no rival, and none of the owner's words where the owner ruled. A relocation
+deliberation: no thread, no rival, and no attribution of the owner's ruling where the owner ruled. A relocation
 or rewording that adds or removes no decision does not count.
 **Response:** open a `defect` naming the head and the commit, and reopen
 `design@agent-skills@new-or-reshaped-head-needs-design` on where its trigger is delivered; for a
@@ -206,14 +207,16 @@ by the scope of the owner's approval among the candidates.
 **Re-entry:** the standing-state review before every merge, and the decision-record and
 design-conformance reviews, which read the heads a change writes.
 
-## Guarding `design@agent-skills@head-ground-is-the-argument`: a quotation that was the owner's own intent is removed `##owner-intent-stripped`
+## Guarding `design@agent-skills@head-ground-is-the-argument`: the owner's own ground is removed from a head `##owner-intent-stripped`
 
 T2 of the premortem of the discussion that made the decision. The decision rests on the premise
 that the repair of an approval cited as a ground does not remove the owner's own words with it.
 
-**Fires when:** a commit removes or rewords as an argument a quotation of the owner in a design head,
-and the transcript or the plan document shows that the decision, or that part, came from the owner.
-**Response:** restore the quotation as the ground, and reopen
+**Fires when:** a commit removes, or rewords as an argument, the owner's ground in a design head,
+quoted or attributed, and the transcript or the plan document shows that the decision, or that
+part, came from the owner. A quotation converted to an attribution that states the same ground, per
+`design@agent-skills@attribution-replaces-quotation`, does not fire it.
+**Response:** restore the owner's ground, attributed, and reopen
 `design@agent-skills@head-ground-is-the-argument` on how a ground is told apart, with the rival
 that cites every ruling of the owner among the candidates.
 **Re-entry:** the standing-state review before every merge, and the transcript review of the change.
@@ -473,3 +476,17 @@ departure is recorded, so that a session can tell it from a reading.
 **Re-entry:** the retrospective of each session, and the standing-state review before every merge,
 with the limit `issue@agent-skills@a-tripwire-on-agent-behaviour-fires-where-this-project-cannot-see`
 names.
+
+## Guarding `design@agent-skills@attribution-replaces-quotation`: an attribution loses the scope the owner's words had `##attribution-loses-the-scope`
+
+T4 of the premortem of the discussion that made the decision. The decision rests on the premise
+that an attribution states what the owner decided and how far it reaches as well as the owner's
+words did.
+
+**Fires when:** the transcript reviewer reports a misstated ruling that traces to an attribution in
+a durable record, where the owner's words would have shown the scope.
+**Response:** reopen `design@agent-skills@attribution-replaces-quotation` on where verbatim words
+are owed, with the rejected alternative that quotes the owner in a head whose ground is the owner's
+among the candidates.
+**Re-entry:** the transcript review of each change, which reads the owner's words in the transcript
+against the record.
