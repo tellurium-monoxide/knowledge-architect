@@ -50,9 +50,9 @@ rulings on its tripwires and acceptance criteria. Bounded work ends sooner, at i
 built on its default (`skill@knowledge-architect-design@bounded-work`). On the full path,
 `skill@knowledge-architect-planning` writes the plan documents, in the same session (step 8); on
 the in-change path, a commit message carries the deliberation
-(`skill@knowledge-architect-design@decision-authority`). Either way, the decisions are recorded at
-the landing of the work that implements them, and a decision that no work implements and that is not
-part of any spec when it is made, per `skill@knowledge-architect-decision-recording@when-recording-happens`.
+(`skill@knowledge-architect-design@decision-authority`). Either way, a decision is recorded at the
+landing of the work that implements it, and one that no work implements and that is not part of
+any spec is recorded when it is made, per `skill@knowledge-architect-decision-recording@when-recording-happens`.
 
 ## Decision authority `##decision-authority`
 
@@ -156,7 +156,7 @@ evidence bring, which nobody knows in advance.
   that reverses a recorded one, and `primer@design-heads`
   decides whether any other decision earns a design head at all. Apply both before proposing to the
   owner where a decision lands. The checkpoint table is shown at convergence when the ledger holds
-  more than one thread. The premortem runs when reversal touches any of the four. Where it runs,
+  more than one thread. The premortem runs when reversal touches any of the four listed below. Where it runs,
   nothing of the decision is implemented or committed before it has run
   and the owner has ruled on its tripwires and acceptance criteria, so the record that carries
   the deliberation carries those rulings.
@@ -413,7 +413,7 @@ line and no binding criterion is unmet (loop step 6).
 
 **`presumed-settled`** is a labeled claim about the owner: they are
 continuing the discussion in a way that assumes this thread's
-resolution. It is deliberately an OPEN state — a presumption never
+resolution. It is deliberately an open thread state — a presumption never
 counts toward convergence. Each time the owner's arguments again
 depend on the presumption, its evidence refreshes. A presumption the
 owner's arguments have not depended on for two rounds is re-surfaced —
