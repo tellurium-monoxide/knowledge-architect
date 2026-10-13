@@ -328,7 +328,7 @@ stand in for the specific criterion that is harder to find.
 %% `design@agent-skills@ruled-items-labelled`.
 **An acceptance criterion stands on the owner's word**, as a tripwire does. The owner rules on
 whether it is applied and on the decision its firing reopens; its observable is worded by the agent,
-and a rewording is listed to the owner at the end of the turn. It is put to the owner under a label,
+and a rewording is listed in the turn's "Decided" section, per `primer@decided-section`. It is put to the owner under a label,
 `AC<n>`, numbered as `primer@labelled-items` says, so the owner's ruling in the transcript finds it.
 A criterion first proposed after the premortem, at the assembly, by a review or at an audit, is
 written as an item of the acceptance criteria section marked as awaiting the owner, its label at the
