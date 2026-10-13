@@ -84,9 +84,8 @@ except the one it plants. `dirhome` is the one mock over which every family runs
 and finds nothing, so a copy of it could serve as a base; `History` in
 `path@core@tests/binary.rs` writes a project out
 anyway, because each test states the exact findings the commits it makes carry and a mock's
-contents are shared with every other test over it. `History` writes the project out,
-configures `user.name` and `user.email` in the copy's own configuration, and commits. Two
-orders it has to keep, both learned by getting them wrong:
+contents are shared with every other test over it. `History` then configures `user.name` and
+`user.email` in the copy's own configuration, and commits. Two orders it has to keep:
 
 - **stage, regenerate the indexes, stage again.** The walk is git's listing, so a deleted entry
   the index still holds is still counted and `cargo klarch index` writes the listing the tree
